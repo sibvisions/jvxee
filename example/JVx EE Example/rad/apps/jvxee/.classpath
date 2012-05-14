@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src.client"/>
+	<classpathentry kind="src" path="src.server"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="libs/client/jvxclient.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/server/eclipselink.jar"/>
+	<classpathentry kind="lib" path="libs/server/javax.persistence_2.0.3.v201010191057.jar"/>
+	<classpathentry kind="lib" path="libs/server/jvx.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JVx EE"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
