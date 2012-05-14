@@ -1,0 +1,1 @@
+java -cp ../libs/server/hsqldb.jar org.hsqldb.Server -database.0 file:jvxeeexample -dbname.0 jvxeeexample
