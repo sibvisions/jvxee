@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,15 +30,24 @@ import javax.persistence.Persistence;
  * <p/>
  * @author Stefan Wurm
  */
-public class Session extends Application {
-	
-	public EntityManager getEntityManager() throws Exception {
-		
+public class Session extends Application 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	/**
+	 * Gets the entity manager for the application.
+	 * 
+	 * @return the new entity manager.
+	 * @throws Exception if creation fails
+	 */
+	public EntityManager getEntityManager() throws Exception 
+	{
 	    EntityManagerFactory emf = Persistence.createEntityManagerFactory("jvxee");   
 	    EntityManager entityManager = emf.createEntityManager();
 		
 	    return entityManager;
-		    
 	}		
 
-}
+}	// Session

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,93 +25,117 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 
 /**
- * The <code>JPAEmbeddedKey</code> encapsulates the <code>JPAServerColumnMetaData</code> for an embedded class of an entity
+ * The <code>JPAEmbeddedKey</code> encapsulates the <code>JPAServerColumnMetaData</code> for an embedded class of an entity.
  * 
  * For example: An Entity "Customer" has an Embedded Object "Address"
  * 
  * @Entity
- * public class Customer implements Serializable {
- * 
- * 	@Id
- *  private int id;
+ * public class Customer implements Serializable
+ * {
+ * 	   @Id
+ *     private int id;
  *  
- *  private String name;
+ *     private String name;
  *  
- *  @Embedded
- *  private Address address;
+ *     @Embedded
+ *     private Address address;
  *  
- *  ....... 
- * 
+ *     ....... 
  * } 
  * 
  * @Embeddable
- *public class Address {
- *
- *   private String street;
- *   private String nr;
+ * public class Address
+ * {
+ *     private String street;
+ *     private String nr;
  *   
- *   .....
- *   
+ *     .....
  * }
  * 
  * It encapsulates the <code>JPAServerColumnMetaData</code> for the columns of the embedded class.
  * It also stores the JPAMappingType for the embedded class.
  * 
- * @see com.sibvisions.rad.persist.jpa.JPAServerColumnMetaDat
+ * @see com.sibvisions.rad.persist.jpa.JPAServerColumnMetaData
  * 
  * @author Stefan Wurm
- *
  */
-public class JPAEmbeddedKey {
+public class JPAEmbeddedKey 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/** The JPAMappingType from the Embedded Object **/
+	/** The JPAMappingType from the Embedded Object. **/
 	private JPAMappingType jpaMappingType; 
 
-	/** The <code>JPAServerColumnMetaData</code> for the columns from the embedded object **/
+	/** The <code>JPAServerColumnMetaData</code> for the columns from the embedded object. **/
 	private Collection<JPAServerColumnMetaData> cServerColumnMetaData = new LinkedHashSet<JPAServerColumnMetaData>();
 	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Overwritten methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	/**
-	 * Returns the <code>JPAMappingType</code>
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() 
+	{
+		return "JPAEmbeddedKey [jpaMappingType=" + jpaMappingType
+				+ ", cServerColumnMetaData=" + cServerColumnMetaData;
+	}
+	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	/**
+	 * Returns the <code>JPAMappingType</code>.
 	 * 
 	 * @return The JPAMappingType
 	 */
-	public JPAMappingType getJPAMappingType() {
+	public JPAMappingType getJPAMappingType() 
+	{
 		return jpaMappingType;
 	}
 
 	/**
-	 * Sets the <code>JPAServerColumnMetaData</code>
+	 * Sets the <code>JPAServerColumnMetaData</code>.
 	 * 
-	 * @param jpaDataType
+	 * @param pJPAMappingType
 	 */
-	public void setJPAMappingType(JPAMappingType pJPAMappingType) {
-		this.jpaMappingType = pJPAMappingType;
+	public void setJPAMappingType(JPAMappingType pJPAMappingType)
+	{
+		jpaMappingType = pJPAMappingType;
 	}
 
 	/**
-	 * Add a <code>JPAServerColumnMetaData</code> to the <code>JPAEmbeddeKey</code>
+	 * Add a <code>JPAServerColumnMetaData</code> to the <code>JPAEmbeddeKey</code>.
 	 * 
 	 * @param pServerColumnMetaData the <code>JPAServerColumnMetaData</code> to add.
 	 */			
-	public void addServerColumnMetaData(JPAServerColumnMetaData pServerColumnMetaData) {
+	public void addServerColumnMetaData(JPAServerColumnMetaData pServerColumnMetaData) 
+	{
 		cServerColumnMetaData.add(pServerColumnMetaData);
 	}
 
 	/**
-	 * Returns all <code>JPAServerColumnMetaData</code> from the <code>JPAEmbeddeKey</code> as an Array
+	 * Returns all <code>JPAServerColumnMetaData</code> from the <code>JPAEmbeddeKey</code> as an Array.
 	 * 
 	 * @return All <code>JPAServerColumnMetaData</code> as Array
 	 */
-	public JPAServerColumnMetaData[] getServerColumnMetaDataAsArray() {
+	public JPAServerColumnMetaData[] getServerColumnMetaDataAsArray() 
+	{
 		return cServerColumnMetaData.toArray(new JPAServerColumnMetaData[cServerColumnMetaData.size()]);
 	}
 
 	/**
-	 * Returns all <code>JPAServerColumnMetaData</code> from the <code>JPAEmbeddeKey</code> in a Collection
+	 * Returns all <code>JPAServerColumnMetaData</code> from the <code>JPAEmbeddeKey</code> in a Collection.
 	 * 
 	 * @return All <code>JPAServerColumnMetaData</code> in a Collection
 	 */	
-	public Collection<JPAServerColumnMetaData> getServerColumnMetaDataAsCollection() {
+	public Collection<JPAServerColumnMetaData> getServerColumnMetaDataAsCollection() 
+	{
 		return cServerColumnMetaData;
 	}
 	
@@ -120,11 +144,12 @@ public class JPAEmbeddedKey {
 	 * 
 	 * @return the names from the columns in an array. 
 	 */
-	public String [] getColumnNames() {
-		
+	public String [] getColumnNames() 
+	{
 		ArrayList<String> columnNames = new ArrayList<String>();
 
-		for(JPAServerColumnMetaData jpaServerColumnMetaData : getServerColumnMetaDataAsCollection()) {
+		for (JPAServerColumnMetaData jpaServerColumnMetaData : getServerColumnMetaDataAsCollection()) 
+		{
 			columnNames.add(jpaServerColumnMetaData.getName());	
 		}
 		
@@ -132,19 +157,13 @@ public class JPAEmbeddedKey {
 	}	
 
 	/**
-	 * Returns the Number of encapsulated <code>JPAServerColumnMetaData</code>
+	 * Returns the Number of encapsulated <code>JPAServerColumnMetaData</code>.
 	 * 
 	 * @return The Number of <code>JPAServerColumnMetaData</code>
 	 */
-	public int getSize() {
+	public int getSize() 
+	{
 		return cServerColumnMetaData.size();
 	}
 	
-
-	@Override
-	public String toString() {
-		return "JPAEmbeddedKey [jpaMappingType=" + jpaMappingType
-				+ ", cServerColumnMetaData=" + cServerColumnMetaData;
-	}
-	
-}
+}	// JPAEmbeddedKey

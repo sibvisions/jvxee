@@ -1,3 +1,23 @@
+/*
+ * Copyright 2012 SIB Visions GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ *
+ * History
+ *
+ * 09.05.2012 - [SW] - creation
+ */
 package com.sibvisions.rad.persist.jpa;
 
 import java.math.BigDecimal;
@@ -24,20 +44,31 @@ import com.sibvisions.rad.persist.jpa.entity.Customer;
 import com.sibvisions.rad.persist.jpa.entity.Education;
 import com.sibvisions.rad.util.DirectObjectConnection;
 
-public class TestJPAStorage {
+public class TestJPAStorage 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	private EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpatest"); 
 	
-	EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpatest"); 
-	EntityManager entityManager = null;
-	CriteriaBuilder criteriaBuilder;
+	private EntityManager entityManager = null;
+
+	private CriteriaBuilder criteriaBuilder;
 	
-	JPAStorage jpaStorageCustomer;
-	JPAStorage jpaStorageAddress;
-	JPAStorage jpaStorageEducation;
+	private JPAStorage jpaStorageCustomer;
+
+	private JPAStorage jpaStorageAddress;
 	
+	private JPAStorage jpaStorageEducation;
+	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Initialization
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	@Before
-	public void open() throws Exception {
-		
+	public void open() throws Exception 
+	{
 	      entityManager = emf.createEntityManager();
 	      criteriaBuilder = emf.getCriteriaBuilder();
 	      clearDB();
@@ -55,65 +86,91 @@ public class TestJPAStorage {
 	      jpaStorageEducation.setEntityManager(entityManager);
 	      jpaStorageEducation.setDetailEntity(Education.class);
 	      jpaStorageEducation.open();	      
-	      
 	}
 	
 	@After
-	public void close() throws Exception {
+	public void close() throws Exception 
+	{
 		entityManager.close();
 	}	
 		
-	public void initializeDB() {
-		
-	      entityManager.getTransaction().begin();
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	public void initializeDB() 
+	{
+		entityManager.getTransaction().begin();
 	      
-	      entityManager.createNativeQuery("insert into salutation (ID, SALUTATION) values (1, 'Mister')").executeUpdate();	      
-	      entityManager.createNativeQuery("insert into salutation (ID, SALUTATION) values (2, 'Mrs')").executeUpdate();
+	    entityManager.createNativeQuery("insert into salutation (ID, SALUTATION) values (1, 'Mister')").executeUpdate();	      
+	    entityManager.createNativeQuery("insert into salutation (ID, SALUTATION) values (2, 'Mrs')").executeUpdate();
 
-	      entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) values (1, 10, 'Healthinsurance 1', 'Street 1', 1111, 'City 1')").executeUpdate();	      
-	      entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) values (2, 20, 'Healthinsurance 2', 'Street 2', 2222, 'City 2')").executeUpdate();     
-	      entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) values (3, 30, 'Healthinsurance 3', 'Street 3', 3333, 'City 3')").executeUpdate();	      
+	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) " +
+	      		                        "values (1, 10, 'Healthinsurance 1', 'Street 1', 1111, 'City 1')").executeUpdate();	      
+	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) " +
+	    	                            "values (2, 20, 'Healthinsurance 2', 'Street 2', 2222, 'City 2')").executeUpdate();     
+	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) " +
+	      		                        "values (3, 30, 'Healthinsurance 3', 'Street 3', 3333, 'City 3')").executeUpdate();	      
 	      
-	      entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) values (1, 'Firstname 1', 'Lastname 1', null, true, '1111111111', '1111111111', 'first1.last1@gmx.at', 1, 'Mister',  1, 10)").executeUpdate();	      
-	      entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) values (2, 'Firstname 2', 'Lastname 2', null, true, '2222222222', '2222222222', 'first2.last2@gmx.at', 1, 'Mister',  1, 10)").executeUpdate();	
-	      entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) values (3, 'Firstname 3', 'Lastname 3', null, false, '3333333333', '3333333333', 'first3.last3@gmx.at', 2, 'Mrs',  3, 30)").executeUpdate();	
-	      entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) values (4, 'Firstname 4', 'Lastname 4', null, false, '4444444444', '4444444444', 'first4.last4@gmx.at', 2, 'Mrs',  3, 30)").executeUpdate();	
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
+	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+	      		                        "values (1, 'Firstname 1', 'Lastname 1', null, true, '1111111111', '1111111111', 'first1.last1@gmx.at', " +
+	      		                                "1, 'Mister',  1, 10)").executeUpdate();	      
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
+	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+                                        "values (2, 'Firstname 2', 'Lastname 2', null, true, '2222222222', '2222222222', 'first2.last2@gmx.at', " +
+                                                "1, 'Mister',  1, 10)").executeUpdate();	
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
+	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+	      		                        "values (3, 'Firstname 3', 'Lastname 3', null, false, '3333333333', '3333333333', 'first3.last3@gmx.at', " +
+	      		                                  "2, 'Mrs',  3, 30)").executeUpdate();	
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
+	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+	      		                        "values (4, 'Firstname 4', 'Lastname 4', null, false, '4444444444', '4444444444', 'first4.last4@gmx.at', " +
+	      		                                "2, 'Mrs',  3, 30)").executeUpdate();	
 	         
-	      entityManager.createNativeQuery("insert into address values (1, 'City 1', 'Street 1',  1, 1)").executeUpdate();
-	      entityManager.createNativeQuery("insert into address values (2, 'City 2', 'Street 2',  2, 1)").executeUpdate();
+	    entityManager.createNativeQuery("insert into address values (1, 'City 1', 'Street 1',  1, 1)").executeUpdate();
+	    entityManager.createNativeQuery("insert into address values (2, 'City 2', 'Street 2',  2, 1)").executeUpdate();
 	      
-	      entityManager.createNativeQuery("insert into education values (1, 'Education 1')").executeUpdate();
-	      entityManager.createNativeQuery("insert into education values (2, 'Education 2')").executeUpdate();
-	      entityManager.createNativeQuery("insert into education values (3, 'Education 3')").executeUpdate();
-	      entityManager.createNativeQuery("insert into education values (4, 'Education 4')").executeUpdate();
-	      entityManager.createNativeQuery("insert into education values (5, 'Education 5')").executeUpdate();
+	    entityManager.createNativeQuery("insert into education values (1, 'Education 1')").executeUpdate();
+	    entityManager.createNativeQuery("insert into education values (2, 'Education 2')").executeUpdate();
+	    entityManager.createNativeQuery("insert into education values (3, 'Education 3')").executeUpdate();
+	    entityManager.createNativeQuery("insert into education values (4, 'Education 4')").executeUpdate();
+	    entityManager.createNativeQuery("insert into education values (5, 'Education 5')").executeUpdate();
 	
-	      entityManager.createNativeQuery("insert into customer_education values (1, 1)").executeUpdate();
-	      entityManager.createNativeQuery("insert into customer_education values (1, 2)").executeUpdate();
+	    entityManager.createNativeQuery("insert into customer_education values (1, 1)").executeUpdate();
+	    entityManager.createNativeQuery("insert into customer_education values (1, 2)").executeUpdate();
 	  
-	      entityManager.flush();
+	    entityManager.flush();
 	      
-	      entityManager.getTransaction().commit();			
+	    entityManager.getTransaction().commit();			
 	}	
 	
-	public void clearDB() {
-	      entityManager.getTransaction().begin();
-	      
-	      entityManager.createQuery("delete from Address").executeUpdate();
-	      entityManager.createQuery("delete from Customer").executeUpdate();
-	      entityManager.createQuery("delete from Salutation").executeUpdate();
-	      entityManager.createQuery("delete from Healthinsurance").executeUpdate();
-	      entityManager.createQuery("delete from Education").executeUpdate();
+	public void clearDB() 
+	{
+		entityManager.getTransaction().begin();
 
-	      entityManager.flush();
-	      
-	      entityManager.getTransaction().commit();		
+		entityManager.createQuery("delete from Address").executeUpdate();
+		entityManager.createQuery("delete from Customer").executeUpdate();
+		entityManager.createQuery("delete from Salutation").executeUpdate();
+		entityManager.createQuery("delete from Healthinsurance").executeUpdate();
+		entityManager.createQuery("delete from Education").executeUpdate();
+
+		entityManager.flush();
+
+		entityManager.getTransaction().commit();
 	}	
 	
-	/****************************** Test MetaData *************************************************/
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Test methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	// MetaData
+	//-----------------------------------
 		
 	@Test
-	public void testMetaDataEducation() throws Throwable {
+	public void testMetaDataEducation() throws Throwable 
+	{
 		
 		DirectObjectConnection con = new DirectObjectConnection();
 		con.put("jpa", jpaStorageEducation);
@@ -133,8 +190,8 @@ public class TestJPAStorage {
 	}	
 	
 	@Test
-	public void testMetaDataAddress() throws Throwable {
-		
+	public void testMetaDataAddress() throws Throwable 
+	{
 		DirectObjectConnection con = new DirectObjectConnection();
 		con.put("jpa", jpaStorageAddress);
 		
@@ -152,122 +209,122 @@ public class TestJPAStorage {
 		Assert.assertArrayEquals(new String[] {"ID", "ZIP", "STREET", "CUSTOMER_ID", "CUSTOMER_LASTNAME", "CITY"}, rdb.getRowDefinition().getColumnNames());
 	}
 	
-	/****************************** Test Fetch *************************************************/
+	// Fetch
+	//-----------------------------------
 	
 	@Test
-	public void testFetch() throws Exception {
+	public void testFetch() throws Exception 
+	{
+		List<Object[]> objects = jpaStorageCustomer.executeFetch(null, null, 0, 10);
 		
-		List<Object []> objects = jpaStorageCustomer.executeFetch(null, null, 0, 10);
-		
-		Assert.assertTrue(objects.size() == 5);
-		
+		Assert.assertEquals(5, objects.size());
 	}
 	
-	/****************************** Test Insert *************************************************/
+	// Insert
+	//-----------------------------------
 	
 	@Test
-	public void testInsertCustomer() throws Exception {
-	
+	public void testInsertCustomer() throws Exception 
+	{
 		/* ID, BIRTHDAY, EMAIL, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, LASTNAME, 
 		 *  HEALTHINSURANCE_ID, HEALTHINSURANCE_NR, HEALTHINSURANCE_HEALTH_INSURANCE,
 		 *  FIRSTNAME, SALUTATION_ID, SALUTATION, PRIVATECUSTOMER
 		 */
-		Object [] dataRow = {null, null, "New Mail", "12345", "12345", "New Lastname", null, null, null, "New Firstname", 1, "Mister", true};
+		Object[] dataRow = {null, null, "New Mail", "12345", "12345", "New Lastname", null, null, null, "New Firstname", BigDecimal.valueOf(1), "Mister", Boolean.TRUE};
 		
 		dataRow = jpaStorageCustomer.executeInsert(dataRow);
 		
-		Assert.assertTrue(dataRow[0] != null);
+		Assert.assertNotNull(dataRow[0]);
 
         entityManager.getTransaction().begin();
         
         Customer entity = entityManager.find(Customer.class, dataRow[0]);
 
-        Assert.assertTrue(entity != null);
-        Assert.assertTrue(entity.getId() == 5);
-        Assert.assertTrue(entity.getBirthday() == null);
-        Assert.assertTrue(dataRow[2].equals(entity.getCustomerContact().getEmail()));
-        Assert.assertTrue(dataRow[3].equals(entity.getCustomerContact().getTelephone_private()));
-        Assert.assertTrue(dataRow[4].equals(entity.getCustomerContact().getTelephone_office()));
-        Assert.assertTrue(dataRow[5].equals(entity.getLastname()));
-        Assert.assertTrue(dataRow[9].equals(entity.getFirstname()));
-        Assert.assertTrue(dataRow[10].equals(new Integer(entity.getSalutation().getSalutationPK().getId())));
-        Assert.assertTrue(dataRow[11].equals(entity.getSalutation().getSalutationPK().getSalutation()));
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(5, entity.getId());
+        Assert.assertNull(entity.getBirthday());
+        Assert.assertEquals(dataRow[2], entity.getCustomerContact().getEmail());
+        Assert.assertEquals(dataRow[3], entity.getCustomerContact().getTelephone_private());
+        Assert.assertEquals(dataRow[4], entity.getCustomerContact().getTelephone_office());
+        Assert.assertEquals(dataRow[5], entity.getLastname());
+        Assert.assertEquals(dataRow[9], entity.getFirstname());
+        Assert.assertEquals(dataRow[10], new Integer(entity.getSalutation().getSalutationPK().getId()));
+        Assert.assertEquals(dataRow[11], entity.getSalutation().getSalutationPK().getSalutation());
         Assert.assertTrue(entity.isPrivateCustomer());
         
         entityManager.getTransaction().commit();		
-		
 	}
 	
 	@Test
-	public void testInsertAddress() throws Exception {
-	
+	public void testInsertAddress() throws Exception 
+	{
 		/* "ID", "ZIP", "STREET", "CUSTOMER_ID", "CUSTOMER_LASTNAME", "CITY" **/
-		Object [] dataRow = {null, 1234, "New street", "2", "Lastname 2", "New city"};
+		Object[] dataRow = {null, new BigDecimal(1234), "New street", "2", "Lastname 2", "New city"};
 		
 		dataRow = jpaStorageAddress.executeInsert(dataRow);
 		
-		Assert.assertTrue(dataRow[0] != null);
+		Assert.assertNotNull(dataRow[0]);
 
         entityManager.getTransaction().begin();
         
         Address entity = entityManager.find(Address.class, dataRow[0]);
 
-        Assert.assertTrue(entity != null);
-        Assert.assertTrue(entity.getId() == 3);
-        Assert.assertTrue(dataRow[1].equals(entity.getZip()));
-        Assert.assertTrue(dataRow[2].equals(entity.getStreet()));
-        Assert.assertTrue(dataRow[3].equals(entity.getCustomer().getId()));
-        Assert.assertTrue(dataRow[4].equals(entity.getCustomer().getLastname()));
-        Assert.assertTrue(dataRow[5].equals(entity.getCity()));
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(3, entity.getId());
+        Assert.assertEquals(dataRow[1], entity.getZip());
+        Assert.assertEquals(dataRow[2], entity.getStreet());
+        Assert.assertEquals(dataRow[3], Integer.valueOf(entity.getCustomer().getId()));
+        Assert.assertEquals(dataRow[4], entity.getCustomer().getLastname());
+        Assert.assertEquals(dataRow[5], entity.getCity());
         
         entityManager.getTransaction().commit();		
         
         entityManager.getTransaction().begin();
         
-        Customer entityCust = entityManager.find(Customer.class, 2);
+        Customer entityCust = entityManager.find(Customer.class, Integer.valueOf(2));
 
-        Assert.assertTrue(entityCust != null);
-        Assert.assertTrue(entityCust.getAddresses().size() == 1);   
+        Assert.assertNotNull(entityCust);
+        Assert.assertEquals(1, entityCust.getAddresses().size());   
         
         entityManager.getTransaction().commit();	        
-		
 	}	
 	
 	@Test
-	public void testInsertEducation() throws Exception {
-	
+	public void testInsertEducation() throws Exception 
+	{
 		/* "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID", "EDUCATION_EDUCATION" */
-		Object [] dataRow = {3, "Lastname 3", 2, "Education 2"};
+		Object[] dataRow = {BigDecimal.valueOf(3), "Lastname 3", BigDecimal.valueOf(2), "Education 2"};
 		
 		dataRow = jpaStorageEducation.executeInsert(dataRow);
 		
-		Assert.assertTrue(dataRow[0] != null);
+		Assert.assertNotNull(dataRow[0]);
 
         entityManager.getTransaction().begin();
         
         Customer entity = entityManager.find(Customer.class, dataRow[0]);
 
-        Assert.assertTrue(entity != null);
-        Assert.assertTrue(entity.getId() == 3);
-        Assert.assertTrue(entity.getEducations().size() == 1);
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(3, entity.getId());
+        Assert.assertEquals(1, entity.getEducations().size());
         
         entityManager.getTransaction().commit();		
 	}		
 	
-	/****************************** Test Update *************************************************/
+	// Update
+	//-----------------------------------
 	
 	@Test
-	public void testUpdateCustomer() throws Exception {
-	
-		ICondition condition = new Equals("ID", 3);
+	public void testUpdateCustomer() throws Exception 
+	{
+		ICondition condition = new Equals("ID", BigDecimal.valueOf(3));
 		
-		List<Object []> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
+		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertTrue(list.size() == 2); // is 2 because of null
+		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
-		Object [] dataRowOld = list.get(0);
+		Object[] dataRowOld = list.get(0);
 		
-		Object [] dataRowNew = dataRowOld;
+		Object[] dataRowNew = dataRowOld;
 
 		/* ID, BIRTHDAY, EMAIL, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, LASTNAME, 
 		 *  HEALTHINSURANCE_ID, HEALTHINSURANCE_NR, HEALTHINSURANCE_HEALTH_INSURANCE,
@@ -279,136 +336,134 @@ public class TestJPAStorage {
 		
 		dataRowNew = jpaStorageCustomer.executeUpdate(dataRowOld, dataRowNew);
 		
-		Assert.assertTrue(dataRowNew != null);
+		Assert.assertNotNull(dataRowNew);
 
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, 3);
+        Customer entity = entityManager.find(Customer.class, BigDecimal.valueOf(3));
 
-        Assert.assertTrue(entity != null);
-        Assert.assertTrue(entity.getId() == 3);
-        Assert.assertTrue(entity.getBirthday() == null);
-        Assert.assertTrue(dataRowNew[2].equals(entity.getCustomerContact().getEmail()));
-        Assert.assertTrue(dataRowNew[3].equals(entity.getCustomerContact().getTelephone_private()));
-        Assert.assertTrue(dataRowNew[4].equals(entity.getCustomerContact().getTelephone_office()));
-        Assert.assertTrue(dataRowNew[5].equals(entity.getLastname()));
-        Assert.assertTrue(dataRowNew[9].equals(entity.getFirstname()));
-        Assert.assertTrue(dataRowNew[10].equals(new Integer(entity.getSalutation().getSalutationPK().getId())));
-        Assert.assertTrue(dataRowNew[11].equals(entity.getSalutation().getSalutationPK().getSalutation()));
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(3, entity.getId());
+        Assert.assertNull(entity.getBirthday());
+        Assert.assertEquals(dataRowNew[2], entity.getCustomerContact().getEmail());
+        Assert.assertEquals(dataRowNew[3], entity.getCustomerContact().getTelephone_private());
+        Assert.assertEquals(dataRowNew[4], entity.getCustomerContact().getTelephone_office());
+        Assert.assertEquals(dataRowNew[5], entity.getLastname());
+        Assert.assertEquals(dataRowNew[9], entity.getFirstname());
+        Assert.assertEquals(dataRowNew[10], new Integer(entity.getSalutation().getSalutationPK().getId()));
+        Assert.assertEquals(dataRowNew[11], entity.getSalutation().getSalutationPK().getSalutation());
         Assert.assertTrue(!entity.isPrivateCustomer());
         
         entityManager.getTransaction().commit();		
-		
 	}	
 	
 	@Test
-	public void testUpdateAddress() throws Exception {
-	
-		ICondition condition = new Equals("ID", 2);
+	public void testUpdateAddress() throws Exception 
+	{
+		ICondition condition = new Equals("ID", BigDecimal.valueOf(2));
 		
-		List<Object []> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
+		List<Object[]> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertTrue(list.size() == 2); // is 2 because of null
+		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
-		Object [] dataRowOld = list.get(0);
+		Object[] dataRowOld = list.get(0);
 		
-		Object [] dataRowNew = dataRowOld;
+		Object[] dataRowNew = dataRowOld;
 
 		/* "ID", "ZIP", "STREET", "CUSTOMER_ID", "CUSTOMER_LASTNAME", "CITY" **/
-		dataRowNew[1] = 8888;
+		dataRowNew[1] = new BigDecimal(8888);
 		dataRowNew[2] = "Updated Street";
 		dataRowNew[5] = "Updated City";
 		
 		dataRowNew = jpaStorageAddress.executeUpdate(dataRowOld, dataRowNew);
 		
-		Assert.assertTrue(dataRowNew != null);
+		Assert.assertNotNull(dataRowNew);
 
         entityManager.getTransaction().begin();
         
-        Address entity = entityManager.find(Address.class, 2);
+        Address entity = entityManager.find(Address.class, Integer.valueOf(2));
 
-        Assert.assertTrue(entity != null);
-        Assert.assertTrue(entity.getId() == 2);
-        Assert.assertTrue(dataRowNew[1].equals(entity.getZip()));
-        Assert.assertTrue(dataRowNew[2].equals(entity.getStreet()));
-        Assert.assertTrue(dataRowNew[3].equals(entity.getCustomer().getId()));
-        Assert.assertTrue(dataRowNew[4].equals(entity.getCustomer().getLastname()));
-        Assert.assertTrue(dataRowNew[5].equals(entity.getCity()));
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(2, entity.getId());
+        Assert.assertEquals(dataRowNew[1], entity.getZip());
+        Assert.assertEquals(dataRowNew[2], entity.getStreet());
+        Assert.assertEquals(dataRowNew[3], Integer.valueOf(entity.getCustomer().getId()));
+        Assert.assertEquals(dataRowNew[4], entity.getCustomer().getLastname());
+        Assert.assertEquals(dataRowNew[5], entity.getCity());
         
         entityManager.getTransaction().commit();		      
-		
 	}		
 	
 	@Test
-	public void testUpdateEducation() throws Exception {
-
+	public void testUpdateEducation() throws Exception 
+	{
 		/* "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID", "EDUCATION_EDUCATION" */
-		Object [] dataRowOld = {1, "Lastname 1", 2, "Education 2"};
+		Object[] dataRowOld = {BigDecimal.valueOf(1), "Lastname 1", BigDecimal.valueOf(2), "Education 2"};
 		
 		/* "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID", "EDUCATION_EDUCATION" */
-		Object [] dataRowNew = {1, "Lastname 1", 3, "Education 3"};
+		Object[] dataRowNew = {BigDecimal.valueOf(1), "Lastname 1", BigDecimal.valueOf(3), "Education 3"};
 
 		dataRowNew = jpaStorageEducation.executeUpdate(dataRowOld, dataRowNew);		
 		
-		Assert.assertTrue(dataRowNew != null);
+		Assert.assertNotNull(dataRowNew);
 
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, 1);
+        Customer entity = entityManager.find(Customer.class, Integer.valueOf(1));
 
-        Assert.assertTrue(entity != null);
-        Assert.assertTrue(entity.getId() == 1);
-        Assert.assertTrue(entity.getEducations().size() == 2);
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(1, entity.getId());
+        Assert.assertEquals(2, entity.getEducations().size());
         
         Education education = new ArrayList<Education>(entity.getEducations()).get(1); 
         
-        Assert.assertTrue(education.getId() == 3);
-        Assert.assertTrue(education.getEducation().equals("Education 3"));
+        Assert.assertEquals(3, education.getId());
+        Assert.assertEquals("Education 3", education.getEducation());
         
         entityManager.getTransaction().commit();		
 	}		
 	
-	/****************************** Test Delete *************************************************/
+	// Delete
+	//-----------------------------------
 	
 	@Test
-	public void testDeleteCustomer() throws Exception {
-	
-		ICondition condition = new Equals("ID", 3);
+	public void testDeleteCustomer() throws Exception 
+	{
+		ICondition condition = new Equals("ID", BigDecimal.valueOf(3));
 		
-		List<Object []> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
+		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertTrue(list.size() == 2); // is 2 because of null
+		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
-		Object [] dataRowDelete = list.get(0);
+		Object[] dataRowDelete = list.get(0);
 		
 		jpaStorageCustomer.executeDelete(dataRowDelete);
 	
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, 3);
+        Customer entity = entityManager.find(Customer.class, Integer.valueOf(3));
         
         Assert.assertNull(entity);
 
         entityManager.getTransaction().commit();		
-		
 	}
 	
 	@Test
-	public void testDeleteAddress() throws Exception {
-	
-		ICondition condition = new Equals("ID", 2);
+	public void testDeleteAddress() throws Exception 
+	{
+		ICondition condition = new Equals("ID", BigDecimal.valueOf(2));
 		
-		List<Object []> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
+		List<Object[]> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertTrue(list.size() == 2); // is 2 because of null
+		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
-		Object [] dataRowDelete = list.get(0);
+		Object[] dataRowDelete = list.get(0);
 
 		jpaStorageAddress.executeDelete(dataRowDelete);
 
         entityManager.getTransaction().begin();
         
-        Address entity = entityManager.find(Address.class, 2);
+        Address entity = entityManager.find(Address.class, Integer.valueOf(2));
 
         Assert.assertNull(entity);
         
@@ -416,50 +471,51 @@ public class TestJPAStorage {
 	}
 	
 	@Test
-	public void testDeleteEducation() throws Exception {
-
+	public void testDeleteEducation() throws Exception 
+	{
 		/* "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID", "EDUCATION_EDUCATION" */
-		Object [] dataRowDelete = {1, "Lastname 1", 2, "Education 2"};
+		Object[] dataRowDelete = {BigDecimal.valueOf(1), "Lastname 1", BigDecimal.valueOf(2), "Education 2"};
 		
 		jpaStorageEducation.executeDelete(dataRowDelete);	
 	
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, 1);
+        Customer entity = entityManager.find(Customer.class, Integer.valueOf(1));
 
-        Assert.assertTrue(entity != null);
-        Assert.assertTrue(entity.getId() == 1);
-        Assert.assertTrue(entity.getEducations().size() == 1);
+        Assert.assertNotNull(entity);
+        Assert.assertEquals(1, entity.getId());
+        Assert.assertEquals(1, entity.getEducations().size());
 
         entityManager.getTransaction().commit();		
 	}		
 	
-	/****************************** Test Refetch *************************************************/	
+	// Refetch
+	//-----------------------------------
 	
 	@Test
-	public void testRefetchCustomer() throws Exception {
-	
-		ICondition condition = new Equals("ID", 3);
+	public void testRefetchCustomer() throws Exception 
+	{
+		ICondition condition = new Equals("ID", BigDecimal.valueOf(3));
 		
-		List<Object []> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
+		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertTrue(list.size() == 2); // is 2 because of null
+		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
-		Object [] dataRowRefetch = list.get(0);
+		Object[] dataRowRefetch = list.get(0);
 
 		/* ID, BIRTHDAY, EMAIL, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, LASTNAME, 
 		 *  HEALTHINSURANCE_ID, HEALTHINSURANCE_NR, HEALTHINSURANCE_HEALTH_INSURANCE,
 		 *  FIRSTNAME, SALUTATION_ID, SALUTATION, PRIVATECUSTOMER
 		 */
 		dataRowRefetch[2] = "updatedMail";
-		dataRowRefetch[10] = new BigDecimal(1);
+		dataRowRefetch[10] = BigDecimal.valueOf(1);
 		dataRowRefetch[11] = "Mister";
 		
-		Object [] dataRowRefetch2 = jpaStorageCustomer.executeRefetchRow(dataRowRefetch);
+		Object[] dataRowRefetch2 = jpaStorageCustomer.executeRefetchRow(dataRowRefetch);
 	
-		Assert.assertTrue(dataRowRefetch2[2].equals("first3.last3@gmx.at"));
-		Assert.assertTrue(dataRowRefetch2[10].equals(new Integer(2)));
-		Assert.assertTrue(dataRowRefetch2[11].equals("Mrs"));
+		Assert.assertEquals("first3.last3@gmx.at", dataRowRefetch2[2]);
+		Assert.assertEquals(new Integer(2), dataRowRefetch2[10]);
+		Assert.assertEquals("Mrs", dataRowRefetch2[11]);
 	}		
 	
-}
+}	// TestJPAStorage

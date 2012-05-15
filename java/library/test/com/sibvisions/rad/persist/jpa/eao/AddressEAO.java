@@ -18,88 +18,58 @@
  *
  * 09.05.2012 - [SW] - creation
  */
-package apps.jvxee.eao;
+package com.sibvisions.rad.persist.jpa.eao;
 
 import javax.persistence.EntityManager;
 import javax.rad.persist.DataSourceException;
 
-import apps.jvxee.entity.Address;
-
 import com.sibvisions.rad.persist.jpa.EAOMethod;
 import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
+import com.sibvisions.rad.persist.jpa.entity.Address;
 
-/**
- * The address EAO.
- * 
- * @author Stefan Wurm
- */
-public class AddressEAO
+public class AddressEAO 
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/** the entity manager. */
 	private EntityManager entityManager;
-
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	/**
-	 * Sets the entity manager.
-	 * 
-	 * @param pEntityManager the entity manager
-	 */
-	public void setEntityManager(EntityManager pEntityManager)
+	public void setEntityManager(EntityManager pEntityManager) 
 	{
-		this.entityManager = pEntityManager;
+		entityManager = pEntityManager;
 	}
-
-	/**
-	 * Inserts an address.
-	 * 
-	 * @param pAddress the address
-	 * @return the inserted address
-	 * @throws DataSourceException if insert or address validation fails
-	 */
-	@EAOMethod(methodIdentifier = EAO.INSERT)
-	public Address insertAddress(Address pAddress) throws DataSourceException
+	
+	@EAOMethod (methodIdentifier = EAO.INSERT)
+	public Address insertAddress(Address address) throws DataSourceException 
 	{
-		if (pAddress.getZip().length() <= 3)
+		if (address.getZip().length() <= 3) 
 		{
 			throw new DataSourceException("ZIP have to be 4 characters long");
-		}
+		}		
 
-		entityManager.getTransaction().begin();
+        entityManager.getTransaction().begin();
+        entityManager.persist(address);
+        entityManager.getTransaction().commit();
 
-		entityManager.persist(pAddress);
-
-		entityManager.getTransaction().commit();
-
-		return pAddress;
+        return address;
 	}
 
-	/**
-	 * Updates an address.
-	 * 
-	 * @param pAddress the address
-	 * @throws DataSourceException if update or address validation fails
-	 */
-	@EAOMethod(methodIdentifier = EAO.UPDATE)
-	public void updateAddress(Address pAddress) throws DataSourceException
+	@EAOMethod (methodIdentifier = EAO.UPDATE)
+	public void updateAddress(Address address) throws DataSourceException 
 	{
-
-		if (pAddress.getZip().length() <= 3)
+		if (address.getZip().length() <= 3) 
 		{
 			throw new DataSourceException("ZIP have to be 4 characters long");
-		}
+		}		
 
-		entityManager.getTransaction().begin();
-
-		entityManager.merge(pAddress);
-
-		entityManager.getTransaction().commit();
+        entityManager.getTransaction().begin();
+        entityManager.merge(address);
+        entityManager.getTransaction().commit();
 	}
-
+	
 }	// AddressEAO

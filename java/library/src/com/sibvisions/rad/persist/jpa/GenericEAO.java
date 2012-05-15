@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,39 +30,41 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 
 /**
- * Implemented Methods to access the database by entities and primary keys
+ * Implemented Methods to access the database by entities and primary keys.
  * 
  * @author Stefan Wurm
  *
  * @param <E> The Type of the Entity
  * @param <PK> The Type of the Primary Key
  */
-public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, PK> {
-	
+public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, PK> 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	private EntityManager entityManager;
+	
 	private Class<E> entityClass;
 	
-	public GenericEAO(EntityManager entityManager) {	
-		setEntityManager(entityManager);
-	}
-	
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Initialization
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	public GenericEAO(EntityManager pEntityManager) 
+	{	
+		setEntityManager(pEntityManager);
 	}
 
-	/**
-	 * Sets the class of the entity the DAO
-	 * 
-	 * @param entityClass
-	 */
-	public void setEntityClass(Class<E> entityClass) {
-		this.entityClass = entityClass;
-	}
-	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Interface implementation
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public E insert(E entity) {
+	public E insert(E entity) 
+	{
 		
         entityManager.getTransaction().begin();
     	
@@ -76,7 +78,8 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	/**
 	 * {@inheritDoc}
 	 */
-	public void update(E entity) {
+	public void update(E entity) 
+	{
 		
         entityManager.getTransaction().begin();
     	
@@ -88,7 +91,8 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	/**
 	 * {@inheritDoc}
 	 */
-	public void delete(E entity) {
+	public void delete(E entity) 
+	{
         entityManager.getTransaction().begin();
     	
         entityManager.remove(entity);
@@ -99,7 +103,8 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	/**
 	 * {@inheritDoc}
 	 */
-	public E findById(PK id) {
+	public E findById(PK id) 
+	{
 		
         entityManager.getTransaction().begin();
     	
@@ -113,7 +118,8 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<E> findAll() {
+	public Collection<E> findAll() 
+	{
         entityManager.getTransaction().begin();
         
 		CriteriaQuery criteriaQuery = entityManager.getCriteriaBuilder().createQuery();
@@ -123,6 +129,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
         Query query = entityManager.createQuery(criteriaQuery);
         List<E> objectList = (List<E>) query.getResultList();
               
+//TODO remove debug code???        
 //        Query  query = entityManager.createQuery("select "+entityClass.getSimpleName()+" from " + entityClass.getSimpleName()+" as "+entityClass.getSimpleName());       
 //        List<E> objectList = (List<E>) query.getResultList();
 
@@ -130,5 +137,24 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
         
         return objectList;
 	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-}
+	public void setEntityManager(EntityManager pEntityManager) 
+	{
+		entityManager = pEntityManager;
+	}
+
+	/**
+	 * Sets the class of the entity the DAO.
+	 * 
+	 * @param entityClass
+	 */
+	public void setEntityClass(Class<E> pEntityClass) 
+	{
+		entityClass = pEntityClass;
+	}
+	
+}	// GenericEAO

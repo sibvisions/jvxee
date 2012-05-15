@@ -9,5 +9,5 @@
 	<classpathentry kind="lib" path="libs/server/javax.persistence_2.0.3.v201010191057.jar"/>
 	<classpathentry kind="lib" path="libs/server/jvx.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JVx EE"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="classes"/>
 </classpath>
