@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -28,24 +28,40 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Salutation implements Serializable {
-	
-    @Id 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
-	private String salutation;
-	
-	public int getId() {
+public class Salutation implements Serializable
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int		id;
+
+	private String	salutation;
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	public int getId()
+	{
 		return id;
 	}
-	public void setId(int id) {
+
+	public void setId(int id)
+	{
 		this.id = id;
 	}
-	public String getSalutation() {
+
+	public String getSalutation()
+	{
 		return salutation;
 	}
-	public void setSalutation(String salutation) {
+
+	public void setSalutation(String salutation)
+	{
 		this.salutation = salutation;
 	}
-	
+
 }

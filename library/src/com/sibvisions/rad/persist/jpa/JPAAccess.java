@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -40,6 +40,8 @@ import javax.persistence.metamodel.Metamodel;
 import javax.rad.persist.DataSourceException;
 
 import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
+import com.sibvisions.util.log.ILogger;
+import com.sibvisions.util.log.LoggerFactory;
 
 /**
  * The <code>JPAAccess</code> class encapsulates the EntityManager and the Metamodel.
@@ -49,278 +51,326 @@ import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
  * @author Stefan Wurm
  *
  */
-public class JPAAccess {
+public class JPAAccess 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	/** The EntityManager to manage the use of the entities **/
+    /** The logger. */
+	protected static ILogger logger = LoggerFactory.getInstance(JPAAccess.class);
+	
+	/** The EntityManager to manage the use of the entities. **/
 	private EntityManager entityManager;
 	
-	/** The inernal generic EAO Object */
+	/** The inernal generic EAO Object. */
 	private GenericEAO genericEAO;
 	
-	/** The external EAO Object */
+	/** The external EAO Object. */
 	private Object externalEAO;
 	
-	/** The name of the insert Methode */
+	/** The name of the insert Method. */
 	private String insertMethod;
 	
-	/** The name of the update Methode */
+	/** The name of the update Method. */
 	private String updateMethod;
 	
-	/** The name of the delete Methode */
+	/** The name of the delete Method. */
 	private String deleteMethod;
 	
-	/** The name of the findById Methode */
+	/** The name of the findById Method. */
 	private String findByIdMethod;
 	
-	/** The name of the findAll Methode */
+	/** The name of the findAll Method. */
 	private String findAllMethod;
 	
-	/** The Metamodel holds information about the structure of the entities **/
+	/** The Metamodel holds information about the structure of the entities. **/
 	private Metamodel metamodel;	
 	
-	/** The PersistenceUnitUtil afford methods to get useful information from entities **/
+	/** The PersistenceUnitUtil afford methods to get useful information from entities. **/
 	private PersistenceUnitUtil persistenceUnitUtil;
 	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Initialization
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/** 
-	 * Sets the external EAO Object
+	 * Sets the external EAO Object.
 	 * 
-	 * @param externalEAO
+	 * @param pExternalEAO the external EAO
 	 */
-	public void setExternalEAO(Object externalEAO) {
-		this.externalEAO = externalEAO;
+	public void setExternalEAO(Object pExternalEAO) 
+	{
+		externalEAO = pExternalEAO;
+		
 		initializeMethods();
 	}
 	
 	/**
-	 * Initializes the methode Names
+	 * Initializes the methode Names.
 	 */
-	private void initializeMethods() {
-
-		if(this.externalEAO instanceof IGenericEAO) {
-			
+	private void initializeMethods() 
+	{
+		if (externalEAO instanceof IGenericEAO) 
+		{
 			insertMethod = "insert";
 			updateMethod = "update";
 			deleteMethod = "delete";
 			findByIdMethod = "findById";
 			findAllMethod = "findAll";
-			
-		} else {
-			
-			for(Method method : this.externalEAO.getClass().getMethods()) {
-				
-				for(Annotation annotation : method.getAnnotations()) {
-					
-					if(annotation.annotationType() == EAOMethod.class) {
-						
-						try {
-						
-							if((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) {
+		} 
+		else 
+		{
+			for (Method method : externalEAO.getClass().getMethods()) 
+			{
+				for (Annotation annotation : method.getAnnotations()) 
+				{
+					if (annotation.annotationType() == EAOMethod.class) 
+					{
+						try 
+						{
+							if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) 
+							{
 								insertMethod = method.getName();
-							} else if((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) {
+							} 
+							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) 
+							{
 								updateMethod = method.getName();
-							} else if((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.DELETE) {
+							} 
+							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.DELETE) 
+							{
 								deleteMethod = method.getName();
-							} else if((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_BY_ID) {
+							} 
+							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_BY_ID) 
+							{
 								findByIdMethod = method.getName();
-							}  else if((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_ALL) {
+							} 
+							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_ALL) 
+							{
 								findAllMethod = method.getName();
 							}
-						
-						} catch(Exception e) {
-							// Nothing to do.
+						} 
+						catch (Exception e)
+						{
+							// Nothing to be done
 						}
-						
 					}
-					
 				}	
-				
 			}
-			
 		}
-		
 	}		
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
 	/**
-	 * Returns the Insert Methode name
+	 * Returns the Insert Methode name.
 	 * 
 	 * @return
 	 */
-	public String getInsertMethod() {
+	public String getInsertMethod() 
+	{
 		return insertMethod;
 	}
 
 	/**
-	 * Sets the Insert Methode name
+	 * Sets the Insert Methode name.
 	 * 
-	 * @param insertMethod
+	 * @param pInsertMethod
 	 */
-	public void setInsertMethod(String insertMethod) {
-		this.insertMethod = insertMethod;
+	public void setInsertMethod(String pInsertMethod) 
+	{
+		insertMethod = pInsertMethod;
 	}
 
 	/**
-	 * Returns the Update Methode name
+	 * Returns the Update Methode name.
 	 * 
 	 * @return
 	 */
-	public String getUpdateMethod() {
+	public String getUpdateMethod() 
+	{
 		return updateMethod;
 	}
 
 	/**
-	 * Sets the Update Methode name
+	 * Sets the Update Methode name.
 	 * 
-	 * @param updateMethod
+	 * @param pUpdateMethod
 	 */
-	public void setUpdateMethod(String updateMethod) {
-		this.updateMethod = updateMethod;
+	public void setUpdateMethod(String pUpdateMethod) 
+	{
+		updateMethod = pUpdateMethod;
 	}
 
 	/**
-	 * Returns the delete Methode name
+	 * Returns the delete Methode name.
 	 * 
 	 * @return
 	 */
-	public String getDeleteMethod() {
+	public String getDeleteMethod() 
+	{
 		return deleteMethod;
 	}
 
 	/**
-	 * Sets the delete Methode name
+	 * Sets the delete Methode name.
 	 * 
-	 * @param deleteMethod
+	 * @param pDeleteMethod
 	 */
-	public void setDeleteMethod(String deleteMethod) {
-		this.deleteMethod = deleteMethod;
+	public void setDeleteMethod(String pDeleteMethod)
+	{
+		deleteMethod = pDeleteMethod;
 	}
 
 	/**
-	 * Returns the findById Methode name
+	 * Returns the findById Methode name.
 	 * 
 	 * @return
 	 */
-	public String getFindByIdMethod() {
+	public String getFindByIdMethod() 
+	{
 		return findByIdMethod;
 	}
 
 	/**
-	 * Sets the findById Methode name
+	 * Sets the findById Methode name.
 	 * 
-	 * @param findByIdMethod
+	 * @param pFindByIdMethod
 	 */
-	public void setFindByIdMethod(String findByIdMethod) {
-		this.findByIdMethod = findByIdMethod;
+	public void setFindByIdMethod(String pFindByIdMethod) 
+	{
+		findByIdMethod = pFindByIdMethod;
 	}
 	
 	/**
-	 * Returns the findAll Methode name
+	 * Returns the findAll Methode name.
 	 * 
 	 * @return
 	 */
-	public String getFindAllMethod() {
+	public String getFindAllMethod() 
+	{
 		return findAllMethod;
 	}
 
 	/**
-	 * Sets the findAll Methode name
+	 * Sets the findAll Methode name.
 	 * 
-	 * @param findAllMethod
+	 * @param pFindAllMethod
 	 */
-	public void setFindAllMethod(String findAllMethod) {
-		this.findAllMethod = findAllMethod;
+	public void setFindAllMethod(String pFindAllMethod)
+	{
+		findAllMethod = pFindAllMethod;
 	}
 
 	/**
 	 * If the external EAO is set and also the insert methode is defined, the insert methode
 	 * from the external EAO is called. Otherwise the insert methode from the genericEAO.
 	 * 
-	 * @param entity The entity to insert
-	 * @param entityClass The entity Class of the inserted entity
+	 * @param pEntity The entity to insert
+	 * @param pEntityClass The entity Class of the inserted entity
 	 * @return
 	 * @throws DataSourceException
 	 */
-    public Object insert(Object entity, Class entityClass) throws DataSourceException {
-
+    public Object insert(Object pEntity, Class pEntityClass) throws DataSourceException 
+    {
     	Object ret = null;
     	
-		if(entity != null) {
-		
-	    	if(externalEAO != null && insertMethod != null) {
-	    		
-	    		try {
+		if (pEntity != null) 
+		{
+	    	if (externalEAO != null && insertMethod != null) 
+	    	{
+	    		try 
+	    		{
+	    			Method  method = externalEAO.getClass().getMethod(insertMethod, pEntityClass);
+	    			ret = method.invoke(externalEAO, pEntity);
+	    		} 
+	    		catch (InvocationTargetException ite) 
+	    		{ 
+	    			// If the exception is from Type DataSourceException throw it
 
-	    			Method  method = externalEAO.getClass().getMethod(insertMethod, entityClass);
-	    			ret = method.invoke(externalEAO, entity);
-	    				
-	    		} catch (InvocationTargetException ite) { // If the exception  is from Type DataSourceException throw it
-	    		     
-	    			try { 
-	    		     
-	    		    	 throw ite.getCause();
-	    		     
-	    		     } catch (DataSourceException dse) {
-	    		           throw dse;
-	    		     } catch (Throwable e) {}
-	    		     
-	    		} catch (Exception e) { 
+	    			Throwable thr = ite.getCause();
+	    			
+	    			if (thr instanceof DataSourceException)
+	    			{
+	    				throw (DataSourceException)ite.getCause();
+	    			}
+	    			else if (thr instanceof RuntimeException) 
+	    			{
+	    				throw (RuntimeException)thr;
+	    			}
+	    			else
+	    			{
+	    				logger.error(thr);
+	    			}
+	    		} 
+	    		catch (Exception e) 
+	    		{ 
 	    			// If there is an error, ignore it and try it with the genericDAO
+    				logger.debug(e);
 	    		}    		
-
 	    	}
 	    	
-	    	if(ret == null || ret.getClass() != entityClass) {
-	    				
-		    	genericEAO.setEntityClass(entityClass);
-		    	ret = genericEAO.insert(entity);	
-	    	
+	    	if (ret == null || ret.getClass() != pEntityClass) 
+	    	{
+		    	genericEAO.setEntityClass(pEntityClass);
+		    	ret = genericEAO.insert(pEntity);	
 	    	}
 		}
 		
 		return ret;
-
     }
     
     /**
 	 * If the external EAO is set and also the update methode is defined, the update methode
 	 * from the external EAO is called. Otherwise the update methode from the genericEAO
 	 * 
-     * @param entity the entity to Update
-     * @param entityClass the entity Class from the entity
+     * @param pEntity the entity to Update
+     * @param pEntityClass the entity Class from the entity
      * @throws DataSourceException
      */
-    public void update(Object entity, Class entityClass) throws DataSourceException {
-
-		if(entity != null) {
-		
-	    	if(externalEAO != null && updateMethod != null) {
-	    		
-	    		try {
-
-	    			Method  method = externalEAO.getClass().getMethod(updateMethod, entityClass);
-	    			method.invoke(externalEAO, entity);
+    public void update(Object pEntity, Class pEntityClass) throws DataSourceException 
+    {
+		if (pEntity != null) 
+		{
+	    	if (externalEAO != null && updateMethod != null) 
+	    	{
+	    		try 
+	    		{
+	    			Method  method = externalEAO.getClass().getMethod(updateMethod, pEntityClass);
+	    			method.invoke(externalEAO, pEntity);
 	    	
 	    			return;
+	    		} 
+	    		catch (InvocationTargetException ite) 
+	    		{ 
+	    			// If the exception is from Type DataSourceException throw it
+
+	    			Throwable thr = ite.getCause();
 	    			
-	    		} catch (InvocationTargetException ite) { // If the exception  is from Type DataSourceException throw it
-	    		     
-	    			try { 
-	    		     
-	    		    	 throw ite.getCause();
-	    		     
-	    		     } catch (DataSourceException dse) {
-	    		           throw dse;
-	    		     } catch (Throwable e) {}
-	    		     
-	    		} catch (Exception e) { 
+	    			if (thr instanceof DataSourceException)
+	    			{
+	    				throw (DataSourceException)ite.getCause();
+	    			}
+	    			else if (thr instanceof RuntimeException) 
+	    			{
+	    				throw (RuntimeException)thr;
+	    			}
+	    			else
+	    			{
+	    				logger.error(thr);
+	    			}
+	    		} 
+	    		catch (Exception e) 
+	    		{ 
 	    			// If there is an error, ignore it and try it with the genericDAO
+	    			logger.debug(e);
 	    		}
-	    		 
 	    	}
 	    	
-	    	genericEAO.setEntityClass(entityClass);
-	    	genericEAO.update(entity);	   	    	
-	    	
+	    	genericEAO.setEntityClass(pEntityClass);
+	    	genericEAO.update(pEntity);	   	    	
 		}    	
     }
     
@@ -328,133 +378,159 @@ public class JPAAccess {
 	 * If the external EAO is set and also the delete methode is defined, the delete methode
 	 * from the external EAO is called. Otherwise the delete methode from the genericEAO
 	 * 
-     * @param entity the entity to delete
-     * @param entityClass the entity class from the entity
+     * @param pEntity the entity to delete
+     * @param pEntityClass the entity class from the entity
      * @throws DataSourceException
      */
-    public void delete(Object entity, Class entityClass) throws DataSourceException {
-    	
-		if(entity != null) {
-			
-	    	if(externalEAO != null && deleteMethod != null) {
-	    		
-	    		try {
-
-	    			Method  method = externalEAO.getClass().getMethod(deleteMethod, entityClass);
-	    			method.invoke(externalEAO, entity);
+    public void delete(Object pEntity, Class pEntityClass) throws DataSourceException 
+    {
+		if (pEntity != null) 
+		{
+	    	if (externalEAO != null && deleteMethod != null) 
+	    	{
+	    		try 
+	    		{
+	    			Method  method = externalEAO.getClass().getMethod(deleteMethod, pEntityClass);
+	    			method.invoke(externalEAO, pEntity);
 	    	
 	    			return;
+	    		} 
+	    		catch (InvocationTargetException ite) 
+	    		{ 
+	    			// If the exception  is from Type DataSourceException throw it
+	    		     
+	    			Throwable thr = ite.getCause();
 	    			
-	    		} catch (InvocationTargetException ite) { // If the exception  is from Type DataSourceException throw it
-	    		     
-	    			try { 
-	    		     
-	    		    	 throw ite.getCause();
-	    		     
-	    		     } catch (DataSourceException dse) {
-	    		           throw dse;
-	    		     } catch (Throwable e) {}
-	    		     
-	    		} catch (Exception e) { 
+	    			if (thr instanceof DataSourceException)
+	    			{
+	    				throw (DataSourceException)ite.getCause();
+	    			}
+	    			else if (thr instanceof RuntimeException) 
+	    			{
+	    				throw (RuntimeException)thr;
+	    			}
+	    			else
+	    			{
+	    				logger.error(thr);
+	    			}
+	    		} 
+	    		catch (Exception e) 
+	    		{ 
 	    			// If there is an error, ignore it and try it with the genericDAO
+	    			logger.debug(e);
 	    		}
-	    		
 	    	}
 	    	
-	    	genericEAO.setEntityClass(entityClass);
-	    	genericEAO.delete(entity);	    	    	
-	    	
+	    	genericEAO.setEntityClass(pEntityClass);
+	    	genericEAO.delete(pEntity);	    	    	
 		} 
     }
-        
     
     /**
      * If the external EAO is set and also the findById methode is defined, the findById methode
 	 * from the external EAO is called. Otherwise the findById methode from the genericEAO
      * 
-     * @param id the id from the entity
-     * @param entityClass the entity class to find
+     * @param pId the id from the entity
+     * @param pEntityClass the entity class to find
      * @return the entity to the id
      * @throws DataSourceException
      */
-    public Object findById(Object id, Class entityClass) throws DataSourceException {
-
+    public Object findById(Object pId, Class pEntityClass) throws DataSourceException 
+    {
     	Object ret = null;
     	
-		if(id != null) {
-			
-	    	if(externalEAO != null && findByIdMethod != null) {
-	    		
-	    		try {
-
-	    			Method  method = externalEAO.getClass().getMethod(findByIdMethod, id.getClass());
-	    			ret = method.invoke(externalEAO, id);
+		if (pId != null) 
+		{
+	    	if (externalEAO != null && findByIdMethod != null) 
+	    	{
+	    		try 
+	    		{
+	    			Method  method = externalEAO.getClass().getMethod(findByIdMethod, pId.getClass());
+	    			ret = method.invoke(externalEAO, pId);
 
 	    			return ret;
+	    		} 
+	    		catch (InvocationTargetException ite) 
+	    		{ 
+	    			// If the exception  is from Type DataSourceException throw it
+	    		     
+	    			Throwable thr = ite.getCause();
 	    			
-	    		} catch (InvocationTargetException ite) { // If the exception  is from Type DataSourceException throw it
-	    		     
-	    			try { 
-	    		     
-	    		    	 throw ite.getCause();
-	    		     
-	    		     } catch (DataSourceException dse) {
-	    		           throw dse;
-	    		     } catch (Throwable e) {}
-	    		     
-	    		} catch (Exception e) { 
+	    			if (thr instanceof DataSourceException)
+	    			{
+	    				throw (DataSourceException)ite.getCause();
+	    			}
+	    			else if (thr instanceof RuntimeException) 
+	    			{
+	    				throw (RuntimeException)thr;
+	    			}
+	    			else
+	    			{
+	    				logger.error(thr);
+	    			}
+	    		} 
+	    		catch (Exception e) 
+	    		{ 
 	    			// If there is an error, ignore it and try it with the genericDAO
+	    			logger.debug(e);
 	    		}
-	    			    	
 	    	}
 	    	
-	    	genericEAO.setEntityClass(entityClass);
-	    	ret = genericEAO.findById((Serializable) id);
-	    	
+	    	genericEAO.setEntityClass(pEntityClass);
+	    	ret = genericEAO.findById((Serializable) pId);
 		}     	
     	
     	return ret;
-    
     }
     
     /**
 	 * If the external EAO is set and also the findAll methode is defined, the findAll methode
 	 * from the external EAO is called. Otherwise the findAll methode from the genericEAO
 	 * 
-     * @param entityClass the entity Class
+     * @param pEntityClass the entity Class
      * @return the entities in a Collection
      * @throws DataSourceException
      */
-    public Collection findAll(Class entityClass) throws DataSourceException {
-
+    public Collection findAll(Class pEntityClass) throws DataSourceException 
+    {
     	Object ret = null;
 
-    	if(externalEAO != null && findByIdMethod != null) {
-    		
-    		try {
-
+    	if (externalEAO != null && findByIdMethod != null) 
+    	{
+    		try 
+    		{
     			Method  method = externalEAO.getClass().getMethod(findAllMethod);
     			ret = method.invoke(externalEAO);   
-
-    		} catch (InvocationTargetException ite) { // If the exception  is from Type DataSourceException throw it
+    		} 
+    		catch (InvocationTargetException ite) 
+    		{ 
+    			// If the exception  is from Type DataSourceException throw it
     		     
-    			try { 
-    		     
-    		    	 throw ite.getCause();
-    		     
-    		     } catch (DataSourceException dse) {
-    		           throw dse;
-    		     } catch (Throwable e) {}
-    		     
-    		} catch (Exception e) { 
+    			Throwable thr = ite.getCause();
+    			
+    			if (thr instanceof DataSourceException)
+    			{
+    				throw (DataSourceException)ite.getCause();
+    			}
+    			else if (thr instanceof RuntimeException) 
+    			{
+    				throw (RuntimeException)thr;
+    			}
+    			else
+    			{
+    				logger.error(thr);
+    			}
+    		} 
+    		catch (Exception e) 
+    		{ 
     			// If there is an error, ignore it and try it with the genericDAO
+    			logger.error(e);
     		}
-	    	
     	}
     	
-    	if(ret == null || !(ret instanceof Collection)) {
-
-	    	genericEAO.setEntityClass(entityClass);
+    	if (ret == null || !(ret instanceof Collection)) 
+    	{
+	    	genericEAO.setEntityClass(pEntityClass);
 	    	ret = genericEAO.findAll();
     	}    	
 	    
@@ -462,67 +538,66 @@ public class JPAAccess {
     }    
     
     /**
-     * Reads and sets the values for the given entity from the db
+     * Reads and sets the values for the given entity from the db.
      * 
-     * @param entity
-     * @param entityClass
+     * @param pEntity
+     * @param pEntityClass
      * @throws DataSourceException
      */
-    public void refresh(Object entity, Class entityClass) {
-
-		if(entity != null) {
-				
+    public void refresh(Object pEntity, Class pEntityClass) 
+    {
+		if (pEntity != null) 
+		{
 	        entityManager.getTransaction().begin();
 	    	
-	        entityManager.refresh(entity);
+	        entityManager.refresh(pEntity);
 	        
 	        entityManager.getTransaction().commit();	
-    
 		}
-
     }    
 
     /**
-     * Return the number of Entities for the given criteriaQuery
+     * Return the number of Entities for the given criteriaQuery.
      * 
-     * @param countCriteriaQuery
+     * @param pCountCriteriaQuery
      * @return the number of Entities
      */
-    public Long countByCriteria(CriteriaQuery<Long> countCriteriaQuery) { 	
-		
-    	if(countCriteriaQuery != null) {
-    	
+    public Long countByCriteria(CriteriaQuery<Long> pCountCriteriaQuery) 
+    { 	
+    	if (pCountCriteriaQuery != null) 
+    	{
 			entityManager.getTransaction().begin();
 	        
-			Long count = entityManager.createQuery(countCriteriaQuery).getSingleResult();
+			Long count = entityManager.createQuery(pCountCriteriaQuery).getSingleResult();
 	        
 			entityManager.getTransaction().commit(); 
 			
 			return count;
-		
     	}
-    	
-    	return null;
-		
+    	else
+    	{
+    		return null;
+    	}
     }
 
     /**
 	 * Returns the Entities for the given criteriaQuery.
 	 * 
-	 * @param criteriaQuery
-	 * @param offset the first Row Index
-	 * @param max Maximum Number of Entities
+	 * @param pCriteriaQuery
+	 * @param pOffset the first Row Index
+	 * @param pMax Maximum Number of Entities
 	 * @return the entities in a collection
 	 * 
 	 * throws DataSourceException
      */
-    public Collection findByCriteria(CriteriaQuery criteriaQuery, int offset, int max) {
+    public Collection findByCriteria(CriteriaQuery pCriteriaQuery, int pOffset, int pMax) 
+    {
     	 
         entityManager.getTransaction().begin();
     	
-        Query query = entityManager.createQuery(criteriaQuery);
-        query.setFirstResult(offset);
-        query.setMaxResults(max);
+        Query query = entityManager.createQuery(pCriteriaQuery);
+        query.setFirstResult(pOffset);
+        query.setMaxResults(pMax);
         List objectList = (List) query.getResultList();
         
         entityManager.getTransaction().commit();
@@ -533,111 +608,117 @@ public class JPAAccess {
 	/**
 	 * Returns the Entities for the given criteriaQuery.
 	 * 
-	 * @param criteriaQuery
+	 * @param pCriteriaQuery
 	 * @return the Entities in a Collection
 	 */    
-    public Collection findByCriteria(CriteriaQuery criteriaQuery) {
-
+    public Collection findByCriteria(CriteriaQuery pCriteriaQuery) 
+    {
         entityManager.getTransaction().begin();
     	
-        Query query = entityManager.createQuery(criteriaQuery);
+        Query query = entityManager.createQuery(pCriteriaQuery);
         List objectList = (List) query.getResultList();
         
         entityManager.getTransaction().commit();
         
         return objectList;
-        
     }
 	
 	/**
-	 * Returns the <code>EntityManager</code>
+	 * Returns the <code>EntityManager</code>.
 	 * 
 	 * @return The <code>EntityManager</code>
 	 */
-	public EntityManager getEntityManager() {
+	public EntityManager getEntityManager() 
+	{
 		return entityManager;
 	}
 
 	/**
-	 * Sets the <code>EntityManager</code>
+	 * Sets the <code>EntityManager</code>.
 	 * 
-	 * @param entityManager
+	 * @param pEntityManager
 	 */
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-		this.genericEAO = new GenericEAO(entityManager);
-		this.metamodel = entityManager.getMetamodel();
-		this.persistenceUnitUtil = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+	public void setEntityManager(EntityManager pEntityManager) 
+	{
+		entityManager = pEntityManager;
+		genericEAO = new GenericEAO(pEntityManager);
+		metamodel = pEntityManager.getMetamodel();
+		persistenceUnitUtil = pEntityManager.getEntityManagerFactory().getPersistenceUnitUtil();
 	}
 
 	/**
-	 * Returns the Metamodel from the entityManager
+	 * Returns the Metamodel from the entityManager.
 	 * 
 	 * @return
 	 */
-	public Metamodel getMetamodel() {
+	public Metamodel getMetamodel() 
+	{
 		return metamodel;
 	}
 
 	/**
-	 * Returns the persistenceUnitUtil
+	 * Returns the persistence unit util.
 	 * 
 	 * @return
 	 */
-	public PersistenceUnitUtil getPersistenceUnitUtil() {
+	public PersistenceUnitUtil getPersistenceUnitUtil() 
+	{
 		return persistenceUnitUtil;
 	}
 
 	/**
-	 * Returns the PrimaryKey from the given entity
+	 * Returns the PrimaryKey from the given entity.
 	 * 
-	 * @param entity 
+	 * @param pEntity 
 	 * @return The PrimaryKey from the given entity
 	 */
-	public Object getIdentifier(Object entity) {
-		return persistenceUnitUtil.getIdentifier(entity);
+	public Object getIdentifier(Object pEntity) 
+	{
+		return persistenceUnitUtil.getIdentifier(pEntity);
 	}
 
 	/**
 	 * Returns the <code>EntityType</code> for the given entityClass.
 	 * 
-	 * @param entityClass
+	 * @param pEntityClass
 	 * @return the <code>EntityType</code> for the given entityClass.
 	 */
-	public EntityType getEntityType(Class entityClass) {
-		return metamodel.entity(entityClass);
+	public EntityType getEntityType(Class pEntityClass)
+	{
+		return metamodel.entity(pEntityClass);
 	}
 	
 	/**
 	 * Returns the <code>Attributes</code> for the given entityClass
 	 * Attributes are the Fields from the entityClass.
 	 * 
-	 * @param entityClass
+	 * @param pEntityClass
 	 * @return <code>Attributes</code> for the given entityClass in a Collection
 	 */
-	public Set<Attribute> getAttributes(Class entityClass) {
-		return metamodel.entity(entityClass).getAttributes();
+	public Set<Attribute> getAttributes(Class pEntityClass) 
+	{
+		return metamodel.entity(pEntityClass).getAttributes();
 	}	
 
 	/**
-	 * Returns the <code>EmbeddableType</code> for the given embeddableClass
+	 * Returns the <code>EmbeddableType</code> for the given embeddableClass.
 	 * 
-	 * @param embeddableClass
+	 * @param pEmbeddableClass
 	 * @return the <code>EmbeddableType</code> for the given embeddableClass 
 	 */
-	public EmbeddableType getEmbeddableType(Class embeddableClass) {
-		return metamodel.embeddable(embeddableClass);
+	public EmbeddableType getEmbeddableType(Class pEmbeddableClass) 
+	{
+		return metamodel.embeddable(pEmbeddableClass);
 	}
 	
 	/**
-	 * Returns the CriteriaBuilder from the EntityManager
+	 * Returns the CriteriaBuilder from the EntityManager.
 	 * 
 	 * @return CriteriaBuilder from the EntityManager
 	 */
-	public CriteriaBuilder getCriteriaBuilder() {
-		
+	public CriteriaBuilder getCriteriaBuilder() 
+	{
 		return entityManager.getCriteriaBuilder();
-		
 	}
 				
-}
+}	// JPAAccess

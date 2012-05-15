@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,52 +32,78 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Address implements Serializable {
+public class Address implements Serializable
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    @Id 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private int id;
-    
-    private String street;
-    
-    @Column(length=4)
-    private String zip;
-    
-    private String city;
-    
-    @ManyToOne
-    private Customer customer;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int			id;
 
-	public int getId() {
+	private String		street;
+
+	@Column(length = 4)
+	private String		zip;
+
+	private String		city;
+
+	@ManyToOne
+	private Customer	customer;
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	public int getId()
+	{
 		return id;
 	}
-	public void setId(int id) {
+
+	public void setId(int id)
+	{
 		this.id = id;
 	}
-	public String getStreet() {
+
+	public String getStreet()
+	{
 		return street;
 	}
-	public void setStreet(String street) {
+
+	public void setStreet(String street)
+	{
 		this.street = street;
 	}
-	
-	public String getZip() {
+
+	public String getZip()
+	{
 		return zip;
 	}
-	public void setZip(String zip) {
+
+	public void setZip(String zip)
+	{
 		this.zip = zip;
 	}
-	public String getCity() {
+
+	public String getCity()
+	{
 		return city;
 	}
-	public void setCity(String city) {
+
+	public void setCity(String city)
+	{
 		this.city = city;
 	}
-	public Customer getCustomer() {
+
+	public Customer getCustomer()
+	{
 		return customer;
 	}
-	public void setCustomer(Customer customer) {
+
+	public void setCustomer(Customer customer)
+	{
 		this.customer = customer;
 	}
 	
-}
+}	// Address

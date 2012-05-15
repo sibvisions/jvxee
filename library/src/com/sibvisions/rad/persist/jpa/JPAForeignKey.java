@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -35,56 +35,75 @@ import javax.rad.model.condition.ICondition;
  * For example: An Entity "Customer" has a ManyToOne Relationship to Salutations
  * 
  * @Entity
- * public class Customer implements Serializable {
- * 
- * 	@Id
- *  private int id;
+ * public class Customer implements Serializable
+ * {
+ * 	   @Id
+ *     private int id;
  *  
- *  private String name;
+ *     private String name;
  *  
- *  @ManyToOne
- *  private Salutations salutations;
+ *     @ManyToOne
+ *     private Salutations salutations;
  *  
- *  ...
- * 
+ *     ...
  * } 
  * 
  * @Entity
- *public class Salutations implements Serializable  {
- *
- * 	@Id
- *  private int id;
+ * public class Salutations implements Serializable
+ * {
+ *     @Id
+ *     private int id;
  *  
- *  private String salutation;
- *   
+ *     private String salutation;
  * }
  *
  * @see com.sibvisions.rad.persist.jpa.JPAEmbeddedKey
  * 
  * @author Stefan Wurm
  */
-public class JPAForeignKey extends JPAEmbeddedKey {
+public class JPAForeignKey extends JPAEmbeddedKey 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	/** Defines if the Id from the entity in the entity is a single id **/
+	/** Defines if the Id from the entity in the entity is a single id. **/
 	private boolean singleIdAttribute = true;
 	
-	/** The class of the key from the entity in the entity **/
+	/** The class of the key from the entity in the entity. **/
 	private Class keyClass;
 
 	private String [] referencedColumnNames; 
 	
-	/** Getter Method Name for Detail Entities */
+	/** Getter Method Name for Detail Entities. */
 	private String detailEntitiesMethode;
 	
-	/** The Add Methode Name to the Detail Entities */	
+	/** The Add Methode Name to the Detail Entities. */	
 	private String addEntityMethode;
 	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Overwritten methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	@Override
+	public String toString() 
+	{
+		return "JPAForeignKey [singleIdAttribute=" + singleIdAttribute
+				+ ", keyClass=" + keyClass + ", toString()=" + super.toString()
+				+ "]";
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	/**
-	 * Returns true if the Id from the entity in the entity is a single id
+	 * Returns true if the Id from the entity in the entity is a single id.
 	 * 
 	 * @return true if the Id from the entity in the entity is a single id
 	 */
-	public boolean isSingleIdAttribute() {
+	public boolean isSingleIdAttribute() 
+	{
 		return singleIdAttribute;
 	}
 
@@ -93,98 +112,111 @@ public class JPAForeignKey extends JPAEmbeddedKey {
 	 * 
 	 * @param pSingleIdAttribute
 	 */
-	public void setSingleIdAttribute(boolean pSingleIdAttribute) {
-		this.singleIdAttribute = pSingleIdAttribute;
+	public void setSingleIdAttribute(boolean pSingleIdAttribute) 
+	{
+		singleIdAttribute = pSingleIdAttribute;
 	}
 
 	/**
-	 * Sets the class of the key from the entity in the entity
+	 * Sets the class of the key from the entity in the entity.
 	 * 
 	 * @param pKeyClass
 	 */
-	public void setKeyClass(Class pKeyClass) {
-		this.keyClass = pKeyClass;
+	public void setKeyClass(Class pKeyClass) 
+	{
+		keyClass = pKeyClass;
 	}
 	
 	/**
-	 * Returns the class of the key from the entity
+	 * Returns the class of the key from the entity.
 	 * 
 	 * @return Class
 	 */
-	public Class getKeyClass() {
-		return this.keyClass;
+	public Class getKeyClass() 
+	{
+		return keyClass;
 	}
 
-	public String[] getReferencedColumnNames() {
+	public String[] getReferencedColumnNames() 
+	{
 		return referencedColumnNames;
 	}
 
-	public void setReferencedColumnNames(String[] referencedColumnNames) {
-		this.referencedColumnNames = referencedColumnNames;
+	public void setReferencedColumnNames(String[] pReferencedColumnNames) 
+	{
+		referencedColumnNames = pReferencedColumnNames;
 	}
 
-	public void setDetailEntitiesMethode(String pDetailEntitiesMethode) {
-		this.detailEntitiesMethode = pDetailEntitiesMethode;
+	public void setDetailEntitiesMethode(String pDetailEntitiesMethode) 
+	{
+		detailEntitiesMethode = pDetailEntitiesMethode;
 	}
 	
-	public String getDetailEntitiesMethode() {
-		return this.detailEntitiesMethode;
+	public String getDetailEntitiesMethode() 
+	{
+		return detailEntitiesMethode;
 	}	
 	
-	public boolean hasDetailEntitiesMethode() {
-		
-		if(this.detailEntitiesMethode != null && this.detailEntitiesMethode.length() > 0) {
+	public boolean hasDetailEntitiesMethode() 
+	{
+		if (detailEntitiesMethode != null && detailEntitiesMethode.length() > 0) 
+		{
 			return true;
 		} 
 		
 		return false;
 	}	
 	
-	public Object getDetailEntities(Object pEntity) {
-			
-		try {
-			
+	public Object getDetailEntities(Object pEntity) 
+	{
+		try 
+		{
 			return pEntity.getClass().getMethod(detailEntitiesMethode).invoke(pEntity);
-			
-		} catch(Exception e) {
-			
+		} 
+		catch (Exception e) 
+		{
+			//nothing to be done
 		}
 		
 		return null;
 	}
 	
-	public void setAddEntityMethode(String pAddEntityMethode) {
-		this.addEntityMethode = pAddEntityMethode;
+	public void setAddEntityMethode(String pAddEntityMethode)
+	{
+		addEntityMethode = pAddEntityMethode;
 	}	
 	
-	public void addEntity(Object pEntity, Object pAddEntity) throws Exception {
-		
-		try {
-			
+	public void addEntity(Object pEntity, Object pAddEntity) throws Exception 
+	{
+		try 
+		{
 			pEntity.getClass().getMethod(addEntityMethode, pAddEntity.getClass()).invoke(pEntity);
-			
-		} catch(Exception e) {
-			
+		} 
+		catch (Exception e) 
+		{
+			//nothing to be done
 		}
-
 	}	
 		
 	
-	public ICondition getCondition() {
-
+	public ICondition getCondition() 
+	{
 		ICondition condition = null;
 		
-		for(JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsCollection()) {
-			
-			if(serverColumnMetaData.isKeyAttribute()) {
-				
+		for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsCollection()) 
+		{
+			if (serverColumnMetaData.isKeyAttribute()) 
+			{
 				String name = serverColumnMetaData.getName();
 				
 				Equals compareCondition = new Equals(name, null, false);
 				
-				if (condition == null) {
+				if (condition == null) 
+				{
 					condition = compareCondition;
-				} else {
+				} 
+				else 
+				{
 					condition = condition.and(compareCondition);
 				}	
 				
@@ -208,8 +240,8 @@ public class JPAForeignKey extends JPAEmbeddedKey {
 	 *    
 	 * 2. Many id attributes in an IdClass
 	 * 
-	 * 			public class CustomerPK implements Serializable {
-	 *   
+	 * 			public class CustomerPK implements Serializable 
+	 *          {
 	 * 				@Id
 	 *  			private int id;
 	 *  
@@ -217,13 +249,12 @@ public class JPAForeignKey extends JPAEmbeddedKey {
 	 *  			private int socialInsuranceNumber;
 	 *  
 	 *  			....
-	 * 
 	 * 			} 
 	 * 
 	 * 			@Entity
 	 * 			@IdClass(CustomerPK.class)
-	 * 			public class Customer implements Serializable {
-	 * 
+	 * 			public class Customer implements Serializable
+	 *          { 
 	 * 				@Id
 	 *  			private int id;
 	 *  
@@ -233,14 +264,13 @@ public class JPAForeignKey extends JPAEmbeddedKey {
 	 *  			private String name;
 	 *  
 	 *  			....
-	 * 
 	 * 			} 
 	 * 
 	 * 3. An Embedded Primary Class
 	 * 			
 	 * 			@Embeddable
-	 * 			public class CustomerPK implements Serializable {
-	 *   
+	 * 			public class CustomerPK implements Serializable
+	 *          {
 	 * 				@Id
 	 *  			private int id;
 	 *  
@@ -248,19 +278,17 @@ public class JPAForeignKey extends JPAEmbeddedKey {
 	 *  			private int socialInsuranceNumber;
 	 *  
 	 *  			....
-	 * 
 	 * 			} 
 	 * 
 	 * 			@Entity
-	 * 			public class Customer implements Serializable {
-	 * 
+	 * 			public class Customer implements Serializable
+	 *          {
 	 * 				@EmbeddedId
 	 * 				private CustomerPK customerPK;
 	 *  
 	 *  			private String name;
 	 *  
 	 *  			....
-	 *  
 	 *  		}
 	 *  
 	 *  *****************************************************************************
@@ -270,68 +298,56 @@ public class JPAForeignKey extends JPAEmbeddedKey {
 	 *  
 	 *  { CUSTOMER_ID = 3, CUSTOMER_SOCIALINSURANCENUMBER = 12345 }
 	 * 
-	 * } 
-	 * 
 	 * @param pData the Map with the values for the key
 	 * @return the primary key from the entity in the entity
 	 * @throws Exception
 	 */
-	public Object getKeyForEntity(Map<String, Object> pData) throws Exception {
-		
+	public Object getKeyForEntity(Map<String, Object> pData) throws Exception 
+	{
 		Object key = null;
 
-		if(isSingleIdAttribute()) {
-						
-			if(JPAStorageUtil.isPrimitiveOrWrapped(getKeyClass())) { // Is single primitive or wrapped Id
-
+		if (isSingleIdAttribute()) 
+		{
+			if (JPAStorageUtil.isPrimitiveOrWrapped(getKeyClass())) 
+			{ 
+				// Is single primitive or wrapped Id
 				JPAServerColumnMetaData serverColumnMetaData = super.getServerColumnMetaDataAsArray()[0];
 
 				key = serverColumnMetaData.getJPAMappingType().castObjectToJavaType(pData.get(serverColumnMetaData.getName()));
-				
-			} else { // Is EmbeddedId
-				
+			} 
+			else 
+			{ 
+				// Is EmbeddedId
 				key = getKeyClass().newInstance();
 				
-				for(JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray()) {
-					
-					if(serverColumnMetaData.isKeyAttribute()) {
-
+				for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray()) 
+				{
+					if (serverColumnMetaData.isKeyAttribute()) 
+					{
 						Object setValue = pData.get(serverColumnMetaData.getName());
 					
 						serverColumnMetaData.getJPAMappingType().setValue(key, setValue);
-
 					}
 				}	
-				
 			}
-			
-		} else { //is IdClass
-			
+		} 
+		else 
+		{ 
+			//is IdClass
 			key = getKeyClass().newInstance();
 			
-			for(JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray()) {
-				
-				if(serverColumnMetaData.isKeyAttribute()) {
-
+			for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray()) 
+			{
+				if (serverColumnMetaData.isKeyAttribute()) 
+				{
 					Object setValue = pData.get(serverColumnMetaData.getName());
 					
 					serverColumnMetaData.getJPAMappingType().setValue(key, setValue);
-				
 				}
-
 			}
-			
 		}
-		
 		
 		return key;
 	}
 
-	@Override
-	public String toString() {
-		return "JPAForeignKey [singleIdAttribute=" + singleIdAttribute
-				+ ", keyClass=" + keyClass + ", toString()=" + super.toString()
-				+ "]";
-	}
-
-}
+}	// JPAForeignKey

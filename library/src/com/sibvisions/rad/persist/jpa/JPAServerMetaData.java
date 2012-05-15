@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -47,101 +47,123 @@ import javax.rad.persist.MetaData;
  * 
  * @author Stefan Wurm
  */
-public class JPAServerMetaData {
+public class JPAServerMetaData 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	/** The MetaData for the client. */
 	private MetaData metaData;
 	
-	/** The encapsulation for the <code>JPAServerColumnMetaData</code> for the primary key columns **/
+	/** The encapsulation for the <code>JPAServerColumnMetaData</code> for the primary key columns. **/
 	private JPAPrimaryKey primaryKey;
 	
-	/** The encapsulation for the <code>JPAServerColumnMetaData</code> for the embedded Objects columns **/
+	/** The encapsulation for the <code>JPAServerColumnMetaData</code> for the embedded Objects columns. **/
 	private Collection<JPAEmbeddedKey> cJPAEmbeddedKey = new ArrayList<JPAEmbeddedKey>();
 	
-	/** The encapsulation for the <code>JPAServerColumnMetaData</code> for the foreign key columns **/
+	/** The encapsulation for the <code>JPAServerColumnMetaData</code> for the foreign key columns. **/
 	private Collection<JPAForeignKey> cJPAForeignKey = new ArrayList<JPAForeignKey>();
 	
 	/** The encapsulation of all <code>JPAServerColumnMetaData</code> which are not primary key, foreign key or embedded Object columns. */
 	private Collection<JPAServerColumnMetaData> cServerColumnMetaData = new LinkedHashSet<JPAServerColumnMetaData>();	
 
-	/** If the JPAServerMetaData is a description of a ManyToMany relation between two entities */
+	/** If the JPAServerMetaData is a description of a ManyToMany relation between two entities. */
 	private boolean manyToMany = false;
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Initialization
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
 	/**
 	 * Creates a new instance of <code>JPAServerMetaData</code> with new {@link MetaData}.
 	 */	
-	public JPAServerMetaData() {
-		this.metaData = new MetaData();
+	public JPAServerMetaData() 
+	{
+		metaData = new MetaData();
 	}
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
 	/**
-	 * Sets the <code>JPAPrimaryKey</code> for the code>JPAServerMetaData</code>
+-	 * Sets the <code>JPAPrimaryKey</code> for the <code>JPAServerMetaData</code>.
 	 * 
 	 * @param pPrimaryKey the <code>JPAPrimaryKey</code> to set.
 	 */	
-	public void setJPAPrimaryKey(JPAPrimaryKey pPrimaryKey) {
-		this.primaryKey = pPrimaryKey;
+	public void setJPAPrimaryKey(JPAPrimaryKey pPrimaryKey) 
+	{
+		primaryKey = pPrimaryKey;
+		
 		metaData.setPrimaryKeyColumnNames(pPrimaryKey.getColumnNames());
 		
 		// Set the ColumnMetaData for the primary Keys
-		for(JPAServerColumnMetaData serverColumnMetaData : pPrimaryKey.getServerColumnMetaDataAsArray()) {
+		for (JPAServerColumnMetaData serverColumnMetaData : pPrimaryKey.getServerColumnMetaDataAsArray()) 
+		{
 			metaData.addColumnMetaData(serverColumnMetaData.getColumnMetaData());
 		}
-		
 	}
 
 	/**
-	 * Returns the <code>JPAPrimaryKey</code> for the <code>JPAServerMetaData</code>
+	 * Returns the <code>JPAPrimaryKey</code> for the <code>JPAServerMetaData</code>.
 	 * 
 	 * @return The JPAPrimaryKey Object
 	 */	
-	public JPAPrimaryKey getJPAPrimaryKey() {
+	public JPAPrimaryKey getJPAPrimaryKey() 
+	{
 		return primaryKey;
 	}	
 	
 	/**
-	 * Add a <code>JPAEmbeddedKey</code> to the <code>JPAServerMetaData</code>
+	 * Add a <code>JPAEmbeddedKey</code> to the <code>JPAServerMetaData</code>.
 	 * 
 	 * @param pJPAEmbeddedKey the <code>JPAEmbeddedKey</code> to add.
 	 */		
-	public void addJPAEmbeddedKey(JPAEmbeddedKey pJPAEmbeddedKey) {
+	public void addJPAEmbeddedKey(JPAEmbeddedKey pJPAEmbeddedKey) 
+	{
 		cJPAEmbeddedKey.add(pJPAEmbeddedKey);
 		
 		// Set the ColumnMetaData for the Embedded Entities
-		for(JPAServerColumnMetaData serverColumnMetaData : pJPAEmbeddedKey.getServerColumnMetaDataAsArray()) {
+		for (JPAServerColumnMetaData serverColumnMetaData : pJPAEmbeddedKey.getServerColumnMetaDataAsArray()) 
+		{
 			metaData.addColumnMetaData(serverColumnMetaData.getColumnMetaData());
 		}		
 	}
 	
 	/**
-	 * Returns all <code>JPAEmbeddedKey</code> from the <code>JPAServerMetaData</code>
+	 * Returns all <code>JPAEmbeddedKey</code> from the <code>JPAServerMetaData</code>.
 	 * 
 	 * @return The JPAEmbeddedKey Objects in a Collection
 	 */		
-	public Collection<JPAEmbeddedKey> getJPAEmbeddedKeys() {
+	public Collection<JPAEmbeddedKey> getJPAEmbeddedKeys() 
+	{
 		return cJPAEmbeddedKey;
 	}	
 
 	/**
-	 * Add a <code>JPAForeignKey</code> to the code>JPAServerMetaData</code>
+	 * Add a <code>JPAForeignKey</code> to the <code>JPAServerMetaData</code>.
 	 * 
 	 * @param pJPAForeignKey the <code>JPAForeignKey</code> to add.
 	 */			
-	public void addJPAForeignKey(JPAForeignKey pJPAForeignKey) {
+	public void addJPAForeignKey(JPAForeignKey pJPAForeignKey) 
+	{
 		cJPAForeignKey.add(pJPAForeignKey);
 		
 		// Set the ColumnMetaData for the foreign Keys
-		for(JPAServerColumnMetaData serverColumnMetaData : pJPAForeignKey.getServerColumnMetaDataAsArray()) {
+		for (JPAServerColumnMetaData serverColumnMetaData : pJPAForeignKey.getServerColumnMetaDataAsArray()) 
+		{
 			metaData.addColumnMetaData(serverColumnMetaData.getColumnMetaData());
 		}		
 	}
 	
 	/**
-	 * Returns all <code>JPAForeignKey</code> from the <code>JPAServerMetaData</code>
+	 * Returns all <code>JPAForeignKey</code> from the <code>JPAServerMetaData</code>.
 	 * 
 	 * @return The JPAForeignKey Objects in a Collection
 	 */		
-	public Collection<JPAForeignKey> getJPAForeignKeys() {
+	public Collection<JPAForeignKey> getJPAForeignKeys() 
+	{
 		return cJPAForeignKey;
 	}
 	
@@ -150,45 +172,51 @@ public class JPAServerMetaData {
 	 * 
 	 * @return the MetaData client infos.
 	 */	
-	public MetaData getMetaData() {
-		return this.metaData;
+	public MetaData getMetaData() 
+	{
+		return metaData;
 	}
 
 	/**
 	 * Set the MetaData client infos.
 	 * 
-	 * @param pMetaData
+	 * @param pMetaData the metadata
 	 */		
-	public void setMetaData(MetaData pMetaData) {
-		this.metaData = pMetaData;
+	public void setMetaData(MetaData pMetaData) 
+	{
+		metaData = pMetaData;
 	}
 
 	/**
-	 * Returns if the <code>JPAServerMetaData</code> is a ManyToMany representation
+	 * Returns if the <code>JPAServerMetaData</code> is a ManyToMany representation.
 	 * 
 	 * @return true when <code>JPAServerMetaData</code> is a ManyToMany representation
 	 */		
-	public boolean isManyToMany() {
+	public boolean isManyToMany() 
+	{
 		return manyToMany;
 	}
 
 	/**
-	 * Is true if the <code>JPAServerMetaData</code> is a ManyToMany representation
+	 * Is true if the <code>JPAServerMetaData</code> is a ManyToMany representation.
 	 * 
-	 * @param manyToMany
+	 * @param pManyToMany
 	 */	
-	public void setManyToMany(boolean manyToMany) {
-		this.manyToMany = manyToMany;
+	public void setManyToMany(boolean pManyToMany) 
+	{
+		manyToMany = pManyToMany;
 	}
 
 	/**
-	 * Add a <code>JPAServerColumnMetaData</code> to the <code>JPAServerMetaData</code>
+	 * Add a <code>JPAServerColumnMetaData</code> to the <code>JPAServerMetaData</code>.
 	 * 
 	 * @param pServerColumnMetaData the <code>JPAServerColumnMetaData</code> to add.
 	 */		
-	public void addServerColumnMetaData(JPAServerColumnMetaData pServerColumnMetaData) {
+	public void addServerColumnMetaData(JPAServerColumnMetaData pServerColumnMetaData) 
+	{
 		cServerColumnMetaData.add(pServerColumnMetaData);
-		this.metaData.addColumnMetaData(pServerColumnMetaData.getColumnMetaData());
+		
+		metaData.addColumnMetaData(pServerColumnMetaData.getColumnMetaData());
 	}
 
 	/**
@@ -202,26 +230,30 @@ public class JPAServerMetaData {
 	}
 
 	/**
-	 * Returns the index for the columnName 
+	 * Returns the index for the columnName. 
 	 * 
 	 * @param pColumnName The Column Name
 	 * @return the index
 	 */
-	public int getColumnMetaDataIndex(String pColumnName) {
+	public int getColumnMetaDataIndex(String pColumnName) 
+	{
 		return getMetaData().getColumnMetaDataIndex(pColumnName);
 	}
 	
-	public String [] getColumnNames() {
-		return this.metaData.getColumnNames();		
+	public String[] getColumnNames() 
+	{
+		return metaData.getColumnNames();		
 	}
 	
-	public JPAForeignKey getJPAForeignKeyForCondition(ICondition pCondition) {
-
-		for(JPAForeignKey jpaForeignKey : cJPAForeignKey) {
+	public JPAForeignKey getJPAForeignKeyForCondition(ICondition pCondition) 
+	{
+		for (JPAForeignKey jpaForeignKey : cJPAForeignKey) 
+		{
 			
 			ICondition condition = jpaForeignKey.getCondition();
 			
-			if(this.compareConditions(condition, pCondition)) {
+			if (compareConditions(condition, pCondition)) 
+			{
 				return jpaForeignKey;
 			}
 			
@@ -230,82 +262,87 @@ public class JPAServerMetaData {
 		return null;
 	}
 	
-	public boolean compareConditions(ICondition pCondition1, ICondition pCondition2) {
-		
-		boolean equal = false;
+	public boolean compareConditions(ICondition pCondition1, ICondition pCondition2) 
+	{
+		boolean bEqual = false;
 
-		if(pCondition1 instanceof CompareCondition && pCondition2 instanceof CompareCondition) {
-
-			if(((CompareCondition) pCondition1).getColumnName().equals(((CompareCondition) pCondition2).getColumnName())) {
-				
+		if (pCondition1 instanceof CompareCondition && pCondition2 instanceof CompareCondition) 
+		{
+			if (((CompareCondition) pCondition1).getColumnName().equals(((CompareCondition) pCondition2).getColumnName())) 
+			{
 				return true;
-				
 			}
+		} 
+		else if (pCondition1 instanceof OperatorCondition && pCondition2 instanceof OperatorCondition) 
+		{
+			ICondition[] subConditions1 = ((OperatorCondition) pCondition1).getConditions();
+			ICondition[] subConditions2 = ((OperatorCondition) pCondition2).getConditions();
 			
-		} else if(pCondition1 instanceof OperatorCondition && pCondition2 instanceof OperatorCondition) {
-			
-			ICondition [] subConditions1 = ((OperatorCondition) pCondition1).getConditions();
-			ICondition [] subConditions2 = ((OperatorCondition) pCondition2).getConditions();
-			
-			if(subConditions1.length == subConditions2.length) {
-				
-				for(int i=0; i < subConditions1.length; i++) {
-					equal = compareConditions(subConditions1[i], subConditions2[i]);
+			if (subConditions1.length == subConditions2.length) 
+			{
+				for (int i = 0; i < subConditions1.length; i++) 
+				{
+					bEqual = compareConditions(subConditions1[i], subConditions2[i]);
 				}
-				
-			} else {
+			} 
+			else 
+			{
 				return false;
 			}
-			
-		} else if(pCondition1 instanceof Not && pCondition2 instanceof Not) {
-			
+		}
+		else if (pCondition1 instanceof Not && pCondition2 instanceof Not)
+		{
 			ICondition subCondition1 = ((Not) pCondition1).getCondition();
 			ICondition subCondition2 = ((Not) pCondition2).getCondition();
 			
-			equal = compareConditions(subCondition1, subCondition2);
-			
+			bEqual = compareConditions(subCondition1, subCondition2);
 		}
 		
-		return equal;
+		return bEqual;
 	}	
 
-	public JPAServerColumnMetaData getServerColumnMetaData(String pColumnName) {
-		
-		for(JPAServerColumnMetaData serverColumnMetaData : primaryKey.getServerColumnMetaDataAsCollection()) {
-			if(serverColumnMetaData.isKeyAttribute() && serverColumnMetaData.getName().equals(pColumnName)) {
+	public JPAServerColumnMetaData getServerColumnMetaData(String pColumnName) 
+	{
+		for (JPAServerColumnMetaData serverColumnMetaData : primaryKey.getServerColumnMetaDataAsCollection()) 
+		{
+			if (serverColumnMetaData.isKeyAttribute() && serverColumnMetaData.getName().equals(pColumnName)) 
+			{
 				return serverColumnMetaData;
 			}
 		}
 		
-		for(JPAEmbeddedKey jpaEmbeddedKey : cJPAEmbeddedKey) {
-			
-			for(JPAServerColumnMetaData serverColumnMetaData : jpaEmbeddedKey.getServerColumnMetaDataAsCollection()) {
-				if(serverColumnMetaData.getName().equals(pColumnName)) {
+		for (JPAEmbeddedKey jpaEmbeddedKey : cJPAEmbeddedKey) 
+		{
+			for (JPAServerColumnMetaData serverColumnMetaData : jpaEmbeddedKey.getServerColumnMetaDataAsCollection()) 
+			{
+				if (serverColumnMetaData.getName().equals(pColumnName)) 
+				{
 					return serverColumnMetaData;
 				}
 			}
-			
 		}
 		
-		for(JPAForeignKey jpaForeignKey : cJPAForeignKey) {
-			
-			for(JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey.getServerColumnMetaDataAsCollection()) {
-				if(serverColumnMetaData.getName().equals(pColumnName)) {
+		for (JPAForeignKey jpaForeignKey : cJPAForeignKey) 
+		{
+			for (JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey.getServerColumnMetaDataAsCollection()) 
+			{
+				if (serverColumnMetaData.getName().equals(pColumnName)) 
+				{
 					return serverColumnMetaData;
 				}
 			}
-			
 		}
 		
-		for(JPAServerColumnMetaData serverColumnMetaData : cServerColumnMetaData) {
-			if(serverColumnMetaData.getName().equals(pColumnName)) {
+		for (JPAServerColumnMetaData serverColumnMetaData : cServerColumnMetaData) 
+		{
+			if (serverColumnMetaData.getName().equals(pColumnName)) 
+			{
 				return serverColumnMetaData;
 			}
 		}		
 		
 		return null;
 	}
-	
 	
 	/**
 	 * Returns a <code>Map<String, Object></code> for the DataRow. 
@@ -314,31 +351,30 @@ public class JPAServerMetaData {
 	 * @param pDataRow The DataRow 
 	 * @return The Map for the DataRow
 	 */
-	public Map<String, Object> getMapForDataRow(Object [] pDataRow) {
-		
+	public Map<String, Object> getMapForDataRow(Object[] pDataRow) 
+	{
 		Map<String, Object> mapDataRow = new HashMap<String, Object>();
 		
-		for(int i=0; i < getMetaData().getColumnMetaData().length; i++) {
-			
+		for (int i = 0; i < getMetaData().getColumnMetaData().length; i++) 
+		{
 			ColumnMetaData serverColumnMetaData = getMetaData().getColumnMetaData()[i];
 			
 			mapDataRow.put(serverColumnMetaData.getName(), pDataRow[i]);				
-
 		}
 				
 		return mapDataRow;		
 	}
 	
 	/**
-	 * Returns a <code>Map<String, Object></code> for a Condition
+	 * Returns a <code>Map<String, Object></code> for a Condition.
 	 * The key of the Map is the name of the column and the value is the Value from the DataRow
-	 * It contains all values and columnNames from the given condition
+	 * It contains all values and columnNames from the given condition.
 	 * 
 	 * @param pCondition condition
 	 * @return The Map for the DataRow
 	 */
-	public Map<String, Object> getValueMapForCondition(ICondition pCondition) {
-		
+	public Map<String, Object> getValueMapForCondition(ICondition pCondition) 
+	{
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		initializeMapForCondition(pCondition, map);
@@ -346,30 +382,26 @@ public class JPAServerMetaData {
 		return map;		
 	}
 	
-	private void initializeMapForCondition(ICondition pCondition, Map<String, Object> map) {
-		
-		if(pCondition instanceof CompareCondition) {
-
+	private void initializeMapForCondition(ICondition pCondition, Map<String, Object> map) 
+	{
+		if (pCondition instanceof CompareCondition) 
+		{
 			String columnName = ((CompareCondition) pCondition).getColumnName();
 			Object value = ((CompareCondition) pCondition).getValue();				
 			
 			map.put(columnName, value);
-			
-		} else if(pCondition instanceof OperatorCondition) {
-			
-			for(ICondition subCondition : ((OperatorCondition) pCondition).getConditions()) {
-				
+		} 
+		else if (pCondition instanceof OperatorCondition) 
+		{
+			for (ICondition subCondition : ((OperatorCondition) pCondition).getConditions()) 
+			{
 				initializeMapForCondition(subCondition, map);				
-				
-				
 			}	
-			
-		} else if(pCondition instanceof Not) {
-			
+		} 
+		else if (pCondition instanceof Not) 
+		{
 			initializeMapForCondition(((Not) pCondition).getCondition(), map);
-			
 		}
-		
 	}	
 	
     /**
@@ -377,17 +409,19 @@ public class JPAServerMetaData {
 	 *
 	 * @return the quoted Representation column names.
 	 */
-	public String[] getRepresentationQuotedColumnNames() {
+	public String[] getRepresentationQuotedColumnNames() 
+	{
 		return metaData.getRepresentationColumnNames();
 	}
 	
 	/**
 	 * Sets the Representation column names. 
 	 *
-	 * @param pRepresentationColumnNames 
-	 *			the Representation column names to set
+	 * @param pRepresentationColumnNames the Representation column names to set
 	 */
-	public void setRepresentationColumnNames(String [] pRepresentationColumnNames) {
+	public void setRepresentationColumnNames(String[] pRepresentationColumnNames) 
+	{
 		metaData.setRepresentationColumnNames(pRepresentationColumnNames);
 	}	
-}
+	
+}	// JPAServerMetaData

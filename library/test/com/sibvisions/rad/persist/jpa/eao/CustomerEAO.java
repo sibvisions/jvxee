@@ -18,55 +18,48 @@
  *
  * 09.05.2012 - [SW] - creation
  */
-package com.sibvisions.rad.persist.jpa.entity;
+package com.sibvisions.rad.persist.jpa.eao;
 
-import javax.persistence.Embeddable;
+import javax.persistence.EntityManager;
 
-@Embeddable
-public class CustomerContact
+import com.sibvisions.rad.persist.jpa.EAOMethod;
+import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
+import com.sibvisions.rad.persist.jpa.entity.Customer;
+
+public class CustomerEAO 
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	private String	telephone_private;
-
-	private String	telephone_office;
-
-	private String	email;
-
+	private EntityManager entityManager;
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	public void setEntityManager(EntityManager pEntityManager) 
+	{
+		entityManager = pEntityManager;
+	}
 	
-	public String getTelephone_private()
+	@EAOMethod (methodIdentifier = EAO.DELETE)
+	public void deleteCustomer(Customer customer) 
 	{
-		return telephone_private;
+        entityManager.getTransaction().begin();
+    	
+        if (customer.getEducations().size() > 0) 
+        {
+        	customer.getEducations().clear();
+        }
+        
+        if (customer.getAddresses().size() > 0) 
+        {
+        	customer.getEducations().clear();
+        }
+        
+        entityManager.remove(customer);
+        entityManager.getTransaction().commit();
 	}
-
-	public void setTelephone_private(String telephone_private)
-	{
-		this.telephone_private = telephone_private;
-	}
-
-	public String getTelephone_office()
-	{
-		return telephone_office;
-	}
-
-	public void setTelephone_office(String telephone_office)
-	{
-		this.telephone_office = telephone_office;
-	}
-
-	public String getEmail()
-	{
-		return email;
-	}
-
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
-
-} 	// CustomerContact
+	
+}	// CustomerEAO

@@ -23,29 +23,50 @@ package apps.jvxee.entity;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class CustomerContact {
+public class CustomerContact
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    private String telephone_private;
-    private String telephone_office;
-    private String email;
-    
-	public String getTelephone_private() {
+	private String	telephone_private;
+
+	private String	telephone_office;
+
+	private String	email;
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	public String getTelephone_private()
+	{
 		return telephone_private;
 	}
-	public void setTelephone_private(String telephone_private) {
+
+	public void setTelephone_private(String telephone_private)
+	{
 		this.telephone_private = telephone_private;
 	}
-	public String getTelephone_office() {
+
+	public String getTelephone_office()
+	{
 		return telephone_office;
 	}
-	public void setTelephone_office(String telephone_office) {
+
+	public void setTelephone_office(String telephone_office)
+	{
 		this.telephone_office = telephone_office;
 	}
-	public String getEmail() {
+
+	public String getEmail()
+	{
 		return email;
 	}
-	public void setEmail(String email) {
+
+	public void setEmail(String email)
+	{
 		this.email = email;
-	}   
-    
+	}
+
 }

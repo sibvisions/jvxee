@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,6 +23,7 @@ package com.sibvisions.rad.persist.jpa;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,13 +36,22 @@ import javax.rad.model.datatype.ObjectDataType;
 import javax.rad.model.datatype.StringDataType;
 import javax.rad.model.datatype.TimestampDataType;
 
-public class JPAStorageUtil {
-	
-	//TODO Check org.apache.commons.lang.ClassUtils: ClassUtils.wrapperToPrimitive(keyClass)
-	private static final Set<Class> WRAPPER_TYPES = new HashSet();	
-	
-	static {
-		
+public final class JPAStorageUtil
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	// TODO Check org.apache.commons.lang.ClassUtils: ClassUtils.wrapperToPrimitive(keyClass)
+	private static final Set<Class>	WRAPPER_TYPES	= new HashSet();
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Initialization
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	static
+	{
+
 		WRAPPER_TYPES.add(Boolean.class);
 		WRAPPER_TYPES.add(Character.class);
 		WRAPPER_TYPES.add(Byte.class);
@@ -52,132 +62,157 @@ public class JPAStorageUtil {
 		WRAPPER_TYPES.add(Double.class);
 		WRAPPER_TYPES.add(String.class);
 	}
+
+	/**
+	 * Invisible constructor because <code>JPAStorageUtil</code> is a utility
+	 * class.
+	 */
+	private JPAStorageUtil()
+	{
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	public static IDataType getDataTypeIdentifierForJavaType(Class pJavaType) {
-		
-		if(pJavaType.isArray()) {
-			
-			if(pJavaType == java.lang.Byte[].class || pJavaType == byte[].class) {
-				return new BinaryDataType();			
-			} else if(pJavaType == java.lang.Character[].class || pJavaType == char[].class) {
-				return new BinaryDataType();	
+	public static IDataType getDataTypeIdentifierForJavaType(Class pJavaType)
+	{
+		if (pJavaType.isArray())
+		{
+			if (pJavaType == Byte[].class || pJavaType == byte[].class)
+			{
+				return new BinaryDataType();
 			}
-			
+			else if (pJavaType == Character[].class || pJavaType == char[].class)
+			{
+				return new BinaryDataType();
+			}
 		}
-		
-		if(pJavaType == java.lang.String.class || 
-		   pJavaType == java.lang.Character.class || pJavaType == char.class) {
 
+		if (pJavaType == String.class 
+			|| pJavaType == Character.class 
+			|| pJavaType == char.class)
+		{
 			return new StringDataType();
-			
-		} else if(pJavaType == java.lang.Byte.class || pJavaType == byte.class ||
-				  pJavaType == java.lang.Short.class || pJavaType == short.class ||
-				  pJavaType == java.lang.Integer.class || pJavaType == int.class ||
-				  pJavaType == java.lang.Long.class || pJavaType == long.class ||
-				  pJavaType == java.lang.Float.class || pJavaType == float.class ||
-				  pJavaType == java.lang.Double.class || pJavaType == double.class ||
-				  pJavaType == java.math.BigDecimal.class) {
-			
+		}
+		else if (Number.class.isAssignableFrom(pJavaType) 
+				 || pJavaType == byte.class 
+				 || pJavaType == short.class 
+				 || pJavaType == int.class 
+				 || pJavaType == long.class 
+				 || pJavaType == float.class 
+				 || pJavaType == double.class)
+		{
 			return new BigDecimalDataType();
-			
-		} if(pJavaType == java.lang.Boolean.class || pJavaType == boolean.class) {
-			
-			return new BooleanDataType();
-		
-		} else if(pJavaType == java.util.Date.class || pJavaType == java.sql.Date.class) {
 
-			return new TimestampDataType();
-			
-		} else if(pJavaType == java.lang.Object.class) {
-			
-			return new ObjectDataType();
-			
 		}
 		
+		if (pJavaType == Boolean.class || pJavaType == boolean.class)
+		{
+			return new BooleanDataType();
+		}
+		else if (Date.class.isAssignableFrom(pJavaType))
+		{
+			return new TimestampDataType();
+		}
+
 		return new ObjectDataType();
 	}
-		
-	public static boolean isPrimaryKeyAttribute(Attribute pAttribute, Class pEntityClass) throws Exception {
 
+	public static boolean isPrimaryKeyAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
+	{
 		Annotation[] annotations = getAnnotationsForAttribute(pAttribute, pEntityClass);
-		
-		for(Annotation annotation : annotations) {
-			
-			if(annotation.annotationType().getName().equals("javax.persistence.Id") || annotation.annotationType().getName().equals("javax.persistence.EmbeddedId")) {
-				return true;				
-			}
 
+		for (Annotation annotation : annotations)
+		{
+			//TODO don't compare strings - use the class
+			if (annotation.annotationType().getName().equals("javax.persistence.Id") 
+				|| annotation.annotationType().getName().equals("javax.persistence.EmbeddedId"))
+			{
+				return true;
+			}
 		}
 
 		return false;
 	}
-	
-	public static boolean isPrimitiveOrWrapped(Class clazz) {
-		return clazz.isPrimitive() || WRAPPER_TYPES.contains(clazz);		
-	}	
-	
-	public static String getSetterMethodNameForAttribute(Attribute attribute) {
-		return "set"+attribute.getName().substring(0,1).toUpperCase()+attribute.getName().substring(1);
-	}
-	
-	public static String getGetterMethodNameForAttribute(Attribute attribute) {
-		
-		String methodName = "get"+attribute.getName().substring(0,1).toUpperCase()+attribute.getName().substring(1);
-		
-		if(attribute.getJavaType() == Boolean.class || attribute.getJavaType() == boolean.class) { 
 
-			try {
-				
-				attribute.getDeclaringType().getJavaType().getMethod(methodName);
-				
-			} catch (NoSuchMethodException e) {
-				methodName = "is"+attribute.getName().substring(0,1).toUpperCase()+attribute.getName().substring(1);
-			} 
-			
+	public static boolean isPrimitiveOrWrapped(Class pClazz)
+	{
+		return pClazz.isPrimitive() || WRAPPER_TYPES.contains(pClazz);
+	}
+
+	public static String getSetterMethodNameForAttribute(Attribute pAttribute)
+	{
+		return "set" + pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+	}
+
+	public static String getGetterMethodNameForAttribute(Attribute pAttribute)
+	{
+
+		String methodName = "get" + pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+
+		if (pAttribute.getJavaType() == Boolean.class || pAttribute.getJavaType() == boolean.class)
+		{
+
+			try
+			{
+
+				pAttribute.getDeclaringType().getJavaType().getMethod(methodName);
+
+			}
+			catch (NoSuchMethodException e)
+			{
+				methodName = "is" + pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+			}
+
 		}
-		
+
 		return methodName;
-	}	
-	
-	public static String getNameForAttribute(Attribute attribute) {
-		return attribute.getName().toUpperCase();
 	}
 
-	public static String getLabelForAttribute(Attribute attribute) {
-		return attribute.getName().substring(0,1).toUpperCase()+attribute.getName().substring(1);
-	}	
-	
-	public static Annotation[] getAnnotationsForAttribute(Attribute attribute, Class entityClass) throws Exception {
-		
-		String member = attribute.getJavaMember().getName();
-		
-		if(member.startsWith("get") || member.startsWith("is")) { // The Annotation is defined on the getter-Methode
-			return entityClass.getMethod(member).getAnnotations();
+	public static String getNameForAttribute(Attribute pAttribute)
+	{
+		return pAttribute.getName().toUpperCase();
+	}
+
+	public static String getLabelForAttribute(Attribute pAttribute)
+	{
+		return pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+	}
+
+	public static Annotation[] getAnnotationsForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
+	{
+		String member = pAttribute.getJavaMember().getName();
+
+		if (member.startsWith("get") || member.startsWith("is"))
+		{ 
+			// The Annotation is defined on the getter-Methode
+			return pEntityClass.getMethod(member).getAnnotations();
 		}
-		
-		return entityClass.getDeclaredField(member).getAnnotations(); // The Annotation is defined on the Field
-	}
-	
-	public static Object getDefaultValueForAttribute(Attribute attribute, Class entityClass) throws Exception {
-		
-//		String member = attribute.getName();
-//		
-//		Field privateField = entityClass.getDeclaredField(member);
-//		privateField.setAccessible(true);
-		
-		return entityClass.getMethod(getGetterMethodNameForAttribute(attribute)).invoke(entityClass.newInstance());
+
+		// The Annotation is defined on the field 
+		return pEntityClass.getDeclaredField(member).getAnnotations(); 
 	}
 
-	public static Class getTypeClassForAttribute(Attribute attribute) throws Exception {
+	public static Object getDefaultValueForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
+	{
+		// String member = attribute.getName();
+		//
+		// Field privateField = entityClass.getDeclaredField(member);
+		// privateField.setAccessible(true);
 
-		Field stringListField = attribute.getDeclaringType().getJavaType().getDeclaredField(attribute.getName());
-		
-		ParameterizedType stringListType = (ParameterizedType) stringListField.getGenericType();
-		
-		Class<?> typeClass = (Class<?>) stringListType.getActualTypeArguments()[0];
-		
-		return typeClass;	
-
+		return pEntityClass.getMethod(getGetterMethodNameForAttribute(pAttribute)).invoke(pEntityClass.newInstance());
 	}
 
-}
+	public static Class getTypeClassForAttribute(Attribute pAttribute) throws Exception
+	{
+		Field stringListField = pAttribute.getDeclaringType().getJavaType().getDeclaredField(pAttribute.getName());
+
+		ParameterizedType stringListType = (ParameterizedType)stringListField.getGenericType();
+
+		Class<?> typeClass = (Class<?>)stringListType.getActualTypeArguments()[0];
+
+		return typeClass;
+	}
+
+}	// JPAStorageUtil

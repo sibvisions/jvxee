@@ -1,0 +1,22 @@
+JVx Enterprise Edition
+Copyright 2012 SIB Visions GmbH
+
+This product includes software developed by
+SIB Visions GmbH (http://www.sibvisions.com/).
+
+
+===
+
+LICENSE INFORMATION REGARDING BUNDLED THIRD-PARTY SOFTWARE
+
+The following third party software is distributed with 
+JVx EE and is provided under other licenses and/or has 
+source available from other locations.
+
+* Eclipse Link, 
+  License: Eclipse Public License Version 1.0 ("EPL")
+  Source code availability: http://www.eclipse.org/eclipselink/
+  
+* HSQLDB
+  License: based on BSD License
+  Source code availability: http://hsqldb.org/

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,18 +26,27 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
 @Entity
-public class Salutation implements Serializable {
+public class Salutation implements Serializable 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	private SalutationPK salutationPK;
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	@EmbeddedId
-	public SalutationPK getSalutationPK() {
+	public SalutationPK getSalutationPK() 
+	{
 		return salutationPK;
 	}
 
-	public void setSalutationPK(SalutationPK salutationPK) {
+	public void setSalutationPK(SalutationPK salutationPK) 
+	{
 		this.salutationPK = salutationPK;
 	}
 	
-	
-}
+}	// Salutation

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -44,8 +44,8 @@ import javax.rad.model.datatype.TimestampDataType;
  * For example:
  * 
  * @Entity
- * public class Customer implements Serializable  {
- *
+ * public class Customer implements Serializable  
+ * {
  * 		@Id
  *  	private int id;
  *  
@@ -74,26 +74,46 @@ import javax.rad.model.datatype.TimestampDataType;
  *      The setterMethodName: is: setAddress      
  * 
  * @author Stefan Wurm
- *
  */
-public class JPAMappingType {
-	
-	/** The DataType Identifier from the column in the dataRow **/
+public class JPAMappingType 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	/** The DataType Identifier from the column in the dataRow. **/
 	private IDataType dataType;	
 	
-	/** The Class of the Entity **/
+	/** The Class of the Entity. **/
 	private Class entityClass;
 	
-	/** The Java Type of the Attribute **/
+	/** The Java Type of the Attribute. **/
 	private Class javaTypeClass;
 
-	/** The getter Method for the Attribute **/
+	/** The getter Method for the Attribute. **/
 	private String getterMethodName;
 	
-	/** The setter Method for the Attribute **/
+	/** The setter Method for the Attribute. **/
 	private String setterMethodName;
 	
 	private ArrayList<String> pathNavigation = new ArrayList<String>();
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Overwritten methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	@Override
+	public String toString() 
+	{
+		return "JPAMappingType [dataType=" + dataType + ", entityClass="
+				+ entityClass + ", javaTypeClass=" + javaTypeClass
+				+ ", getterMethodName=" + getterMethodName
+				+ ", setterMethodName=" + setterMethodName + "]";
+	}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	/**
 	 * Sets the given value to the given entity.
@@ -102,32 +122,32 @@ public class JPAMappingType {
 	 * @param pValue The value to set
 	 * @throws Exception
 	 */
-	public void setValue(Object pEntity, Object pValue) throws Exception {
-
-		if(pEntity != null) {
-		
+	public void setValue(Object pEntity, Object pValue) throws Exception 
+	{
+		if (pEntity != null) 
+		{
 			Object setValue = this.castObjectToJavaType(pValue);
 	
-			if(setValue != null) {
+			if (setValue != null) 
+			{
 				pEntity.getClass().getMethod(setterMethodName, javaTypeClass).invoke(pEntity, setValue);
 			}	
-		
 		}
-
 	}
 	
 	/**
-	 * Returns the Value for the given entity
+	 * Returns the Value for the given entity.
 	 * 
 	 * @param pEntity The Entity, the Primary Key, Foreign Key or Embedded Object 
 	 * @return the value for the given entity
 	 * @throws Exception
 	 */
-	public Object getValue(Object pEntity) throws Exception {
-		
-		if(pEntity != null) {
-		
-			if(JPAStorageUtil.isPrimitiveOrWrapped(pEntity.getClass())) {
+	public Object getValue(Object pEntity) throws Exception 
+	{
+		if (pEntity != null) 
+		{
+			if (JPAStorageUtil.isPrimitiveOrWrapped(pEntity.getClass())) 
+			{
 				return pEntity;
 			}
 	
@@ -139,75 +159,83 @@ public class JPAMappingType {
 	}
 	
 	/**
-	 * Sets the DataType Identifier
+	 * Sets the DataType Identifier.
 	 * 
-	 * @param dataTypeIdentifier
+	 * @param pDataTypeIdentifier
 	 */
-	public void setDataType(IDataType dataTypeIdentifier) {
-		this.dataType = dataTypeIdentifier;
+	public void setDataType(IDataType pDataTypeIdentifier) 
+	{
+		dataType = pDataTypeIdentifier;
 	}	
 
 	/**
-	 * Returns the DataType Identifier
+	 * Returns the DataType Identifier.
 	 * 
 	 * @return the DataType Identifier
 	 */
-	public int getDataType() {
+	public int getDataType() 
+	{
 		return dataType.getTypeIdentifier();
 	}
 
 	/**
-	 * Returns the class of the entity
+	 * Returns the class of the entity.
 	 * 
 	 * @return the class of the entity
 	 */
-	public Class getEntityClass() {
+	public Class getEntityClass() 
+	{
 		return entityClass;
 	}
 
 	/**
-	 * Sets the class of the entity
+	 * Sets the class of the entity.
 	 * 
-	 * @param entityClass
+	 * @param pEntityClass
 	 */
-	public void setEntityClass(Class entityClass) {
-		this.entityClass = entityClass;
+	public void setEntityClass(Class pEntityClass) 
+	{
+		this.entityClass = pEntityClass;
 	}
 
 	/**
-	 * Returns the class of the java Type
+	 * Returns the class of the java Type.
 	 * 
 	 * @return the class of the java Type 
 	 */
-	public Class getJavaTypeClass() {
+	public Class getJavaTypeClass() 
+	{
 		return javaTypeClass;
 	}
 
 	/**
-	 * Sets the class of the java Type
+	 * Sets the class of the java Type.
 	 * 
-	 * @param javaTypeClass
+	 * @param pJavaTypeClass
 	 */
-	public void setJavaTypeClass(Class javaTypeClass) {
-		this.javaTypeClass = javaTypeClass;
+	public void setJavaTypeClass(Class pJavaTypeClass) 
+	{
+		javaTypeClass = pJavaTypeClass;
 	}
 	
 	/**
-	 * Sets the getterMethodName for the Attribute
+	 * Sets the getterMethodName for the Attribute.
 	 * 
-	 * @param getterMethodName
+	 * @param pGetterMethodName
 	 */
-	public void setGetterMethodName(String getterMethodName) {
-		this.getterMethodName = getterMethodName;
+	public void setGetterMethodName(String pGetterMethodName) 
+	{
+		this.getterMethodName = pGetterMethodName;
 	}
 
 	/**
-	 * Sets the setterMethodName for the Attribute
+	 * Sets the setterMethodName for the Attribute.
 	 * 
-	 * @param setterMethodName
+	 * @param pSetterMethodName
 	 */
-	public void setSetterMethodName(String setterMethodName) {
-		this.setterMethodName = setterMethodName;
+	public void setSetterMethodName(String pSetterMethodName) 
+	{
+		this.setterMethodName = pSetterMethodName;
 	}
 	
 	/**
@@ -216,37 +244,36 @@ public class JPAMappingType {
 	 * For a Example the path navigation to the Attribute street is: Address, street
 	 *
 	 * @Entity
-	 * public class Customer implements Serializable {
-	 * 
-	 * 	@Id
-	 *  private int id;
+	 * public class Customer implements Serializable
+	 * {
+	 * 	   @Id
+	 *     private int id;
 	 *  
-	 *  private String name;
+	 *     private String name;
 	 *  
-	 *  @Embedded
-	 *  private Address address;
+	 *     @Embedded
+	 *     private Address address;
 	 *  
-	 *  ....... 
-	 * 
+	 *     ....... 
 	 * } 
 	 * 
 	 * @Embeddable
-	 *public class Address {
-	 *
-	 *   private String street;
-	 *   private String nr;
+	 * public class Address 
+	 * {
+	 *     private String street;
+	 *     private String nr;
 	 *   
-	 *   .....
-	 *   
+	 *     .....
  	 * }
  	 * 
 	 * @return
 	 */
-	public ArrayList<String> getPathNavigation() {
-		
+	public ArrayList<String> getPathNavigation() 
+	{
 		ArrayList<String> pathNavigationSwap = new ArrayList<String>();
 		
-		for(int i=pathNavigation.size()-1; i >= 0; i--) {
+		for (int i = pathNavigation.size() - 1; i >= 0; i--) 
+		{
 			pathNavigationSwap.add(pathNavigation.get(i));
 		}
 				
@@ -255,111 +282,107 @@ public class JPAMappingType {
 	}
 
 	/**
-	 * Adds a path element
+	 * Adds a path element.
 	 * 
-	 * @param pathNavigation
+	 * @param pPathNavigation
 	 */
-	public void addPathNavigation(String pathNavigation) {
-		this.pathNavigation.add(pathNavigation);
+	public void addPathNavigation(String pPathNavigation) 
+	{
+		pathNavigation.add(pPathNavigation);
 	}
 
 	/**
 	 * Casts the given Value from the DataRow to the java Type 
-	 * from the attribute of the entity
+	 * from the attribute of the entity.
 	 * 
 	 * @param pValue The value from the DataRow
 	 * 
 	 * @return The casted java Type
 	 */
-	public Object castObjectToJavaType(Object pValue) throws ModelException {
-		
+	public Object castObjectToJavaType(Object pValue) throws ModelException 
+	{
 		pValue = dataType.convertToTypeClass(pValue);
 		
-		if(pValue == null) {
-			
+		if (pValue == null) 
+		{
 			return null;
-			
-		} else if(dataType instanceof StringDataType) {
-			
-			if(javaTypeClass == String.class) {
+		} 
+		else if (dataType instanceof StringDataType) 
+		{
+			if (javaTypeClass == String.class) 
+			{
 				return (String) pValue;
-			} else if(javaTypeClass == char.class || javaTypeClass == Character.class) {
-				return ((String) pValue).charAt(0);
+			} 
+			else if (javaTypeClass == char.class || javaTypeClass == Character.class) 
+			{
+				return Character.valueOf(((String)pValue).charAt(0));
 			}
-		
-		} else if(dataType instanceof BigDecimalDataType) {
-
-			if(javaTypeClass == java.lang.Byte.class || javaTypeClass  == byte.class) {
-				
+		} 
+		else if (dataType instanceof BigDecimalDataType) 
+		{
+			if (javaTypeClass == java.lang.Byte.class || javaTypeClass  == byte.class) 
+			{
 				return new Byte(((BigDecimal) pValue).byteValue());
-				
-			} else if(javaTypeClass == java.lang.Short.class || javaTypeClass == short.class) {
-				
+			} 
+			else if (javaTypeClass == java.lang.Short.class || javaTypeClass == short.class) 
+			{
 				return new Short(((BigDecimal) pValue).shortValue());	
-				
-			} else if(javaTypeClass == java.lang.Integer.class || javaTypeClass == int.class) {
-				
+			} 
+			else if (javaTypeClass == java.lang.Integer.class || javaTypeClass == int.class) 
+			{
 				return new Integer(((BigDecimal) pValue).intValue());					
-
-			} else if(javaTypeClass == java.lang.Long.class || javaTypeClass == long.class) {
-				
+			} 
+			else if (javaTypeClass == java.lang.Long.class || javaTypeClass == long.class) 
+			{
 				return new Long(((BigDecimal) pValue).longValue());				
-				
-			} else if(javaTypeClass == java.lang.Float.class || javaTypeClass == float.class) {
-				
+			} 
+			else if (javaTypeClass == java.lang.Float.class || javaTypeClass == float.class) 
+			{
 				return new Float(((BigDecimal) pValue).floatValue());				
-				
-			} else if(javaTypeClass == java.lang.Double.class || javaTypeClass == double.class) {
-				
+			} 
+			else if (javaTypeClass == java.lang.Double.class || javaTypeClass == double.class) 
+			{
 				return new Double(((BigDecimal) pValue).doubleValue());				
-				
-			} else if(javaTypeClass == java.math.BigDecimal.class) {
-				
+			} 
+			else if (javaTypeClass == java.math.BigDecimal.class) 
+			{
 				return pValue;
-				
 			}
-			
-		} else if(dataType instanceof BinaryDataType) {
-
-			if(javaTypeClass == java.lang.Byte[].class) {
-				
+		} 
+		else if (dataType instanceof BinaryDataType) 
+		{
+			if (javaTypeClass == java.lang.Byte[].class) 
+			{
 				return (java.lang.Byte []) pValue;		
-				
-			} else if(javaTypeClass == byte[].class) {
-				
+			} 
+			else if (javaTypeClass == byte[].class) 
+			{
 				return (byte []) pValue;				
-			
 			}
-
-		} else if(dataType instanceof BooleanDataType) {
-			
+		} 
+		else if (dataType instanceof BooleanDataType) 
+		{
 			return (java.lang.Boolean) pValue;
-			
-		} else if(dataType instanceof TimestampDataType) {
-			
-			if(javaTypeClass == java.util.Date.class) {
-				
+		} 
+		else if (dataType instanceof TimestampDataType) 
+		{
+			if (javaTypeClass == java.util.Date.class) 
+			{
 				return new java.util.Date(((Timestamp) pValue).getTime());
-				
-			} else if(javaTypeClass == java.sql.Date.class) {
-				
+			} 
+			else if (javaTypeClass == java.sql.Date.class) 
+			{
 				return new java.sql.Date(((Timestamp) pValue).getTime());
 			}
-			
-		} else { // ObjectDataType
+		} 
+		else 
+		{ 
+			// ObjectDataType
 			return pValue;
 		}
 		
 		throw new ModelException("Conversion failed! Type not supported ! from " +  
-				pValue.getClass().getName() + " to IDataType " + dataType.getTypeClass()+" to java Type "+javaTypeClass);		
+				                 pValue.getClass().getName() + " to IDataType " + dataType.getTypeClass() + " to java Type " + javaTypeClass);		
 	}
 
-	@Override
-	public String toString() {
-		return "JPAMappingType [dataType=" + dataType + ", entityClass="
-				+ entityClass + ", javaTypeClass=" + javaTypeClass
-				+ ", getterMethodName=" + getterMethodName
-				+ ", setterMethodName=" + setterMethodName + "]";
-	}
-
-}
+}	// JPAMappingType

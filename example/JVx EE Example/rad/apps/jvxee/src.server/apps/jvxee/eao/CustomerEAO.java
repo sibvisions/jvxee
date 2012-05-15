@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -27,31 +27,57 @@ import apps.jvxee.entity.Customer;
 import com.sibvisions.rad.persist.jpa.EAOMethod;
 import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
 
-public class CustomerEAO {
+/**
+ * The customer EAO.
+ * 
+ * @author Stefan Wurm
+ */
+public class CustomerEAO
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/** the entity manager. */
 	private EntityManager entityManager;
-	
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	/**
+	 * Sets the entity manager.
+	 * 
+	 * @param pEntityManager the entity manager
+	 */
+	public void setEntityManager(EntityManager pEntityManager) 
+	{
+		this.entityManager = pEntityManager;
 	}
 	
+	/**
+	 * Deletes a customer.
+	 * 
+	 * @param pCustomer the customer
+	 */
 	@EAOMethod(methodIdentifier = EAO.DELETE)
-	public void deleteCustomer(Customer customer) {
-
+	public void deleteCustomer(Customer pCustomer) 
+	{
         entityManager.getTransaction().begin();
     	
-        if(customer.getEducations().size() > 0) {
-        	customer.getEducations().clear();
+        if (pCustomer.getEducations().size() > 0) 
+        {
+        	pCustomer.getEducations().clear();
         }
         
-        if(customer.getAddresses().size() > 0) {
-        	customer.getEducations().clear();
+        if (pCustomer.getAddresses().size() > 0) 
+        {
+        	pCustomer.getEducations().clear();
         }
         
-        entityManager.remove(customer);
+        entityManager.remove(pCustomer);
                 
         entityManager.getTransaction().commit();
-
 	}
 	
-}
+}	// CustomerEAO

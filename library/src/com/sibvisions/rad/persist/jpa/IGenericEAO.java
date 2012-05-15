@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,18 +24,21 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * The <code>IGenericDAO</code> defines the methods to access the database by entities and primary keys
+ * The <code>IGenericDAO</code> defines the methods to access the database by entities and primary keys.
  * 
- * @author Stefan Wurm
- *
  * @param <E> The Type of the Entity
  * @param <PK> The Type of the Primary Key
+ * 
+ * @author Stefan Wurm
  */
-public interface IGenericEAO<E, PK  extends Serializable> {
-
+public interface IGenericEAO<E, PK  extends Serializable> 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Method definitions
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Saves the values of the entity in the database
+	 * Saves the values of the entity in the database.
 	 * 
 	 * @param newEntity the new entity to insert
 	 * @return the inserted entity
@@ -43,21 +46,21 @@ public interface IGenericEAO<E, PK  extends Serializable> {
     public E insert(E newEntity);
     
     /**
-     * Saves the values of the entity in the database
+     * Saves the values of the entity in the database.
      * 
      * @param entity to update
      */
     public void update(E entity);
     
     /**
-     * Removes the values of this entity from the database
+     * Removes the values of this entity from the database.
      * 
      * @param entity to delete
      */
     public void delete(E entity);
         
     /**
-     * Finds the entity for the given id
+     * Finds the entity for the given id.
      * 
      * @param id the primary key
      * @return the entity for this primary key
@@ -65,10 +68,10 @@ public interface IGenericEAO<E, PK  extends Serializable> {
     public E findById(PK id);
     
     /**
-     * Finds all entities
+     * Finds all entities.
      * 
      * @return a Collection of all entities
      */
     public Collection<E> findAll();
     
-}
+}	// IGenericEAO

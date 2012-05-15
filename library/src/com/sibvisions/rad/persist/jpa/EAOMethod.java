@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,14 +25,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
+@Retention (RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface EAOMethod {
+public @interface EAOMethod 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Definitions
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public enum EAO {
-		 INSERT, UPDATE, DELETE, FIND_BY_ID, FIND_ALL;
+	public enum EAO 
+	{
+		 INSERT, 
+		 UPDATE, 
+		 DELETE, 
+		 FIND_BY_ID, 
+		 FIND_ALL
 	}
 	
 	public EAO methodIdentifier();
 	
-}
+}	// EAOMethod

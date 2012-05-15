@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 SIB Visions GmbH
+ * Copyright 2012 SIB Visions GmbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -35,46 +35,129 @@ import javax.rad.persist.ColumnMetaData;
  * 
  * @author Stefan Wurm
  */
-public class JPAServerColumnMetaData {
+public class JPAServerColumnMetaData 
+{
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Class members
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	/** The MappingType for this column meta data */
+	/** The MappingType for this column meta data. */
 	private JPAMappingType jpaMappingType;
 	
 	/** The ColumnMetaData for the client. */
 	private ColumnMetaData	columnMetaData;
 	
-	/** The name of the column meta data **/
+	/** The name of the column meta data. **/
 	private String name;
 	
-	/** If the column meta data is part of the primary key */
+	/** If the column meta data is part of the primary key. */
 	private boolean keyAttribute = false;
 	
 	private boolean storageReference = false;
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Initialization
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
 	/**
-	 * Constructs a <code>JPAServerColumnMetaData</code>
+	 * Constructs a <code>JPAServerColumnMetaData</code>.
 	 */	
-	public JPAServerColumnMetaData() {
+	public JPAServerColumnMetaData() 
+	{
 		columnMetaData = new ColumnMetaData();
+	}
+	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Overwritten methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() 
+	{
+		final int prime = 31;
+		
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		
+		return result;
 	}
 
 	/**
-	 * Returns the <code>JPAMappingType</code> 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) 
+	{
+		if (this == obj)
+		{
+			return true;
+		}
+		
+		if (obj == null)
+		{
+			return false;
+		}
+		
+		if (getClass() != obj.getClass())
+		{
+			return false;
+		}
+		
+		JPAServerColumnMetaData other = (JPAServerColumnMetaData) obj;
+		
+		if (name == null) 
+		{
+			if (other.name != null)
+			{
+				return false;
+			}
+		} 
+		else if (!name.equals(other.name))
+		{
+			return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() 
+	{
+		return "JPAServerColumnMetaData [jpaMappingType=" + jpaMappingType
+				+ ", columnMetaData=" + columnMetaData + ", name=" + name
+				+ ", keyAttribute=" + keyAttribute + "]";
+	}	
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// User-defined methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	/**
+	 * Returns the <code>JPAMappingType</code>. 
 	 * 
 	 * @return The <code>JPAMappingType</code> 
 	 */
-	public JPAMappingType getJPAMappingType() {
+	public JPAMappingType getJPAMappingType() 
+	{
 		return jpaMappingType;
 	}
 
 	/**
-	 * Set the <code>JPAMappingType</code> for this <code>JPAServerColumnMetaData</code>
+	 * Set the <code>JPAMappingType</code> for this <code>JPAServerColumnMetaData</code>.
 	 * 
-	 * @param jpaMappingType
+	 * @param pJpaMappingType
 	 */
-	public void setJPAMappingType(JPAMappingType jpaMappingType) {
-		this.jpaMappingType = jpaMappingType;
-		this.setDataType(jpaMappingType.getDataType());
+	public void setJPAMappingType(JPAMappingType pJpaMappingType) 
+	{
+		jpaMappingType = pJpaMappingType;
+		
+		setDataType(jpaMappingType.getDataType());
 	}
 	
 	/**
@@ -82,44 +165,49 @@ public class JPAServerColumnMetaData {
 	 * 
 	 * @return the ColumnMetaData client infos.
 	 */
-	public ColumnMetaData getColumnMetaData() {
+	public ColumnMetaData getColumnMetaData() 
+	{
 		return columnMetaData;
 	}	
 
 	/**
-	 * Sets true if the <code>JPAServerColumnMetaData</code> is part of the primary key
+	 * Sets true if the <code>JPAServerColumnMetaData</code> is part of the primary key.
 	 * 
-	 * @param keyAttribute
+	 * @param pKeyAttribute
 	 */
-	public void setKeyAttribute(boolean keyAttribute) {
-		this.keyAttribute = keyAttribute;
+	public void setKeyAttribute(boolean pKeyAttribute)
+	{
+		keyAttribute = pKeyAttribute;
 	}
 	
 	/**
-	 * Returns true if the <code>JPAServerColumnMetaData</code> is part of the primary key
+	 * Returns true if the <code>JPAServerColumnMetaData</code> is part of the primary key.
 	 * 
 	 * @return true if the <code>JPAServerColumnMetaData</code> is part of the primary key
 	 */
-	public boolean isKeyAttribute() {
+	public boolean isKeyAttribute() 
+	{
 		return keyAttribute;
 	}
 
 	/**
-	 * Returns true if the <code>JPAServerColumnMetaData</code> is a StorageReference Column
+	 * Returns true if the <code>JPAServerColumnMetaData</code> is a StorageReference Column.
 	 * 
 	 * @return true if the <code>JPAServerColumnMetaData</code> is a StorageReference Column
 	 */
-	public boolean isStorageReference() {
+	public boolean isStorageReference() 
+	{
 		return storageReference;
 	}
 
 	/**
-	 * Sets true if the <code>JPAServerColumnMetaData</code> is a StorageReference Column
+	 * Sets true if the <code>JPAServerColumnMetaData</code> is a StorageReference Column.
 	 * 
-	 * @param storageReference
+	 * @param pStorageReference
 	 */
-	public void setStorageReference(boolean storageReference) {
-		this.storageReference = storageReference;
+	public void setStorageReference(boolean pStorageReference) 
+	{
+		storageReference = pStorageReference;
 	}
 
 	/**
@@ -133,12 +221,14 @@ public class JPAServerColumnMetaData {
 	}
 
 	/**
-	 * Sets the Name of the column
+	 * Sets the Name of the column.
 	 * 
 	 * @param pName the column name
 	 */
-	public void setName(String pName) {
-		this.name = pName;
+	public void setName(String pName) 
+	{
+		name = pName;
+		
 		columnMetaData.setName(pName);
 	}
 	
@@ -175,8 +265,7 @@ public class JPAServerColumnMetaData {
 	/**
 	 * Sets whether values in this column may be null.
 	 * 
-	 * @param pNullable
-	 *            true if values in this column may be null.
+	 * @param pNullable true if values in this column may be null.
 	 */
 	public void setNullable(boolean pNullable)
 	{
@@ -227,8 +316,7 @@ public class JPAServerColumnMetaData {
 	/**
 	 * Sets the scale of this column. 
 	 * 
-	 * @param pScale
-	 *            the scale of this column.
+	 * @param pScale the scale of this column.
 	 */
 	public void setScale(int pScale)
 	{
@@ -238,7 +326,7 @@ public class JPAServerColumnMetaData {
 	/**
 	 * Sets whether this column is writeable.
 	 * 
-	 * @param pWriteable	true if column is writeable.
+	 * @param pWriteable true if column is writeable.
 	 */
 	public void setWritable(boolean pWriteable)
 	{
@@ -288,8 +376,7 @@ public class JPAServerColumnMetaData {
 	/**
 	 * Sets if this <code>ColumnMetaData</code> is an auto increment column.
 	 *
-	 * @param pAutoIncrement 
-	 *			the bAutoIncrement to set
+	 * @param pAutoIncrement the bAutoIncrement to set
 	 */
 	public void setAutoIncrement(boolean pAutoIncrement)
 	{
@@ -313,7 +400,8 @@ public class JPAServerColumnMetaData {
 	 */
 	public void setLinkReference(StorageReferenceDefinition pLinkReference)
 	{
-		if(isStorageReference()) {
+		if (isStorageReference()) 
+		{
 			columnMetaData.setLinkReference(pLinkReference);
 		}
 	}	
@@ -358,36 +446,4 @@ public class JPAServerColumnMetaData {
 		return columnMetaData.getAllowedValues();
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		JPAServerColumnMetaData other = (JPAServerColumnMetaData) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "JPAServerColumnMetaData [jpaMappingType=" + jpaMappingType
-				+ ", columnMetaData=" + columnMetaData + ", name=" + name
-				+ ", keyAttribute=" + keyAttribute + "]";
-	}	
-
-}
+}	// JPAServerColumnMetaData
