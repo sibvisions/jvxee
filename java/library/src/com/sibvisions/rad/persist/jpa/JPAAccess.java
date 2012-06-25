@@ -70,19 +70,34 @@ public class JPAAccess
 	private Object externalEAO;
 	
 	/** The name of the insert Method. */
-	private String insertMethod;
+	private String insertMethodName;
 	
 	/** The name of the update Method. */
-	private String updateMethod;
+	private String updateMethodName;
 	
 	/** The name of the delete Method. */
-	private String deleteMethod;
+	private String deleteMethodName;
 	
 	/** The name of the findById Method. */
-	private String findByIdMethod;
+	private String findByIdMethodName;
 	
 	/** The name of the findAll Method. */
-	private String findAllMethod;
+	private String findAllMethodName;
+	
+	/** The insert Method. */
+	private Method insertMethod;
+	
+	/** The update Method. */
+	private Method updateMethod;
+	
+	/** The delete Method. */
+	private Method deleteMethod;
+	
+	/** The findById Method. */
+	private Method findByIdMethod;
+	
+	/** The findAll Method. */
+	private Method findAllMethod;	
 	
 	/** The Metamodel holds information about the structure of the entities. **/
 	private Metamodel metamodel;	
@@ -113,11 +128,11 @@ public class JPAAccess
 	{
 		if (externalEAO instanceof IGenericEAO) 
 		{
-			insertMethod = "insert";
-			updateMethod = "update";
-			deleteMethod = "delete";
-			findByIdMethod = "findById";
-			findAllMethod = "findAll";
+			insertMethodName = "insert";
+			updateMethodName = "update";
+			deleteMethodName = "delete";
+			findByIdMethodName = "findById";
+			findAllMethodName = "findAll";
 		} 
 		else 
 		{
@@ -131,23 +146,23 @@ public class JPAAccess
 						{
 							if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) 
 							{
-								insertMethod = method.getName();
+								insertMethodName = method.getName();
 							} 
 							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) 
 							{
-								updateMethod = method.getName();
+								updateMethodName = method.getName();
 							} 
 							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.DELETE) 
 							{
-								deleteMethod = method.getName();
+								deleteMethodName = method.getName();
 							} 
 							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_BY_ID) 
 							{
-								findByIdMethod = method.getName();
+								findByIdMethodName = method.getName();
 							} 
 							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_ALL) 
 							{
-								findAllMethod = method.getName();
+								findAllMethodName = method.getName();
 							}
 						} 
 						catch (Exception e)
@@ -171,7 +186,7 @@ public class JPAAccess
 	 */
 	public String getInsertMethod() 
 	{
-		return insertMethod;
+		return insertMethodName;
 	}
 
 	/**
@@ -181,7 +196,7 @@ public class JPAAccess
 	 */
 	public void setInsertMethod(String pInsertMethod) 
 	{
-		insertMethod = pInsertMethod;
+		insertMethodName = pInsertMethod;
 	}
 
 	/**
@@ -191,7 +206,7 @@ public class JPAAccess
 	 */
 	public String getUpdateMethod() 
 	{
-		return updateMethod;
+		return updateMethodName;
 	}
 
 	/**
@@ -201,7 +216,7 @@ public class JPAAccess
 	 */
 	public void setUpdateMethod(String pUpdateMethod) 
 	{
-		updateMethod = pUpdateMethod;
+		updateMethodName = pUpdateMethod;
 	}
 
 	/**
@@ -211,7 +226,7 @@ public class JPAAccess
 	 */
 	public String getDeleteMethod() 
 	{
-		return deleteMethod;
+		return deleteMethodName;
 	}
 
 	/**
@@ -221,7 +236,7 @@ public class JPAAccess
 	 */
 	public void setDeleteMethod(String pDeleteMethod)
 	{
-		deleteMethod = pDeleteMethod;
+		deleteMethodName = pDeleteMethod;
 	}
 
 	/**
@@ -231,7 +246,7 @@ public class JPAAccess
 	 */
 	public String getFindByIdMethod() 
 	{
-		return findByIdMethod;
+		return findByIdMethodName;
 	}
 
 	/**
@@ -241,7 +256,7 @@ public class JPAAccess
 	 */
 	public void setFindByIdMethod(String pFindByIdMethod) 
 	{
-		findByIdMethod = pFindByIdMethod;
+		findByIdMethodName = pFindByIdMethod;
 	}
 	
 	/**
@@ -251,7 +266,7 @@ public class JPAAccess
 	 */
 	public String getFindAllMethod() 
 	{
-		return findAllMethod;
+		return findAllMethodName;
 	}
 
 	/**
@@ -261,7 +276,7 @@ public class JPAAccess
 	 */
 	public void setFindAllMethod(String pFindAllMethod)
 	{
-		findAllMethod = pFindAllMethod;
+		findAllMethodName = pFindAllMethod;
 	}
 
 	/**
@@ -279,12 +294,16 @@ public class JPAAccess
     	
 		if (pEntity != null) 
 		{
-	    	if (externalEAO != null && insertMethod != null) 
+	    	if (externalEAO != null && insertMethodName != null) 
 	    	{
 	    		try 
 	    		{
-	    			Method  method = externalEAO.getClass().getMethod(insertMethod, pEntityClass);
-	    			ret = method.invoke(externalEAO, pEntity);
+	    			if(insertMethod == null) 
+	    			{
+	    				insertMethod = externalEAO.getClass().getMethod(insertMethodName, pEntityClass);
+	    			}
+	    			
+	    			ret = insertMethod.invoke(externalEAO, pEntity);
 	    		} 
 	    		catch (InvocationTargetException ite) 
 	    		{ 
@@ -334,12 +353,16 @@ public class JPAAccess
     {
 		if (pEntity != null) 
 		{
-	    	if (externalEAO != null && updateMethod != null) 
+	    	if (externalEAO != null && updateMethodName != null) 
 	    	{
 	    		try 
 	    		{
-	    			Method  method = externalEAO.getClass().getMethod(updateMethod, pEntityClass);
-	    			method.invoke(externalEAO, pEntity);
+	    			if(updateMethod == null)
+	    			{
+	    				updateMethod = externalEAO.getClass().getMethod(updateMethodName, pEntityClass);
+	    			}
+	    			
+	    			updateMethod.invoke(externalEAO, pEntity);
 	    	
 	    			return;
 	    		} 
@@ -386,12 +409,16 @@ public class JPAAccess
     {
 		if (pEntity != null) 
 		{
-	    	if (externalEAO != null && deleteMethod != null) 
+	    	if (externalEAO != null && deleteMethodName != null) 
 	    	{
 	    		try 
 	    		{
-	    			Method  method = externalEAO.getClass().getMethod(deleteMethod, pEntityClass);
-	    			method.invoke(externalEAO, pEntity);
+	    			if(deleteMethod == null) 
+	    			{
+	    				deleteMethod = externalEAO.getClass().getMethod(deleteMethodName, pEntityClass);
+	    			}
+	    			
+	    			deleteMethod.invoke(externalEAO, pEntity);
 	    	
 	    			return;
 	    		} 
@@ -441,12 +468,16 @@ public class JPAAccess
     	
 		if (pId != null) 
 		{
-	    	if (externalEAO != null && findByIdMethod != null) 
+	    	if (externalEAO != null && findByIdMethodName != null) 
 	    	{
 	    		try 
 	    		{
-	    			Method  method = externalEAO.getClass().getMethod(findByIdMethod, pId.getClass());
-	    			ret = method.invoke(externalEAO, pId);
+	    			if(findByIdMethod == null) 
+	    			{
+	    				findByIdMethod = externalEAO.getClass().getMethod(findByIdMethodName, pId.getClass());
+	    			}
+	    				
+	    			ret = findByIdMethod.invoke(externalEAO, pId);
 
 	    			return ret;
 	    		} 
@@ -495,12 +526,16 @@ public class JPAAccess
     {
     	Object ret = null;
 
-    	if (externalEAO != null && findByIdMethod != null) 
+    	if (externalEAO != null && findByIdMethodName != null) 
     	{
     		try 
     		{
-    			Method  method = externalEAO.getClass().getMethod(findAllMethod);
-    			ret = method.invoke(externalEAO);   
+    			if(findAllMethod == null) 
+    			{
+    				findAllMethod = externalEAO.getClass().getMethod(findAllMethodName);
+    			}
+    				
+    			ret = findAllMethod.invoke(externalEAO);   
     		} 
     		catch (InvocationTargetException ite) 
     		{ 
