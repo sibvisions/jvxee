@@ -52,7 +52,7 @@ public class Customer implements Serializable
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int						id;
+	private long					id;
 
 	@ManyToOne
 	private Salutation				salutation;
@@ -86,16 +86,21 @@ public class Customer implements Serializable
 	@OneToMany(cascade = ALL, fetch = FetchType.LAZY, mappedBy = "customer")
 	private Collection<Address>		addresses		= new ArrayList<Address>();
 
+	public Customer() 
+	{
+		
+	}
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public int getId()
+	public long getId()
 	{
 		return id;
 	}
 
-	public void setId(int id)
+	public void setId(long id)
 	{
 		this.id = id;
 	}

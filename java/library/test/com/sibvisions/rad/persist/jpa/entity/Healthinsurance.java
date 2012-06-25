@@ -37,17 +37,22 @@ public class Healthinsurance implements Serializable
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	private int		id;
+	private long	id;
 
 	private int		nr;
 
-	private String	health_insurance;
+	private String	healthinsurance;
 
 	private String	street;
 
 	private int		zip;
 
 	private String	city;
+	
+	public Healthinsurance() 
+	{
+		
+	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
@@ -55,12 +60,12 @@ public class Healthinsurance implements Serializable
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public int getId()
+	public long getId()
 	{
 		return id;
 	}
 
-	public void setId(int id)
+	public void setId(long id)
 	{
 		this.id = id;
 	}
@@ -77,14 +82,14 @@ public class Healthinsurance implements Serializable
 	}
 
 	@Column(unique = true)
-	public String getHealth_insurance()
+	public String getHealthinsurance()
 	{
-		return health_insurance;
+		return healthinsurance;
 	}
 
-	public void setHealth_insurance(String health_insurance)
+	public void setHealthinsurance(String healthinsurance)
 	{
-		this.health_insurance = health_insurance;
+		this.healthinsurance = healthinsurance;
 	}
 
 	public String getStreet()
