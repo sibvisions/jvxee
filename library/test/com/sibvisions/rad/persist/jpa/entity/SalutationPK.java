@@ -32,13 +32,18 @@ public class SalutationPK implements Serializable {
 
     @Id 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	private String salutation;
 	
-	public int getId() {
+	public SalutationPK() 
+	{
+		
+	}
+	
+	public long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getSalutation() {
@@ -47,17 +52,17 @@ public class SalutationPK implements Serializable {
 	public void setSalutation(String salutation) {
 		this.salutation = salutation;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result
 				+ ((salutation == null) ? 0 : salutation.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -75,5 +80,6 @@ public class SalutationPK implements Serializable {
 		} else if (!salutation.equals(other.salutation))
 			return false;
 		return true;
-	}	
+	}
+	
 }

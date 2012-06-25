@@ -193,7 +193,7 @@ public class CustomerEditFrame extends UIInternalFrame
 	private void initializeModel() throws Throwable
 	{
 		// we use a new "session" for the screen
-		connection = ((MasterConnection)application.getConnection()).createSubConnection("apps.jvxee.frames.Customer");
+		connection = ((MasterConnection)application.getConnection()).createSubConnection("apps.jvxee.frames.CustomerEdit");
 		connection.open();
 
 		// data connection
@@ -300,13 +300,13 @@ public class CustomerEditFrame extends UIInternalFrame
 		edtBirthday.setDataRow(rdbCustomer);
 		edtBirthday.setColumnName("BIRTHDAY");
 		edtHealthInsurance.setDataRow(rdbCustomer);
-		edtHealthInsurance.setColumnName("HEALTHINSURANCE_HEALTH_INSURANCE");
+		edtHealthInsurance.setColumnName("HEALTHINSURANCE_HEALTHINSURANCE");
 		edtFilename.setDataRow(rdbCustomer);
 		edtFilename.setColumnName("FILENAME");
 		edtTelephonePrivate.setDataRow(rdbCustomer);
-		edtTelephonePrivate.setColumnName("TELEPHONE_PRIVATE");
+		edtTelephonePrivate.setColumnName("TELEPHONEPRIVATE");
 		edtTelephoneOffice.setDataRow(rdbCustomer);
-		edtTelephoneOffice.setColumnName("TELEPHONE_OFFICE");
+		edtTelephoneOffice.setColumnName("TELEPHONEOFFICE");
 		edtEmail.setDataRow(rdbCustomer);
 		edtEmail.setColumnName("EMAIL");
 		edtPrivateCustomer.setDataRow(rdbCustomer);

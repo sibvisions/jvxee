@@ -105,27 +105,27 @@ public class TestJPAStorage
 	    entityManager.createNativeQuery("insert into salutation (ID, SALUTATION) values (1, 'Mister')").executeUpdate();	      
 	    entityManager.createNativeQuery("insert into salutation (ID, SALUTATION) values (2, 'Mrs')").executeUpdate();
 
-	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) " +
+	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTHINSURANCE, STREET, ZIP, CITY) " +
 	      		                        "values (1, 10, 'Healthinsurance 1', 'Street 1', 1111, 'City 1')").executeUpdate();	      
-	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) " +
+	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTHINSURANCE, STREET, ZIP, CITY) " +
 	    	                            "values (2, 20, 'Healthinsurance 2', 'Street 2', 2222, 'City 2')").executeUpdate();     
-	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTH_INSURANCE, STREET, ZIP, CITY) " +
+	    entityManager.createNativeQuery("insert into healthinsurance (ID, NR, HEALTHINSURANCE, STREET, ZIP, CITY) " +
 	      		                        "values (3, 30, 'Healthinsurance 3', 'Street 3', 3333, 'City 3')").executeUpdate();	      
 	      
-	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
-	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONEPRIVATE, " +
+	      		                                              "TELEPHONEOFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
 	      		                        "values (1, 'Firstname 1', 'Lastname 1', null, true, '1111111111', '1111111111', 'first1.last1@gmx.at', " +
 	      		                                "1, 'Mister',  1, 10)").executeUpdate();	      
-	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
-	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONEPRIVATE, " +
+	      		                                              "TELEPHONEOFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
                                         "values (2, 'Firstname 2', 'Lastname 2', null, true, '2222222222', '2222222222', 'first2.last2@gmx.at', " +
                                                 "1, 'Mister',  1, 10)").executeUpdate();	
-	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
-	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONEPRIVATE, " +
+	      		                                              "TELEPHONEOFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
 	      		                        "values (3, 'Firstname 3', 'Lastname 3', null, false, '3333333333', '3333333333', 'first3.last3@gmx.at', " +
 	      		                                  "2, 'Mrs',  3, 30)").executeUpdate();	
-	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONE_PRIVATE, " +
-	      		                                              "TELEPHONE_OFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
+	    entityManager.createNativeQuery("insert into customer (ID, FIRSTNAME, LASTNAME, BIRTHDAY, PRIVATECUSTOMER, TELEPHONEPRIVATE, " +
+	      		                                              "TELEPHONEOFFICE, EMAIL, SALUTATION_ID, SALUTATION_SALUTATION, HEALTHINSURANCE_ID, HEALTHINSURANCE_NR) " +
 	      		                        "values (4, 'Firstname 4', 'Lastname 4', null, false, '4444444444', '4444444444', 'first4.last4@gmx.at', " +
 	      		                                "2, 'Mrs',  3, 30)").executeUpdate();	
 	         
@@ -244,11 +244,11 @@ public class TestJPAStorage
         Assert.assertEquals(5, entity.getId());
         Assert.assertNull(entity.getBirthday());
         Assert.assertEquals(dataRow[2], entity.getCustomerContact().getEmail());
-        Assert.assertEquals(dataRow[3], entity.getCustomerContact().getTelephone_private());
-        Assert.assertEquals(dataRow[4], entity.getCustomerContact().getTelephone_office());
+        Assert.assertEquals(dataRow[3], entity.getCustomerContact().getTelephonePrivate());
+        Assert.assertEquals(dataRow[4], entity.getCustomerContact().getTelephoneOffice());
         Assert.assertEquals(dataRow[5], entity.getLastname());
         Assert.assertEquals(dataRow[9], entity.getFirstname());
-        Assert.assertEquals(dataRow[10], new Integer(entity.getSalutation().getSalutationPK().getId()));
+        Assert.assertEquals(dataRow[10], new Long(entity.getSalutation().getSalutationPK().getId()));
         Assert.assertEquals(dataRow[11], entity.getSalutation().getSalutationPK().getSalutation());
         Assert.assertTrue(entity.isPrivateCustomer());
         
@@ -273,7 +273,7 @@ public class TestJPAStorage
         Assert.assertEquals(3, entity.getId());
         Assert.assertEquals(dataRow[1], entity.getZip());
         Assert.assertEquals(dataRow[2], entity.getStreet());
-        Assert.assertEquals(dataRow[3], Integer.valueOf(entity.getCustomer().getId()));
+        Assert.assertEquals(dataRow[3], Long.valueOf(entity.getCustomer().getId()));
         Assert.assertEquals(dataRow[4], entity.getCustomer().getLastname());
         Assert.assertEquals(dataRow[5], entity.getCity());
         
@@ -281,7 +281,7 @@ public class TestJPAStorage
         
         entityManager.getTransaction().begin();
         
-        Customer entityCust = entityManager.find(Customer.class, Integer.valueOf(2));
+        Customer entityCust = entityManager.find(Customer.class, Long.valueOf(2));
 
         Assert.assertNotNull(entityCust);
         Assert.assertEquals(1, entityCust.getAddresses().size());   
@@ -340,17 +340,17 @@ public class TestJPAStorage
 
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, BigDecimal.valueOf(3));
+        Customer entity = entityManager.find(Customer.class, Long.valueOf(3));
 
         Assert.assertNotNull(entity);
         Assert.assertEquals(3, entity.getId());
         Assert.assertNull(entity.getBirthday());
         Assert.assertEquals(dataRowNew[2], entity.getCustomerContact().getEmail());
-        Assert.assertEquals(dataRowNew[3], entity.getCustomerContact().getTelephone_private());
-        Assert.assertEquals(dataRowNew[4], entity.getCustomerContact().getTelephone_office());
+        Assert.assertEquals(dataRowNew[3], entity.getCustomerContact().getTelephonePrivate());
+        Assert.assertEquals(dataRowNew[4], entity.getCustomerContact().getTelephoneOffice());
         Assert.assertEquals(dataRowNew[5], entity.getLastname());
         Assert.assertEquals(dataRowNew[9], entity.getFirstname());
-        Assert.assertEquals(dataRowNew[10], new Integer(entity.getSalutation().getSalutationPK().getId()));
+        Assert.assertEquals(dataRowNew[10], new Long(entity.getSalutation().getSalutationPK().getId()));
         Assert.assertEquals(dataRowNew[11], entity.getSalutation().getSalutationPK().getSalutation());
         Assert.assertTrue(!entity.isPrivateCustomer());
         
@@ -381,13 +381,13 @@ public class TestJPAStorage
 
         entityManager.getTransaction().begin();
         
-        Address entity = entityManager.find(Address.class, Integer.valueOf(2));
+        Address entity = entityManager.find(Address.class, Long.valueOf(2));
 
         Assert.assertNotNull(entity);
         Assert.assertEquals(2, entity.getId());
         Assert.assertEquals(dataRowNew[1], entity.getZip());
         Assert.assertEquals(dataRowNew[2], entity.getStreet());
-        Assert.assertEquals(dataRowNew[3], Integer.valueOf(entity.getCustomer().getId()));
+        Assert.assertEquals(dataRowNew[3], Long.valueOf(entity.getCustomer().getId()));
         Assert.assertEquals(dataRowNew[4], entity.getCustomer().getLastname());
         Assert.assertEquals(dataRowNew[5], entity.getCity());
         
@@ -409,7 +409,7 @@ public class TestJPAStorage
 
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, Integer.valueOf(1));
+        Customer entity = entityManager.find(Customer.class, Long.valueOf(1));
 
         Assert.assertNotNull(entity);
         Assert.assertEquals(1, entity.getId());
@@ -441,7 +441,7 @@ public class TestJPAStorage
 	
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, Integer.valueOf(3));
+        Customer entity = entityManager.find(Customer.class, Long.valueOf(3));
         
         Assert.assertNull(entity);
 
@@ -463,7 +463,7 @@ public class TestJPAStorage
 
         entityManager.getTransaction().begin();
         
-        Address entity = entityManager.find(Address.class, Integer.valueOf(2));
+        Address entity = entityManager.find(Address.class, Long.valueOf(2));
 
         Assert.assertNull(entity);
         
@@ -480,7 +480,7 @@ public class TestJPAStorage
 	
         entityManager.getTransaction().begin();
         
-        Customer entity = entityManager.find(Customer.class, Integer.valueOf(1));
+        Customer entity = entityManager.find(Customer.class, Long.valueOf(1));
 
         Assert.assertNotNull(entity);
         Assert.assertEquals(1, entity.getId());
@@ -502,7 +502,7 @@ public class TestJPAStorage
 		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
 		Object[] dataRowRefetch = list.get(0);
-
+		
 		/* ID, BIRTHDAY, EMAIL, TELEPHONE_PRIVATE, TELEPHONE_OFFICE, LASTNAME, 
 		 *  HEALTHINSURANCE_ID, HEALTHINSURANCE_NR, HEALTHINSURANCE_HEALTH_INSURANCE,
 		 *  FIRSTNAME, SALUTATION_ID, SALUTATION, PRIVATECUSTOMER
@@ -514,7 +514,7 @@ public class TestJPAStorage
 		Object[] dataRowRefetch2 = jpaStorageCustomer.executeRefetchRow(dataRowRefetch);
 	
 		Assert.assertEquals("first3.last3@gmx.at", dataRowRefetch2[2]);
-		Assert.assertEquals(new Integer(2), dataRowRefetch2[10]);
+		Assert.assertEquals(new Long(2), dataRowRefetch2[10]);
 		Assert.assertEquals("Mrs", dataRowRefetch2[11]);
 	}		
 	
