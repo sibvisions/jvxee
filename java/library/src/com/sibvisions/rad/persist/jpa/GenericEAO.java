@@ -43,14 +43,21 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/** The Entity Manager. */
 	private EntityManager entityManager;
 	
+	/** The Class for the entity. */
 	private Class<E> entityClass;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/**
+	 * To set the Entity Manager.
+	 * 
+	 * @param pEntityManager The Entity Manager
+	 */
 	public GenericEAO(EntityManager pEntityManager) 
 	{	
 		setEntityManager(pEntityManager);
@@ -65,12 +72,21 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	 */
 	public E insert(E entity) 
 	{
-		
-        entityManager.getTransaction().begin();
-    	
-        entityManager.persist(entity);
-                
-        entityManager.getTransaction().commit();
+		try 
+		{
+			
+	        entityManager.getTransaction().begin();
+	
+	        entityManager.persist(entity);
+	                
+	        entityManager.getTransaction().commit();
+	        
+		}  
+		catch(IllegalStateException ise) 
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed
+			entityManager.persist(entity);
+		}
 
         return entity;
 	}
@@ -81,11 +97,21 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	public void update(E entity) 
 	{
 		
-        entityManager.getTransaction().begin();
-    	
-        entityManager.merge(entity);
+		try 
+		{
+			
+	        entityManager.getTransaction().begin();
+	    	
+	        entityManager.merge(entity);
+	        
+	        entityManager.getTransaction().commit();
         
-        entityManager.getTransaction().commit();
+		} 
+		catch(IllegalStateException ise) 
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed
+			entityManager.merge(entity);
+		}        
 	}
 	
 	/**
@@ -93,11 +119,21 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	 */
 	public void delete(E entity) 
 	{
+		try 
+		{
+			
         entityManager.getTransaction().begin();
     	
         entityManager.remove(entity);
         
         entityManager.getTransaction().commit();	
+        
+		} 
+		catch(IllegalStateException ise) 
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed
+			entityManager.remove(entity);
+		}        
 	}
 	
 	/**
@@ -106,11 +142,23 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	public E findById(PK id) 
 	{
 		
-        entityManager.getTransaction().begin();
-    	
-        E entity = entityManager.find(entityClass, id);
-
-        entityManager.getTransaction().commit();
+		E entity = null;
+		
+		try 
+		{
+			
+	        entityManager.getTransaction().begin();
+	    	
+	        entity = entityManager.find(entityClass, id);
+	
+	        entityManager.getTransaction().commit();
+        
+		}
+		catch(IllegalStateException ise) 
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed
+			entity = entityManager.find(entityClass, id);
+		}   
         
         return entity;
 	}
@@ -120,20 +168,30 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	 */
 	public Collection<E> findAll() 
 	{
-        entityManager.getTransaction().begin();
-        
+	
 		CriteriaQuery criteriaQuery = entityManager.getCriteriaBuilder().createQuery();
 		From from = criteriaQuery.from(entityClass);
 		criteriaQuery.select(from);
 		
         Query query = entityManager.createQuery(criteriaQuery);
-        List<E> objectList = (List<E>) query.getResultList();
-              
-//TODO remove debug code???        
-//        Query  query = entityManager.createQuery("select "+entityClass.getSimpleName()+" from " + entityClass.getSimpleName()+" as "+entityClass.getSimpleName());       
-//        List<E> objectList = (List<E>) query.getResultList();
-
-        entityManager.getTransaction().commit();
+        
+        List<E> objectList = null;
+		
+		try 
+		{
+			
+	        entityManager.getTransaction().begin();
+	        
+	        objectList = (List<E>) query.getResultList();
+	              
+	        entityManager.getTransaction().commit();
+        
+		}
+		catch(IllegalStateException ise) 
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed
+			objectList = (List<E>) query.getResultList();
+		}           
         
         return objectList;
 	}
@@ -142,6 +200,11 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
+	/**
+	 * Setter Methode for the Entity Manager.
+	 * 
+	 * @param pEntityManager The Entity Manager for the entities
+	 */
 	public void setEntityManager(EntityManager pEntityManager) 
 	{
 		entityManager = pEntityManager;
@@ -150,7 +213,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	/**
 	 * Sets the class of the entity the DAO.
 	 * 
-	 * @param entityClass
+	 * @param entityClass The Class for the entity
 	 */
 	public void setEntityClass(Class<E> pEntityClass) 
 	{
