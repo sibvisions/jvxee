@@ -102,7 +102,7 @@ public class JPAEmbeddedKey
 	/**
 	 * Sets the <code>JPAServerColumnMetaData</code>.
 	 * 
-	 * @param pJPAMappingType
+	 * @param pJPAMappingType the JPAMAppingType
 	 */
 	public void setJPAMappingType(JPAMappingType pJPAMappingType)
 	{

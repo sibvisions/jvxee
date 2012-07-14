@@ -74,8 +74,8 @@ public class ConditionCriteriaMapper
 	/**
 	 * Creates the ConditionCriteriaMapper.
 	 * 
-	 * @param pServerMetaData
-	 * @param pCriteriaBuilder
+	 * @param pServerMetaData The JPAServerMetaData
+	 * @param pCriteriaBuilder The CriteriaBuilder
 	 */
 	public ConditionCriteriaMapper(JPAServerMetaData pServerMetaData, CriteriaBuilder pCriteriaBuilder) 
 	{
@@ -94,7 +94,7 @@ public class ConditionCriteriaMapper
 	 * @param pSort the SortDefinition
 	 * @param pFromEntity the Entity to select
 	 * @param pJoinAttributeName the Attribute Name for a join. It is used in a ManyToMany Realtion
-	 * @return
+	 * @return The CriteriaQuery
 	 * @throws DataSourceException Throws a DataSourceException when the defined Columns are not in the ServerMetaData
 	 */
 	public CriteriaQuery getCriteriaQuery(ICondition pCondition, SortDefinition pSort, Class pFromEntity, String pJoinAttributeName) throws DataSourceException 
@@ -123,9 +123,6 @@ public class ConditionCriteriaMapper
 					predicate = getPredicateForNotCondition((Not) pCondition, from);
 				}				
 
-//TODO remove debug code???				
-//				JPAForeignKey jpaForeignKey = serverMetaData.getJPAForeignKeyForCondition(pCondition);
-	
 				if (predicate != null) 
 				{
 					from = from.join(pJoinAttributeName);
@@ -181,7 +178,7 @@ public class ConditionCriteriaMapper
 	 * @param pCondition the ICondition
 	 * @param pFromEntity the Entity to select
 	 * @param pJoinAttributeName the Attribute Name for a join. It is used in a ManyToMany Realtion
-	 * @return
+	 * @return the CriteriaQuery
 	 * @throws DataSourceException throws a DataSourceException when the defined Columns are not in the ServerMetaData
 	 */
 	public CriteriaQuery getCountCriteriaQuery(ICondition pCondition, Class pFromEntity, String pJoinAttributeName) throws DataSourceException 
@@ -230,9 +227,9 @@ public class ConditionCriteriaMapper
 	/**
 	 * Returns the javax.persistence.criteria.Predicate for the given OperatorCondition.
 	 * 
-	 * @param pOperatorCondition
-	 * @param pFrom
-	 * @return
+	 * @param pOperatorCondition the OperatorCondition
+	 * @param pFrom 
+	 * @return The Predicate
 	 * @throws DataSourceException throws a DataSourceException when the defined Columns are not in the ServerMetaData
 	 */
 	private Predicate getPredicateForOperatorCondition(OperatorCondition pOperatorCondition, From pFrom) throws DataSourceException 
@@ -278,9 +275,9 @@ public class ConditionCriteriaMapper
 	/**
 	 * Returns the Predicate for the Not Condition.
 	 * 
-	 * @param pNotCondition
-	 * @param pFrom
-	 * @return
+	 * @param pNotCondition The NotCondition
+	 * @param pFrom 
+	 * @return the Predicate
 	 * @throws DataSourceException throws a DataSourceException when the defined Columns are not in the ServerMetaData
 	 */
 	private Predicate getPredicateForNotCondition(Not pNotCondition, From pFrom) throws DataSourceException 
@@ -308,9 +305,9 @@ public class ConditionCriteriaMapper
 	/**
 	 * Returns the javax.persistence.criteria.Predicate for the CompareCondition.
 	 * 
-	 * @param pCompareCondition
-	 * @param pFrom
-	 * @return
+	 * @param pCompareCondition the CompareCondition
+	 * @param pFrom 
+	 * @return The Predicate
 	 * @throws DataSourceException throws a DataSourceException when the defined Columns are not in the ServerMetaData
 	 */
 	private Predicate getPredicateForCompareCondition(CompareCondition pCompareCondition, From pFrom) throws DataSourceException 
@@ -536,10 +533,10 @@ public class ConditionCriteriaMapper
 	/**
 	 * Sets the Order By to the given criteriaQuery.
 	 * 
-	 * @param pCriteriaQuery
-	 * @param pFrom
-	 * @param pSort
-	 * @throws DataSourceException
+	 * @param pCriteriaQuery the CriteriaQuery
+	 * @param pFrom 
+	 * @param pSort the SortDefinition
+	 * @throws DataSourceException 
 	 */
 	public void setOrdering(CriteriaQuery pCriteriaQuery, From pFrom, SortDefinition pSort) throws DataSourceException 
 	{

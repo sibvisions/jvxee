@@ -41,18 +41,19 @@ public class JPAServerColumnMetaData
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	/** The MappingType for this column meta data. */
+	/** The MappingType for this column meta data. **/
 	private JPAMappingType jpaMappingType;
 	
-	/** The ColumnMetaData for the client. */
+	/** The ColumnMetaData for the client. **/
 	private ColumnMetaData	columnMetaData;
 	
 	/** The name of the column meta data. **/
 	private String name;
 	
-	/** If the column meta data is part of the primary key. */
+	/** If the column meta data is part of the primary key. **/
 	private boolean keyAttribute = false;
 	
+	/** if the JPAServerColumnMetaData is a storageReference. **/
 	private boolean storageReference = false;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,7 +152,7 @@ public class JPAServerColumnMetaData
 	/**
 	 * Set the <code>JPAMappingType</code> for this <code>JPAServerColumnMetaData</code>.
 	 * 
-	 * @param pJpaMappingType
+	 * @param pJpaMappingType the JPAMappingType
 	 */
 	public void setJPAMappingType(JPAMappingType pJpaMappingType) 
 	{
@@ -173,7 +174,7 @@ public class JPAServerColumnMetaData
 	/**
 	 * Sets true if the <code>JPAServerColumnMetaData</code> is part of the primary key.
 	 * 
-	 * @param pKeyAttribute
+	 * @param pKeyAttribute true if the JPAServerColumnMetaData is part of the primary key
 	 */
 	public void setKeyAttribute(boolean pKeyAttribute)
 	{
@@ -203,7 +204,7 @@ public class JPAServerColumnMetaData
 	/**
 	 * Sets true if the <code>JPAServerColumnMetaData</code> is a StorageReference Column.
 	 * 
-	 * @param pStorageReference
+	 * @param pStorageReference true if it is a StorageReference
 	 */
 	public void setStorageReference(boolean pStorageReference) 
 	{

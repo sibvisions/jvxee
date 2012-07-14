@@ -96,6 +96,7 @@ public class JPAMappingType
 	/** The setter Method for the Attribute. **/
 	private String setterMethodName;
 	
+	/** The Path-Navigation. **/
 	private ArrayList<String> pathNavigation = new ArrayList<String>();
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,7 +121,7 @@ public class JPAMappingType
 	 * 
 	 * @param pEntity The Entity, the Primary Key, Foreign Key or Embedded Object 
 	 * @param pValue The value to set
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	public void setValue(Object pEntity, Object pValue) throws Exception 
 	{
@@ -140,7 +141,7 @@ public class JPAMappingType
 	 * 
 	 * @param pEntity The Entity, the Primary Key, Foreign Key or Embedded Object 
 	 * @return the value for the given entity
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	public Object getValue(Object pEntity) throws Exception 
 	{
@@ -161,7 +162,7 @@ public class JPAMappingType
 	/**
 	 * Sets the DataType Identifier.
 	 * 
-	 * @param pDataTypeIdentifier
+	 * @param pDataTypeIdentifier The DataTypeIdentifier
 	 */
 	public void setDataType(IDataType pDataTypeIdentifier) 
 	{
@@ -191,7 +192,7 @@ public class JPAMappingType
 	/**
 	 * Sets the class of the entity.
 	 * 
-	 * @param pEntityClass
+	 * @param pEntityClass The class of the entity
 	 */
 	public void setEntityClass(Class pEntityClass) 
 	{
@@ -211,7 +212,7 @@ public class JPAMappingType
 	/**
 	 * Sets the class of the java Type.
 	 * 
-	 * @param pJavaTypeClass
+	 * @param pJavaTypeClass the class of the java type
 	 */
 	public void setJavaTypeClass(Class pJavaTypeClass) 
 	{
@@ -221,7 +222,7 @@ public class JPAMappingType
 	/**
 	 * Sets the getterMethodName for the Attribute.
 	 * 
-	 * @param pGetterMethodName
+	 * @param pGetterMethodName the Name of the getter-method
 	 */
 	public void setGetterMethodName(String pGetterMethodName) 
 	{
@@ -231,7 +232,7 @@ public class JPAMappingType
 	/**
 	 * Sets the setterMethodName for the Attribute.
 	 * 
-	 * @param pSetterMethodName
+	 * @param pSetterMethodName the Name of the setter-method
 	 */
 	public void setSetterMethodName(String pSetterMethodName) 
 	{
@@ -266,7 +267,7 @@ public class JPAMappingType
 	 *     .....
  	 * }
  	 * 
-	 * @return
+	 * @return the PathNavigation
 	 */
 	public ArrayList<String> getPathNavigation() 
 	{
@@ -284,7 +285,7 @@ public class JPAMappingType
 	/**
 	 * Adds a path element.
 	 * 
-	 * @param pPathNavigation
+	 * @param pPathNavigation Adds an Element to the path Navigation
 	 */
 	public void addPathNavigation(String pPathNavigation) 
 	{
@@ -298,6 +299,7 @@ public class JPAMappingType
 	 * @param pValue The value from the DataRow
 	 * 
 	 * @return The casted java Type
+	 * @throws ModelException 
 	 */
 	public Object castObjectToJavaType(Object pValue) throws ModelException 
 	{
