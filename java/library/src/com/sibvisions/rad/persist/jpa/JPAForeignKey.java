@@ -73,13 +73,11 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	/** The class of the key from the entity in the entity. **/
 	private Class keyClass;
 
+	/** The column names. **/
 	private String [] referencedColumnNames; 
 	
 	/** Getter Method Name for Detail Entities. */
 	private String detailEntitiesMethode;
-	
-	/** The Add Methode Name to the Detail Entities. */	
-	private String addEntityMethode;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Overwritten methods
@@ -110,7 +108,7 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	/**
 	 * Sets the SingledIdAttribute.
 	 * 
-	 * @param pSingleIdAttribute
+	 * @param pSingleIdAttribute true when it is a singled Id
 	 */
 	public void setSingleIdAttribute(boolean pSingleIdAttribute) 
 	{
@@ -120,7 +118,7 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	/**
 	 * Sets the class of the key from the entity in the entity.
 	 * 
-	 * @param pKeyClass
+	 * @param pKeyClass the Class of the key
 	 */
 	public void setKeyClass(Class pKeyClass) 
 	{
@@ -137,26 +135,51 @@ public class JPAForeignKey extends JPAEmbeddedKey
 		return keyClass;
 	}
 
+	/**
+	 * Returns the referenced Column Names.
+	 * 
+	 * @return the referenced Column Names
+	 */
 	public String[] getReferencedColumnNames() 
 	{
 		return referencedColumnNames;
 	}
 
+	/**
+	 * Set the referenced Column Names.
+	 * 
+	 * @param pReferencedColumnNames the referenced Column Names
+	 */
 	public void setReferencedColumnNames(String[] pReferencedColumnNames) 
 	{
 		referencedColumnNames = pReferencedColumnNames;
 	}
 
+	/**
+	 * The Name of the detail Entities Method.
+	 * 
+	 * @param pDetailEntitiesMethode 
+	 */
 	public void setDetailEntitiesMethode(String pDetailEntitiesMethode) 
 	{
 		detailEntitiesMethode = pDetailEntitiesMethode;
 	}
 	
+	/**
+	 * Returns the Name of the detail Entities Method. 
+	 * 
+	 * @return the name of the detail Entities Method
+	 */
 	public String getDetailEntitiesMethode() 
 	{
 		return detailEntitiesMethode;
 	}	
 	
+	/**
+	 * True if the detail Entities Method is set.
+	 * 
+	 * @return True if the detail Entities Method is set
+	 */
 	public boolean hasDetailEntitiesMethode() 
 	{
 		if (detailEntitiesMethode != null && detailEntitiesMethode.length() > 0) 
@@ -167,6 +190,12 @@ public class JPAForeignKey extends JPAEmbeddedKey
 		return false;
 	}	
 	
+	/**
+	 * Calls the detail Entities Method of the given entity-object.
+	 * 
+	 * @param pEntity the entity-object
+	 * @return the Detail Entity objects
+	 */
 	public Object getDetailEntities(Object pEntity) 
 	{
 		try 
@@ -179,26 +208,13 @@ public class JPAForeignKey extends JPAEmbeddedKey
 		}
 		
 		return null;
-	}
-	
-	public void setAddEntityMethode(String pAddEntityMethode)
-	{
-		addEntityMethode = pAddEntityMethode;
 	}	
 	
-	public void addEntity(Object pEntity, Object pAddEntity) throws Exception 
-	{
-		try 
-		{
-			pEntity.getClass().getMethod(addEntityMethode, pAddEntity.getClass()).invoke(pEntity);
-		} 
-		catch (Exception e) 
-		{
-			//nothing to be done
-		}
-	}	
-		
-	
+	/**
+	 * Return the ICondition for this JPAForeignKey.
+	 * 
+	 * @return the ICondition
+	 */
 	public ICondition getCondition() 
 	{
 		ICondition condition = null;
@@ -300,7 +316,7 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	 * 
 	 * @param pData the Map with the values for the key
 	 * @return the primary key from the entity in the entity
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	public Object getKeyForEntity(Map<String, Object> pData) throws Exception 
 	{

@@ -180,9 +180,9 @@ public class JPAAccess
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Returns the Insert Methode name.
+	 * Returns the Insert Method name.
 	 * 
-	 * @return
+	 * @return The Name of the Insert Method
 	 */
 	public String getInsertMethod() 
 	{
@@ -190,9 +190,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Sets the Insert Methode name.
+	 * Sets the Insert Method name.
 	 * 
-	 * @param pInsertMethod
+	 * @param pInsertMethod The name of the insert method
 	 */
 	public void setInsertMethod(String pInsertMethod) 
 	{
@@ -200,9 +200,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Returns the Update Methode name.
+	 * Returns the Update Method name.
 	 * 
-	 * @return
+	 * @return The Name of the update method
 	 */
 	public String getUpdateMethod() 
 	{
@@ -210,9 +210,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Sets the Update Methode name.
+	 * Sets the Update Method name.
 	 * 
-	 * @param pUpdateMethod
+	 * @param pUpdateMethod The name of the update method
 	 */
 	public void setUpdateMethod(String pUpdateMethod) 
 	{
@@ -220,9 +220,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Returns the delete Methode name.
+	 * Returns the delete Method name.
 	 * 
-	 * @return
+	 * @return the name of the delete method
 	 */
 	public String getDeleteMethod() 
 	{
@@ -230,9 +230,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Sets the delete Methode name.
+	 * Sets the delete Method name.
 	 * 
-	 * @param pDeleteMethod
+	 * @param pDeleteMethod the name of the delete method
 	 */
 	public void setDeleteMethod(String pDeleteMethod)
 	{
@@ -240,9 +240,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Returns the findById Methode name.
+	 * Returns the findById Method name.
 	 * 
-	 * @return
+	 * @return the name of the find-by-id method
 	 */
 	public String getFindByIdMethod() 
 	{
@@ -250,9 +250,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Sets the findById Methode name.
+	 * Sets the findById Method name.
 	 * 
-	 * @param pFindByIdMethod
+	 * @param pFindByIdMethod the name of the find-by-id method
 	 */
 	public void setFindByIdMethod(String pFindByIdMethod) 
 	{
@@ -260,9 +260,9 @@ public class JPAAccess
 	}
 	
 	/**
-	 * Returns the findAll Methode name.
+	 * Returns the findAll Method name.
 	 * 
-	 * @return
+	 * @return the name of the find-all method
 	 */
 	public String getFindAllMethod() 
 	{
@@ -270,9 +270,9 @@ public class JPAAccess
 	}
 
 	/**
-	 * Sets the findAll Methode name.
+	 * Sets the findAll Method name.
 	 * 
-	 * @param pFindAllMethod
+	 * @param pFindAllMethod the name of the find-all method
 	 */
 	public void setFindAllMethod(String pFindAllMethod)
 	{
@@ -285,8 +285,8 @@ public class JPAAccess
 	 * 
 	 * @param pEntity The entity to insert
 	 * @param pEntityClass The entity Class of the inserted entity
-	 * @return
-	 * @throws DataSourceException
+	 * @return The inserted entity-object
+	 * @throws DataSourceException 
 	 */
     public Object insert(Object pEntity, Class pEntityClass) throws DataSourceException 
     {
@@ -298,7 +298,7 @@ public class JPAAccess
 	    	{
 	    		try 
 	    		{
-	    			if(insertMethod == null) 
+	    			if (insertMethod == null) 
 	    			{
 	    				insertMethod = externalEAO.getClass().getMethod(insertMethodName, pEntityClass);
 	    			}
@@ -347,7 +347,7 @@ public class JPAAccess
 	 * 
      * @param pEntity the entity to Update
      * @param pEntityClass the entity Class from the entity
-     * @throws DataSourceException
+     * @throws DataSourceException 
      */
     public void update(Object pEntity, Class pEntityClass) throws DataSourceException 
     {
@@ -357,7 +357,7 @@ public class JPAAccess
 	    	{
 	    		try 
 	    		{
-	    			if(updateMethod == null)
+	    			if (updateMethod == null)
 	    			{
 	    				updateMethod = externalEAO.getClass().getMethod(updateMethodName, pEntityClass);
 	    			}
@@ -403,7 +403,7 @@ public class JPAAccess
 	 * 
      * @param pEntity the entity to delete
      * @param pEntityClass the entity class from the entity
-     * @throws DataSourceException
+     * @throws DataSourceException 
      */
     public void delete(Object pEntity, Class pEntityClass) throws DataSourceException 
     {
@@ -413,7 +413,7 @@ public class JPAAccess
 	    	{
 	    		try 
 	    		{
-	    			if(deleteMethod == null) 
+	    			if (deleteMethod == null) 
 	    			{
 	    				deleteMethod = externalEAO.getClass().getMethod(deleteMethodName, pEntityClass);
 	    			}
@@ -460,7 +460,7 @@ public class JPAAccess
      * @param pId the id from the entity
      * @param pEntityClass the entity class to find
      * @return the entity to the id
-     * @throws DataSourceException
+     * @throws DataSourceException 
      */
     public Object findById(Object pId, Class pEntityClass) throws DataSourceException 
     {
@@ -472,7 +472,7 @@ public class JPAAccess
 	    	{
 	    		try 
 	    		{
-	    			if(findByIdMethod == null) 
+	    			if (findByIdMethod == null) 
 	    			{
 	    				findByIdMethod = externalEAO.getClass().getMethod(findByIdMethodName, pId.getClass());
 	    			}
@@ -520,7 +520,7 @@ public class JPAAccess
 	 * 
      * @param pEntityClass the entity Class
      * @return the entities in a Collection
-     * @throws DataSourceException
+     * @throws DataSourceException 
      */
     public Collection findAll(Class pEntityClass) throws DataSourceException 
     {
@@ -530,7 +530,7 @@ public class JPAAccess
     	{
     		try 
     		{
-    			if(findAllMethod == null) 
+    			if (findAllMethod == null) 
     			{
     				findAllMethod = externalEAO.getClass().getMethod(findAllMethodName);
     			}
@@ -575,9 +575,8 @@ public class JPAAccess
     /**
      * Reads and sets the values for the given entity from the db.
      * 
-     * @param pEntity
-     * @param pEntityClass
-     * @throws DataSourceException
+     * @param pEntity The entity-object
+     * @param pEntityClass the class of the entity
      */
     public void refresh(Object pEntity, Class pEntityClass) 
     {
@@ -594,7 +593,7 @@ public class JPAAccess
     /**
      * Return the number of Entities for the given criteriaQuery.
      * 
-     * @param pCountCriteriaQuery
+     * @param pCountCriteriaQuery the CriteriaQuery
      * @return the number of Entities
      */
     public Long countByCriteria(CriteriaQuery<Long> pCountCriteriaQuery) 
@@ -618,12 +617,10 @@ public class JPAAccess
     /**
 	 * Returns the Entities for the given criteriaQuery.
 	 * 
-	 * @param pCriteriaQuery
+	 * @param pCriteriaQuery the CriteriaQuery
 	 * @param pOffset the first Row Index
 	 * @param pMax Maximum Number of Entities
 	 * @return the entities in a collection
-	 * 
-	 * throws DataSourceException
      */
     public Collection findByCriteria(CriteriaQuery pCriteriaQuery, int pOffset, int pMax) 
     {
@@ -643,7 +640,7 @@ public class JPAAccess
 	/**
 	 * Returns the Entities for the given criteriaQuery.
 	 * 
-	 * @param pCriteriaQuery
+	 * @param pCriteriaQuery the CriteriaQuery
 	 * @return the Entities in a Collection
 	 */    
     public Collection findByCriteria(CriteriaQuery pCriteriaQuery) 
@@ -671,7 +668,7 @@ public class JPAAccess
 	/**
 	 * Sets the <code>EntityManager</code>.
 	 * 
-	 * @param pEntityManager
+	 * @param pEntityManager the EntityManager
 	 */
 	public void setEntityManager(EntityManager pEntityManager) 
 	{
@@ -684,7 +681,7 @@ public class JPAAccess
 	/**
 	 * Returns the Metamodel from the entityManager.
 	 * 
-	 * @return
+	 * @return The Metamodel
 	 */
 	public Metamodel getMetamodel() 
 	{
@@ -694,7 +691,7 @@ public class JPAAccess
 	/**
 	 * Returns the persistence unit util.
 	 * 
-	 * @return
+	 * @return the PersistenceUnitUtil
 	 */
 	public PersistenceUnitUtil getPersistenceUnitUtil() 
 	{
@@ -715,7 +712,7 @@ public class JPAAccess
 	/**
 	 * Returns the <code>EntityType</code> for the given entityClass.
 	 * 
-	 * @param pEntityClass
+	 * @param pEntityClass the class of the entity
 	 * @return the <code>EntityType</code> for the given entityClass.
 	 */
 	public EntityType getEntityType(Class pEntityClass)
@@ -727,7 +724,7 @@ public class JPAAccess
 	 * Returns the <code>Attributes</code> for the given entityClass
 	 * Attributes are the Fields from the entityClass.
 	 * 
-	 * @param pEntityClass
+	 * @param pEntityClass the class of the entity
 	 * @return <code>Attributes</code> for the given entityClass in a Collection
 	 */
 	public Set<Attribute> getAttributes(Class pEntityClass) 
@@ -738,7 +735,7 @@ public class JPAAccess
 	/**
 	 * Returns the <code>EmbeddableType</code> for the given embeddableClass.
 	 * 
-	 * @param pEmbeddableClass
+	 * @param pEmbeddableClass the class of the embedded class
 	 * @return the <code>EmbeddableType</code> for the given embeddableClass 
 	 */
 	public EmbeddableType getEmbeddableType(Class pEmbeddableClass) 

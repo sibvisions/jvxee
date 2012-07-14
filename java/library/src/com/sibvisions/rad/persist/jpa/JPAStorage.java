@@ -57,8 +57,7 @@ import com.sibvisions.util.type.StringUtil;
 /**
  * Storage Object for JPA.
  * 
- * @author Stefan
- *
+ * @author Stefan Wurm
  */
 public class JPAStorage extends AbstractCachedStorage 
 {

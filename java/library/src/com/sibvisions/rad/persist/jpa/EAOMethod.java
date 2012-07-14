@@ -25,6 +25,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The Interface for the definition of the EAO Methods.
+ * 
+ * @author Stefan Wurm
+ */
 @Retention (RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EAOMethod 
@@ -33,15 +38,29 @@ public @interface EAOMethod
 	// Definitions
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/**
+	 * Enumeration Type for the EAO Methods.
+	 * 
+	 * @author Stefan Wurm
+	 */
 	public enum EAO 
 	{
+		/** The Insert Method. **/
 		 INSERT, 
+		 /** The Update Method. **/
 		 UPDATE, 
+		 /** The Delete Method. **/
 		 DELETE, 
+		 /** The Find-by-id Method. **/
 		 FIND_BY_ID, 
+		 /** The Find-all Method. **/
 		 FIND_ALL
 	}
 	
+	/**
+	 * Returns the Methode Identifier.
+	 * 
+	 */
 	public EAO methodIdentifier();
 	
 }	// EAOMethod

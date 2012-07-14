@@ -141,7 +141,7 @@ public class JPAPrimaryKey extends JPAEmbeddedKey
 	/**
 	 * Sets the SingledIdAttribute.
 	 * 
-	 * @param pSingleIdAttribute
+	 * @param pSingleIdAttribute true if it is a sigled Id
 	 */
 	public void setSingleIdAttribute(boolean pSingleIdAttribute) 
 	{
@@ -169,9 +169,9 @@ public class JPAPrimaryKey extends JPAEmbeddedKey
 	}
 
 	/**
-	 * Sets true if the primary key from the entity is an embedde class.
+	 * Sets true if the primary key from the entity is an embedded class.
 	 * 
-	 * @param pIsEmbedded
+	 * @param pIsEmbedded true if the primary key is embedded
 	 */
 	public void setEmbedded(boolean pIsEmbedded) 
 	{
@@ -189,8 +189,8 @@ public class JPAPrimaryKey extends JPAEmbeddedKey
 	 * 
 	 * And so the PrimaryKey for this relation is a combined ForeignKey from Order and Article
 	 * 
-	 * @param pEntity
-	 * @param pForeignKey
+	 * @param pEntity the class of the entity
+	 * @param pForeignKey the JPAForeignKEy
 	 */
 	public void addForeignKey(Class pEntity, JPAForeignKey pForeignKey) 
 	{
@@ -200,7 +200,7 @@ public class JPAPrimaryKey extends JPAEmbeddedKey
 	/**
 	 * Returns the <code>JPAForeignKey</code> for the given class.
 	 * 
-	 * @param pEntity
+	 * @param pEntity the class of the entity
 	 * @return the <code>JPAForeignKey</code> for the given class 
 	 */
 	public JPAForeignKey getForeignKey(Class pEntity) 
@@ -218,7 +218,7 @@ public class JPAPrimaryKey extends JPAEmbeddedKey
 	 * 
 	 * @param pData the Map with the values for the key
 	 * @return the primary key from the entity in the entity
-	 * @throws Exception
+	 * @throws Exception 
 	 */	
 	public Object getKeyForEntity(Map<String, Object> pData) throws Exception 
 	{

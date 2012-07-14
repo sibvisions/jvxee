@@ -200,7 +200,7 @@ public class JPAServerMetaData
 	/**
 	 * Is true if the <code>JPAServerMetaData</code> is a ManyToMany representation.
 	 * 
-	 * @param pManyToMany
+	 * @param pManyToMany true if it is a ManyToMany representation
 	 */	
 	public void setManyToMany(boolean pManyToMany) 
 	{
@@ -240,11 +240,22 @@ public class JPAServerMetaData
 		return getMetaData().getColumnMetaDataIndex(pColumnName);
 	}
 	
+	/**
+	 * Returns the ColumnNames.
+	 * 
+	 * @return the ColumnNames
+	 */
 	public String[] getColumnNames() 
 	{
 		return metaData.getColumnNames();		
 	}
 	
+	/**
+	 * Returns the JPAForeignKey of the given ICondition.
+	 * 
+	 * @param pCondition the ICondition
+	 * @return the JPAForeignKey
+	 */
 	public JPAForeignKey getJPAForeignKeyForCondition(ICondition pCondition) 
 	{
 		for (JPAForeignKey jpaForeignKey : cJPAForeignKey) 
@@ -261,7 +272,14 @@ public class JPAServerMetaData
 		
 		return null;
 	}
-	
+
+	/**
+	 * Returns true if the given Conditions are true.
+	 * 
+	 * @param pCondition1 the first condition
+	 * @param pCondition2 the second condition
+	 * @return true if pCondtion1 is the same as pCondition2
+	 */
 	public boolean compareConditions(ICondition pCondition1, ICondition pCondition2) 
 	{
 		boolean bEqual = false;
@@ -301,6 +319,12 @@ public class JPAServerMetaData
 		return bEqual;
 	}	
 
+	/**
+	 * Returns the JPAServerColumnMetaData for the given names.
+	 * 
+	 * @param pColumnName the name of the columnMetaData
+	 * @return the JPAServerColumnMetaData
+	 */
 	public JPAServerColumnMetaData getServerColumnMetaData(String pColumnName) 
 	{
 		for (JPAServerColumnMetaData serverColumnMetaData : primaryKey.getServerColumnMetaDataAsCollection()) 
@@ -382,6 +406,12 @@ public class JPAServerMetaData
 		return map;		
 	}
 	
+	/**
+	 * Initialize the given Map with the keys and values of the given condition.
+	 * 
+	 * @param pCondition 
+	 * @param map 
+	 */
 	private void initializeMapForCondition(ICondition pCondition, Map<String, Object> map) 
 	{
 		if (pCondition instanceof CompareCondition) 

@@ -82,7 +82,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	        entityManager.getTransaction().commit();
 	        
 		}  
-		catch(IllegalStateException ise) 
+		catch (IllegalStateException ise) 
 		{
 			// getTransaction throws an IllegalStateException if the entityManager is container managed
 			entityManager.persist(entity);
@@ -107,7 +107,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	        entityManager.getTransaction().commit();
         
 		} 
-		catch(IllegalStateException ise) 
+		catch (IllegalStateException ise) 
 		{
 			// getTransaction throws an IllegalStateException if the entityManager is container managed
 			entityManager.merge(entity);
@@ -129,7 +129,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
         entityManager.getTransaction().commit();	
         
 		} 
-		catch(IllegalStateException ise) 
+		catch (IllegalStateException ise) 
 		{
 			// getTransaction throws an IllegalStateException if the entityManager is container managed
 			entityManager.remove(entity);
@@ -154,7 +154,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	        entityManager.getTransaction().commit();
         
 		}
-		catch(IllegalStateException ise) 
+		catch (IllegalStateException ise) 
 		{
 			// getTransaction throws an IllegalStateException if the entityManager is container managed
 			entity = entityManager.find(entityClass, id);
@@ -187,7 +187,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	        entityManager.getTransaction().commit();
         
 		}
-		catch(IllegalStateException ise) 
+		catch (IllegalStateException ise) 
 		{
 			// getTransaction throws an IllegalStateException if the entityManager is container managed
 			objectList = (List<E>) query.getResultList();
@@ -213,7 +213,7 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	/**
 	 * Sets the class of the entity the DAO.
 	 * 
-	 * @param entityClass The Class for the entity
+	 * @param pEntityClass The Class for the entity
 	 */
 	public void setEntityClass(Class<E> pEntityClass) 
 	{
