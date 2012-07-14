@@ -21,6 +21,7 @@
 package com.sibvisions.rad.persist.jpa;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,15 +40,26 @@ import javax.rad.model.ModelException;
 import javax.rad.model.SortDefinition;
 import javax.rad.model.condition.ICondition;
 import javax.rad.model.datatype.BinaryDataType;
+import javax.rad.model.datatype.IDataType;
 import javax.rad.model.datatype.StringDataType;
 import javax.rad.model.reference.StorageReferenceDefinition;
+import javax.rad.persist.ColumnMetaData;
 import javax.rad.persist.DataSourceException;
 import javax.rad.persist.IStorage;
 import javax.rad.persist.MetaData;
+import javax.rad.type.bean.IBean;
 
+import com.sibvisions.rad.model.DataBookUtil;
 import com.sibvisions.rad.persist.AbstractCachedStorage;
 import com.sibvisions.rad.persist.AbstractStorage;
+import com.sibvisions.util.type.StringUtil;
 
+/**
+ * Storage Object for JPA.
+ * 
+ * @author Stefan
+ *
+ */
 public class JPAStorage extends AbstractCachedStorage 
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -555,7 +567,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * Creates a <code>JPAAccess</code> with the given <code>EntityManager</code> for this JPAStorage.
 	 * There have to be one JPAAccess per JPAStorage.
 	 * 
-	 * @param pEntityManager
+	 * @param pEntityManager The EntityManager
 	 * @return 
 	 * @throws DataSourceException If the EntityManager is not open or null
 	 */
@@ -696,9 +708,9 @@ public class JPAStorage extends AbstractCachedStorage
 	 * Creates and sets a new <code>StorageReferenceDefinition</code> for the Columns of the <code>JPAForeignKey</code>
 	 * e.g. its used to make an automatic linked celleditor from a custom written view and set it on all Columns of the <code>JPAForeignKey</code>. 
 	 * 
-	 * @param pJPAForeignKey
+	 * @param pJPAForeignKey The JPAForeignKey
 	 * @param pMasterEntity The Entity for the AutoLinkReference
-	 * @throws ModelException
+	 * @throws ModelException 
 	 */
 	public void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, Class pMasterEntity) throws ModelException
 	{
@@ -727,9 +739,9 @@ public class JPAStorage extends AbstractCachedStorage
 	 * Creates and sets a new <code>StorageReferenceDefinition</code> with the specified <code>JPAStorage</code> for
 	 * the <code>JPAForeignKey</code> Columns. 
 	 * 
-	 * @param pJPAForeignKey
-	 * @param pJPAStorage
-	 * @throws ModelException
+	 * @param pJPAForeignKey The JPAForeignKey
+	 * @param pJPAStorage The Storage Object 
+	 * @throws ModelException 
 	 */
 	protected void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, AbstractStorage pJPAStorage) throws ModelException 
 	{
@@ -781,12 +793,89 @@ public class JPAStorage extends AbstractCachedStorage
 			             String[] pLabels, ICondition pFilter, SortDefinition pSort,
 			             String pSeparator) throws Exception 
 	{
-		// TODO implement this method
+		OutputStreamWriter out = new OutputStreamWriter(pStream, "ISO-8859-1");
+
+		try
+		{	
+			List<Object[]> lResult = this.executeFetch(pFilter, pSort, 0, 0);
+			
+			if (pColumnNames == null)
+			{
+				pColumnNames = this.serverMetaData.getColumnNames();
+			}
+			
+			if (pLabels == null)
+			{
+				pLabels = new String[pColumnNames.length];
+				
+				for (int i = 0; i < pColumnNames.length; i++)
+				{
+					pLabels[i] = this.serverMetaData.getServerColumnMetaData(pColumnNames[i]).getLabel();
+					
+					if (pLabels[i] == null)
+					{
+						pLabels[i] = ColumnMetaData.getDefaultLabel(pColumnNames[i]);
+					}
+				}
+			}
+			
+			// write column headers with the defined label
+			for (int i = 0; i < pLabels.length; i++)
+			{
+				if (i > 0)
+				{
+					out.write(pSeparator);
+				}
+				out.write(StringUtil.quote(pLabels[i], '"'));
+			}
+			out.write("\n");
+			
+			//cache the column datatypes
+			IDataType[] dataTypes = new IDataType[pColumnNames.length];
+			
+			for (int i = 0, anz = pColumnNames.length; i < anz; i++)
+			{
+				dataTypes[i] = ColumnMetaData.createDataType(serverMetaData.getServerColumnMetaData(pColumnNames[i]).getColumnMetaData());
+			}
+			
+			IBean bnRowData;
+	
+			//write rows (last row
+			for (int i = 0; i < lResult.size() - 1; i++)
+			{
+				bnRowData = createBean(lResult.get(i));
+				
+				for (int j = 0; j < pColumnNames.length; j++)
+				{
+					if (j > 0)
+					{
+						out.write(pSeparator);
+					}
+					
+					DataBookUtil.writeQuoted(out, dataTypes[j], bnRowData.get(pColumnNames[j]), pSeparator);
+				}			
+				out.write("\n");			
+			}
+				
+			out.flush();
+		}
+		finally
+		{
+			try
+			{
+				out.close();
+			}
+			catch (Exception e)
+			{
+				// nothing to be done
+			}
+		}
 	}
 	
 	/**
 	 * Creates the <code>JPAServerMetaData</code> for this JPAStorage.
 	 * 
+	 * @param pUseRepresentationColumns If the representation Column Names should be used
 	 * @return The <code>JPAServerMetaData</code> for this JPAStorage
 	 * @throws DataSourceException if create server metadata fails
 	 */
@@ -971,7 +1060,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pEntityClass The Class for generating the JPAPrimaryKey
 	 * @return the <code>JPAPrimaryKey</code>
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	private JPAPrimaryKey createPrimaryKey(Class pEntityClass) throws Exception
 	{
@@ -1064,10 +1153,9 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Creates the <code>JPAForeignKey</code> for the given entity class.
 	 * 
-	 * @param pEntityClass
-	 * @param pParentEntityClass
+	 * @param pEntityClass The Class of the entity
 	 * @return The <code>JPAForeignKey</code> for the given entity class
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	private JPAForeignKey createForeignKey(Class pEntityClass) throws Exception 
 	{
@@ -1114,8 +1202,8 @@ public class JPAStorage extends AbstractCachedStorage
 	 * Returns the best Attribute for the automatic link reference.
 	 * 
 	 * @param pEntityClass The Class to search for the best attribute
-	 * @return
-	 * @throws Exception
+	 * @return The Attribute for the automatic link reference
+	 * @throws Exception 
 	 */
 	private Attribute getBestAttributeForStorageReference(Class pEntityClass) throws Exception 
 	{
@@ -1141,39 +1229,6 @@ public class JPAStorage extends AbstractCachedStorage
 				}
 			}
 		}	
-
-//TODO remove debug code???
-//		for(Attribute attribute : attributes) {
-//			
-//			if(attribute.getPersistentAttributeType() == PersistentAttributeType.EMBEDDED) {
-//				
-//				EmbeddableType embeddableType = jpaAccess.getMetamodel().embeddable(attribute.getJavaType());
-//				
-//				Set<Attribute> setAttribute = embeddableType.getAttributes();
-//				
-//				for(Attribute attributeEmbedded : setAttribute) {
-//					
-//					if(attributeEmbedded.getJavaType() == java.lang.String.class) {
-//						
-//						if(uniqueKeys.size() > 0) {
-//							
-//							if(uniqueKeys.contains(JPAStorageUtil.getNameForAttribute(attributeEmbedded))) {
-//								return attributeEmbedded;	
-//							}
-//								
-//						}  else {
-//							return attributeEmbedded;
-//						}
-//						
-//						
-//						
-//					}
-//								
-//				}	
-//				
-//			}
-//			
-//		}
 		
 		for (Attribute attribute : attributes) 
 		{	
@@ -1221,8 +1276,8 @@ public class JPAStorage extends AbstractCachedStorage
 	 * @param pMasterEntity the Master Entity (in the example "Customer")
 	 * @param pDetailEntity the Detail Entity (in the example "Address")
 	 * @param pPersistentAttributeType the PersistentAttributeType (OneToMany or ManyToMany)
-	 * @return
-	 * @throws Exception
+	 * @return The Attribute for the detail Relation
+	 * @throws Exception 
 	 */
 	private Attribute getDetailRelationAttribute(Class pMasterEntity, Class pDetailEntity, PersistentAttributeType pPersistentAttributeType) throws Exception 
 	{
@@ -1268,9 +1323,9 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Returns the UniqueKey Column Names for the given entity.
 	 * 
-	 * @param pEntityClass
-	 * @return
-	 * @throws Exception
+	 * @param pEntityClass The Class of the entity
+	 * @return A List with the UniqueKey Column Names
+	 * @throws Exception 
 	 */
 	private ArrayList<String> getUniqueKeyColumnNames(Class pEntityClass) throws Exception 
 	{
@@ -1320,10 +1375,10 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Returns the JPAServerColumnMetaData for the given Attribute.
 	 * 
-	 * @param pAttribute
-	 * @param pEntityClass
+	 * @param pAttribute 
+	 * @param pEntityClass 
 	 * @return the JPAServerColumnMetaData for the given Attribute
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	private JPAServerColumnMetaData getServerColumnMetaData(Attribute pAttribute, Class pEntityClass) throws Exception 
 	{
@@ -1392,6 +1447,14 @@ public class JPAStorage extends AbstractCachedStorage
 		
 	}		
 	
+	/**
+	 * Returns the DataRow for a ManyToMany relation between to Entities.
+	 * 
+	 * @param pEntity1 
+	 * @param pEntity2 
+	 * @return The DataRow
+	 * @throws DataSourceException 
+	 */
 	protected Object[] getDataRowForEntities(Object pEntity1, Object pEntity2) throws DataSourceException 
 	{
 		if (!isOpen()) 
@@ -1458,6 +1521,13 @@ public class JPAStorage extends AbstractCachedStorage
 		}		
 	}		
 
+	/**
+	 * Returns the DataRow for the given entity-object.
+	 * 
+	 * @param pEntity 
+	 * @return The DataRow
+	 * @throws DataSourceException 
+	 */
 	protected Object[] getDataRowForEntity(Object pEntity) throws DataSourceException 
 	{
 		if (!isOpen()) 
@@ -1536,6 +1606,13 @@ public class JPAStorage extends AbstractCachedStorage
 		}
 	}	
 
+	/**
+	 * Writes all values from the DataRow to the entity-object.
+	 * 
+	 * @param pDataRow The DataRow
+	 * @param pEntity The entity-object
+	 * @throws DataSourceException 
+	 */
 	protected void mappeDataRowToEntity(Object[] pDataRow, Object pEntity) throws DataSourceException 
 	{
 		if (!isOpen()) 
