@@ -25,8 +25,9 @@ the License.
   <property name="build" location="${basedir}/../build"/>
   <property name="dist" location="${build}/dist" />
   <property name="quality" location="${build}/quality" />
-  <property name="javadoc" location="${dist}/doc/api" />
-
+  <property name="javadoc" location="${dist}/doc" />
+  <property name="checkstyle" location="${dist}/checkstyle" />
+	
 	
   <property name="temp" location="${build}/temp" />
   <property name="classes" location="${temp}/classes" />
@@ -111,6 +112,7 @@ the License.
     <mkdir dir="${checkstyle}" />
 
     <checkstyle configurl="http://jvx.svn.sourceforge.net/viewvc/jvx/trunk/java/library/checkstyle_opensource.xml">
+      <classpath path="${libs}/jvx.jar"/>
       <fileset dir="${src}" includes="**/*.java" />
       <fileset dir="${src.test}" includes="**/*.java" />
       <formatter type="plain" />
@@ -135,14 +137,15 @@ the License.
     <stopwatch name="timer11"/>
     
     <delete dir="${javadoc}" />
-
+ 	<mkdir dir="${javadoc}" />
+ 	
     <javadoc packagenames="*" 
       		 defaultexcludes="yes" 
              destdir="${javadoc}" 
              author="false" 
              version="false" 
              use="true" 
-             windowtitle="JVx EE)"
+             windowtitle="JVx EE"
              source="1.5" 
              encoding="ISO-8859-1">
       <classpath>
