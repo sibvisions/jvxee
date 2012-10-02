@@ -26,23 +26,39 @@ import com.sibvisions.rad.persist.jpa.EAOMethod;
 import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
 import com.sibvisions.rad.persist.jpa.entity.Customer;
 
+/**
+ * An Entity Access Object for the Customer Entity.
+ * 
+ * @author Stefan Wurm
+ */
 public class CustomerEAO 
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/** The Entity Manager. */
 	private EntityManager entityManager;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/**
+	 * Setter Method for the Entity Manager.
+	 * 
+	 * @param pEntityManager The Entity Manager
+	 */
 	public void setEntityManager(EntityManager pEntityManager) 
 	{
 		entityManager = pEntityManager;
 	}
 	
+	/**
+	 * Deletes the given customer from the DB.
+	 * 
+	 * @param customer The Customer
+	 */
 	@EAOMethod (methodIdentifier = EAO.DELETE)
 	public void deleteCustomer(Customer customer) 
 	{
