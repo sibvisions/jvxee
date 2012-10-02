@@ -27,7 +27,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.rad.model.condition.Equals;
 import javax.rad.model.condition.ICondition;
 import javax.rad.remote.MasterConnection;
@@ -44,33 +43,50 @@ import com.sibvisions.rad.persist.jpa.entity.Customer;
 import com.sibvisions.rad.persist.jpa.entity.Education;
 import com.sibvisions.rad.util.DirectObjectConnection;
 
+/**
+ * The class to test the JPAStorage.
+ * 
+ * @author Stefan Wurm
+ *
+ */
 public class TestJPAStorage 
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/** The EntityManagerFactory. **/
 	private EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpatest"); 
 	
+	/** The EntityManager. **/
 	private EntityManager entityManager = null;
 
-	private CriteriaBuilder criteriaBuilder;
+	/** The CriteriaBuilder. **/
+//	private CriteriaBuilder criteriaBuilder;
 	
+	/** The storage for the customer entities. **/
 	private JPAStorage jpaStorageCustomer;
 
+	/** The storage for the address entities. **/
 	private JPAStorage jpaStorageAddress;
 	
+	/** The storage for the education entities. **/
 	private JPAStorage jpaStorageEducation;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
+	/**
+	 * Initializes the storage objects.
+	 * 
+	 * @throws Exception if there is an exception
+	 */
 	@Before
 	public void open() throws Exception 
 	{
 	      entityManager = emf.createEntityManager();
-	      criteriaBuilder = emf.getCriteriaBuilder();
+//	      criteriaBuilder = emf.getCriteriaBuilder();
 	      clearDB();
 	      initializeDB();
 	      
@@ -88,6 +104,11 @@ public class TestJPAStorage
 	      jpaStorageEducation.open();	      
 	}
 	
+	/**
+	 * Close the EntityManager.
+	 * 
+	 * @throws Exception if there is an exception.
+	 */
 	@After
 	public void close() throws Exception 
 	{
@@ -98,6 +119,10 @@ public class TestJPAStorage
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
+	/**
+	 * Initializes the database with default values.
+	 * 
+	 */
 	public void initializeDB() 
 	{
 		entityManager.getTransaction().begin();
@@ -146,6 +171,10 @@ public class TestJPAStorage
 	    entityManager.getTransaction().commit();			
 	}	
 	
+	/**
+	 * Delets all values from the database.
+	 * 
+	 */
 	public void clearDB() 
 	{
 		entityManager.getTransaction().begin();
@@ -168,6 +197,11 @@ public class TestJPAStorage
 	// MetaData
 	//-----------------------------------
 		
+	/**
+	 * Tests the initialization of the MetaData for the education entity. 
+	 * 
+	 * @throws Throwable 
+	 */
 	@Test
 	public void testMetaDataEducation() throws Throwable 
 	{
@@ -188,7 +222,12 @@ public class TestJPAStorage
 				
 		Assert.assertArrayEquals(new String[] {"CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID", "EDUCATION_EDUCATION"}, rdb.getRowDefinition().getColumnNames());
 	}	
-	
+
+	/**
+	 * Tests the initialization of the MetaData for the address entity. 
+	 * 
+	 * @throws Throwable 
+	 */
 	@Test
 	public void testMetaDataAddress() throws Throwable 
 	{
@@ -212,6 +251,11 @@ public class TestJPAStorage
 	// Fetch
 	//-----------------------------------
 	
+	/**
+	 * Tests the fetch method from JPAStorageCustomer. 
+	 * 
+	 * @throws Exception  
+	 */	
 	@Test
 	public void testFetch() throws Exception 
 	{
@@ -223,6 +267,11 @@ public class TestJPAStorage
 	// Insert
 	//-----------------------------------
 	
+	/**
+	 * Test method to insert a customer.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testInsertCustomer() throws Exception 
 	{
@@ -255,6 +304,11 @@ public class TestJPAStorage
         entityManager.getTransaction().commit();		
 	}
 	
+	/**
+	 * Test method to insert an address.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testInsertAddress() throws Exception 
 	{
@@ -289,6 +343,11 @@ public class TestJPAStorage
         entityManager.getTransaction().commit();	        
 	}	
 	
+	/**
+	 * Test method to insert an education.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testInsertEducation() throws Exception 
 	{
@@ -313,6 +372,11 @@ public class TestJPAStorage
 	// Update
 	//-----------------------------------
 	
+	/**
+	 * Test method to update a customer.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testUpdateCustomer() throws Exception 
 	{
@@ -357,6 +421,11 @@ public class TestJPAStorage
         entityManager.getTransaction().commit();		
 	}	
 	
+	/**
+	 * Test method to update an address.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testUpdateAddress() throws Exception 
 	{
@@ -394,6 +463,11 @@ public class TestJPAStorage
         entityManager.getTransaction().commit();		      
 	}		
 	
+	/**
+	 * Test method to update an education.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testUpdateEducation() throws Exception 
 	{
@@ -426,6 +500,11 @@ public class TestJPAStorage
 	// Delete
 	//-----------------------------------
 	
+	/**
+	 * Test method to delete a customer.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testDeleteCustomer() throws Exception 
 	{
@@ -448,6 +527,11 @@ public class TestJPAStorage
         entityManager.getTransaction().commit();		
 	}
 	
+	/**
+	 * Test method to delete an address.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testDeleteAddress() throws Exception 
 	{
@@ -470,6 +554,11 @@ public class TestJPAStorage
         entityManager.getTransaction().commit();		      
 	}
 	
+	/**
+	 * Test method to delete an education.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testDeleteEducation() throws Exception 
 	{
@@ -492,6 +581,11 @@ public class TestJPAStorage
 	// Refetch
 	//-----------------------------------
 	
+	/**
+	 * Test method to refetch a customer.
+	 * 
+	 * @throws Exception 
+	 */
 	@Test
 	public void testRefetchCustomer() throws Exception 
 	{

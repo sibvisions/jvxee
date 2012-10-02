@@ -27,23 +27,41 @@ import com.sibvisions.rad.persist.jpa.EAOMethod;
 import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
 import com.sibvisions.rad.persist.jpa.entity.Address;
 
+/**
+ * An Entity Access Object for the Address Entity.
+ * 
+ * @author Stefan Wurm
+ */
 public class AddressEAO 
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
+	/** The Entity Manager. */
 	private EntityManager entityManager;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	/**
+	 * Setter Method for the Entity Manager.
+	 * 
+	 * @param pEntityManager The Entity Manager
+	 */	
 	public void setEntityManager(EntityManager pEntityManager) 
 	{
 		entityManager = pEntityManager;
 	}
 	
+	/**
+	 * Saves the given address in the database.
+	 * 
+	 * @param address the address
+	 * @return the address with the id
+	 * @throws DataSourceException if the zip is not 4 characters long.
+	 */
 	@EAOMethod (methodIdentifier = EAO.INSERT)
 	public Address insertAddress(Address address) throws DataSourceException 
 	{
@@ -59,6 +77,12 @@ public class AddressEAO
         return address;
 	}
 
+	/**
+	 * Make an update to the given address.
+	 * 
+	 * @param address the address
+	 * @throws DataSourceException if the zip is not 4 characters long.
+	 */
 	@EAOMethod (methodIdentifier = EAO.UPDATE)
 	public void updateAddress(Address address) throws DataSourceException 
 	{
