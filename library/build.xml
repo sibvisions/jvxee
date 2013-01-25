@@ -31,7 +31,9 @@ the License.
   	-->
   
   <property name="jar.name" value="jvxee.jar" />
-
+  
+  <property name="release.name" value="jvxee"/>
+  
   <!-- 
   	***************************************************************** 
   	* general properties   
@@ -41,6 +43,7 @@ the License.
   <property name="build" location="${basedir}/../build"/>
   <property name="buildnumber" location="${build}/buildnumber" />
   <property name="temp" location="${build}/temp" />
+  <property name="licence" location="${basedir}" />
   <property name="quality" location="${build}/quality" />
   <property name="classes" location="${temp}/classes" />
   
@@ -48,7 +51,8 @@ the License.
   <property name="src.test" location="${basedir}/test" />
   <property name="libs" location="${basedir}/lib" />
 
-  <property name="install" location="${build}/release" />
+  <property name="install" location="${build}/install" />
+  <property name="release" location="${build}/release" />
   <property name="javadoc" location="${install}/doc" />
   <property name="checkstyle" location="${install}/checkstyle" />
   	
@@ -85,6 +89,7 @@ the License.
     
     <delete dir="${temp}" />
     <delete dir="${install}" />
+    <delete dir="${release}" />
     <delete dir="${quality}" />
     
     <stopwatch name="timer1" action="total"/>
@@ -145,6 +150,35 @@ the License.
     <stopwatch name="timer4" action="total"/>
     
   </target>
+  
+  <target name="opensource" depends="jar, javadoc">
+
+    <zip destfile="${release}/${release.name}-${build.version}.zip">
+      <zipfileset dir="${install}">
+        <include name="${jar.name}" />
+      </zipfileset>
+      <zipfileset dir="${licence}">
+        <include name="LICENSE.txt" />
+        <include name="NOTICE.txt" />
+      </zipfileset>
+    </zip>
+
+    <zip destfile="${release}/${release.name}-${build.version}_src.zip">
+      <zipfileset dir="${src}" prefix="src" />
+      <zipfileset dir="${licence}">
+        <include name="LICENSE.txt" />
+        <include name="NOTICE.txt" />
+        </zipfileset>
+    </zip>    
+    
+    <zip destfile="${release}/${release.name}-${build.version}_javadoc.zip">
+      <zipfileset dir="${javadoc}" prefix="api" />
+      <zipfileset dir="${licence}">
+        <include name="LICENSE.txt" />
+      </zipfileset>
+    </zip>    
+      
+  </target>  
 	
   <!-- 
 	* quality tasks 
@@ -228,6 +262,6 @@ the License.
  
   <target name="start.quality" depends="clean.start, checkstyle, javadoc, clean.stop" />
   
-  <target name="start.complete" depends="clean.start, jar, checkstyle, javadoc, clean.stop"/> 
+  <target name="start.complete" depends="clean.start, opensource, clean.stop"/> 
  
 </project>
