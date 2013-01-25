@@ -42,21 +42,21 @@ import javax.rad.model.datatype.TimestampDataType;
  * With a <code>JPAMappingType</code> it is possible to set and get values from an Entity
  * 
  * For example:
- * 
- * @Entity
+ * <pre>
+ * {@literal @}Entity
  * public class Customer implements Serializable  
  * {
- * 		@Id
- *  	private int id;
+ *      {@literal @}Id
+ *      private int id;
  *  
- *  	private String name;
+ *      private String name;
  *      
- *      @Embedded
+ *      {@literal @}Embedded
  *      private Address address;
  *   
  *      ....
  * }
- * 
+ * </pre>
  * The <code>JPAMappingType</code> for the Attribute id:
  * 
  * 		The dataType is: BigDecimalDataType.TYPE_IDENTIFIER
@@ -243,22 +243,22 @@ public class JPAMappingType
 	 * Returns a List with the Names of the attributes to this attribute.
 	 *
 	 * For a Example the path navigation to the Attribute street is: Address, street
-	 *
-	 * @Entity
+	 * <pre>
+	 * {@literal @}Entity
 	 * public class Customer implements Serializable
 	 * {
-	 * 	   @Id
+	 * 	   {@literal @}Id
 	 *     private int id;
 	 *  
 	 *     private String name;
 	 *  
-	 *     @Embedded
+	 *     {@literal @}Embedded
 	 *     private Address address;
 	 *  
 	 *     ....... 
 	 * } 
 	 * 
-	 * @Embeddable
+	 * {@literal @}Embeddable
 	 * public class Address 
 	 * {
 	 *     private String street;
@@ -266,6 +266,7 @@ public class JPAMappingType
 	 *   
 	 *     .....
  	 * }
+ 	 * </pre>
  	 * 
 	 * @return the PathNavigation
 	 */

@@ -28,22 +28,22 @@ import java.util.LinkedHashSet;
  * The <code>JPAEmbeddedKey</code> encapsulates the <code>JPAServerColumnMetaData</code> for an embedded class of an entity.
  * 
  * For example: An Entity "Customer" has an Embedded Object "Address"
- * 
- * @Entity
+ * <pre>
+ * {@literal @}Entity
  * public class Customer implements Serializable
  * {
- * 	   @Id
+ *     {@literal @}Id
  *     private int id;
  *  
  *     private String name;
  *  
- *     @Embedded
+ *     {@literal @}Embedded
  *     private Address address;
  *  
  *     ....... 
  * } 
  * 
- * @Embeddable
+ * {@literal @}Embeddable
  * public class Address
  * {
  *     private String street;
@@ -51,13 +51,12 @@ import java.util.LinkedHashSet;
  *   
  *     .....
  * }
- * 
+ * </pre>
  * It encapsulates the <code>JPAServerColumnMetaData</code> for the columns of the embedded class.
  * It also stores the JPAMappingType for the embedded class.
  * 
- * @see com.sibvisions.rad.persist.jpa.JPAServerColumnMetaData
- * 
  * @author Stefan Wurm
+ * @see com.sibvisions.rad.persist.jpa.JPAServerColumnMetaData
  */
 public class JPAEmbeddedKey 
 {

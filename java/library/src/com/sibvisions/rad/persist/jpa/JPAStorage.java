@@ -567,7 +567,6 @@ public class JPAStorage extends AbstractCachedStorage
 	 * There have to be one JPAAccess per JPAStorage.
 	 * 
 	 * @param pEntityManager The EntityManager
-	 * @return 
 	 * @throws DataSourceException If the EntityManager is not open or null
 	 */
 	public void setEntityManager(EntityManager pEntityManager) throws DataSourceException 
