@@ -33,33 +33,33 @@ import javax.rad.model.condition.ICondition;
  * And so an entity in an entity is similar to an embedded Object in an entity.
  * 
  * For example: An Entity "Customer" has a ManyToOne Relationship to Salutations
- * 
- * @Entity
+ * <pre>
+ * {@literal @}Entity
  * public class Customer implements Serializable
  * {
- * 	   @Id
+ *     {@literal @}Id
  *     private int id;
  *  
  *     private String name;
  *  
- *     @ManyToOne
+ *     {@literal @}ManyToOne
  *     private Salutations salutations;
  *  
  *     ...
  * } 
  * 
- * @Entity
+ * {@literal @}Entity
  * public class Salutations implements Serializable
  * {
- *     @Id
+ *     {@literal @}Id
  *     private int id;
  *  
  *     private String salutation;
  * }
- *
- * @see com.sibvisions.rad.persist.jpa.JPAEmbeddedKey
+ * </pre>
  * 
  * @author Stefan Wurm
+ * @see com.sibvisions.rad.persist.jpa.JPAEmbeddedKey
  */
 public class JPAForeignKey extends JPAEmbeddedKey 
 {
@@ -250,31 +250,31 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	 * For example: An entity can have three different types of primary keys:
 	 * 
 	 * 1. A singled id attribute:
-	 *    
-	 *    		@Id
+	 *   
+	 *    		{@literal @}Id
 	 *    		private int id;
 	 *    
 	 * 2. Many id attributes in an IdClass
 	 * 
 	 * 			public class CustomerPK implements Serializable 
 	 *          {
-	 * 				@Id
+	 * 				{@literal @}Id
 	 *  			private int id;
 	 *  
-	 *  			@Id
+	 *  			{@literal @}Id
 	 *  			private int socialInsuranceNumber;
 	 *  
 	 *  			....
 	 * 			} 
 	 * 
-	 * 			@Entity
-	 * 			@IdClass(CustomerPK.class)
+	 * 			{@literal @}Entity
+	 * 			{@literal @}IdClass(CustomerPK.class)
 	 * 			public class Customer implements Serializable
 	 *          { 
-	 * 				@Id
+	 * 				{@literal @}Id
 	 *  			private int id;
 	 *  
-	 *  			@Id
+	 *  			{@literal @}Id
 	 *  			private int socialInsuranceNumber;
 	 *  
 	 *  			private String name;
@@ -284,22 +284,22 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	 * 
 	 * 3. An Embedded Primary Class
 	 * 			
-	 * 			@Embeddable
+	 * 			{@literal @}Embeddable
 	 * 			public class CustomerPK implements Serializable
 	 *          {
-	 * 				@Id
+	 * 				{@literal @}Id
 	 *  			private int id;
 	 *  
-	 *  			@Id
+	 *  			{@literal @}Id
 	 *  			private int socialInsuranceNumber;
 	 *  
 	 *  			....
 	 * 			} 
 	 * 
-	 * 			@Entity
+	 * 			{@literal @}Entity
 	 * 			public class Customer implements Serializable
 	 *          {
-	 * 				@EmbeddedId
+	 * 				{@literal @}EmbeddedId
 	 * 				private CustomerPK customerPK;
 	 *  
 	 *  			private String name;

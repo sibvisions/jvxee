@@ -32,70 +32,68 @@ import java.util.Map;
  * *******************************************************************************
  * 
  * 1. A singled id attribute:
- *    
- *    		@Id
- *    		private int id;
- *    
+ * <pre>   
+ * {@literal @}Id
+ * private int id;
+ * </pre>  
  * 2. Many id attributes in an IdClass
+ * <pre>
+ * public class CustomerPK implements Serializable
+ * {
+ *      {@literal @}Id
+ *      private int id;
+ *  
+ *      {@literal @}Id
+ *      private int socialInsuranceNumber;
+ *  
+ *      ....
+ * } 
  * 
- * 			public class CustomerPK implements Serializable
- *          {
- * 				@Id
- *  			private int id;
+ * {@literal @}Entity
+ * {@literal @}IdClass(CustomerPK.class)
+ * public class Customer implements Serializable
+ * { 
+ *      {@literal @}Id
+ *      private int id;
  *  
- *  			@Id
- *  			private int socialInsuranceNumber;
+ *      {@literal @}Id
+ *      private int socialInsuranceNumber;
  *  
- *  			....
- * 			} 
- * 
- * 			@Entity
- * 			@IdClass(CustomerPK.class)
- * 			public class Customer implements Serializable
- * 			{ 
- * 				@Id
- *  			private int id;
+ *      private String name;
  *  
- *  			@Id
- *  			private int socialInsuranceNumber;
- *  
- *  			private String name;
- *  
- *  			....
- * 			} 
- * 
+ *      ....
+ * } 
+ * </pre>
  * 3. An Embedded Primary Class
- * 			
- * 			@Embeddable
- * 			public class CustomerPK implements Serializable
- * 			{ 
- * 				@Id
- *  			private int id;
+ * <pre>	
+ * {@literal @}Embeddable
+ * public class CustomerPK implements Serializable
+ * { 
+ *      {@literal @}Id
+ *      private int id;
  *  
- *  			@Id
- *  			private int socialInsuranceNumber;
+ *      {@literal @}Id
+ *      private int socialInsuranceNumber;
  *  
- *  			....
- * 			} 
+ *      ....
+ * } 
  * 
- * 			@Entity
- * 			public class Customer implements Serializable 
- *          {
- * 				@EmbeddedId
- * 				private CustomerPK customerPK;
+ * {@literal @}Entity
+ * public class Customer implements Serializable 
+ * {
+ *      {@literal @}EmbeddedId
+ *      private CustomerPK customerPK;
  *  
- *  			private String name;
+ *      private String name;
  *  
- *  			....
- *  		}
- *  
- *  *****************************************************************************
+ *      ....
+ * }
+ * </pre>
  * 
  * And so the primary key from an entity is similar to an embedded Object in an entity.
  * 
- * @see com.sibvisions.rad.persist.jpa.JPAEmbeddedKey
- * 
  * @author Stefan Wurm
+ * @see com.sibvisions.rad.persist.jpa.JPAEmbeddedKey
  */
 public class JPAPrimaryKey extends JPAEmbeddedKey 
 {

@@ -14,28 +14,44 @@ License for the specific language governing permissions and limitations under
 the License.
 -->
 
-<project name="JVx EE" default="dist">
+<project name="JVx EE" default="start.complete">
 
-  <description>JVx EE build</description>
+  <!-- 
+    ***************************************************************** 
+  	* information   
+  	***************************************************************** 
+  	-->
+    
+  <description>JVx EE</description>
  
-  <property name="jar.jvxee" value="jvxee.jar" />
+  <!-- 
+  	***************************************************************** 
+  	* global properties   
+  	***************************************************************** 
+  	-->
+  
+  <property name="jar.name" value="jvxee.jar" />
 
+  <!-- 
+  	***************************************************************** 
+  	* general properties   
+  	***************************************************************** 
+  	-->
+  
+  <property name="build" location="${basedir}/../build"/>
+  <property name="buildnumber" location="${build}/buildnumber" />
+  <property name="temp" location="${build}/temp" />
+  <property name="quality" location="${build}/quality" />
+  <property name="classes" location="${temp}/classes" />
+  
   <property name="src" location="${basedir}/src"/>
   <property name="src.test" location="${basedir}/test" />
-  <property name="build" location="${basedir}/../build"/>
-  <property name="dist" location="${build}/dist" />
-  <property name="quality" location="${build}/quality" />
-  <property name="javadoc" location="${dist}/doc" />
-  <property name="checkstyle" location="${dist}/checkstyle" />
-	
-	
-  <property name="temp" location="${build}/temp" />
-  <property name="classes" location="${temp}/classes" />
-	
   <property name="libs" location="${basedir}/lib" />
-	
-  <property environment="env"/> 	
-	
+
+  <property name="install" location="${build}/release" />
+  <property name="javadoc" location="${install}/doc" />
+  <property name="checkstyle" location="${install}/checkstyle" />
+  	
   <!-- 
   	***************************************************************** 
   	* external taskdefinitions   
@@ -45,63 +61,97 @@ the License.
   <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${build}/ant-contrib.jar" />
 
   <taskdef resource="checkstyletask.properties" classpath="${build}/checkstyle-all-5.1.jar" />
-
-  <property name="home.findbugs" value="${build}/findbugs-1.3.8"/>
-  <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${home.findbugs}/lib/findbugs-ant.jar"/>
-
-  <taskdef resource="emma_ant.properties" classpath="${build}/emma_ant.jar;${build}/emma.jar;"/>
-
-  <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask" classpath="${build}/catalina-ant.jar"/>
-  <taskdef name="list"      classname="org.apache.catalina.ant.ListTask" classpath="${build}/catalina-ant.jar"/>
-  <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask" classpath="${build}/catalina-ant.jar"/>
-  <taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask" classpath="${build}/catalina-ant.jar"/>
-  <taskdef name="roles"     classname="org.apache.catalina.ant.RolesTask" classpath="${build}/catalina-ant.jar"/>
-  <taskdef name="start"     classname="org.apache.catalina.ant.StartTask" classpath="${build}/catalina-ant.jar"/>
-  <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask" classpath="${build}/catalina-ant.jar"/>
-  <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask" classpath="${build}/catalina-ant.jar"/>
 	
-  <target name="init">
-    <!-- Create the time stamp -->
-    <tstamp/>
-    <!-- Create the build directory structure used by compile -->
-    <mkdir dir="${build}"/>
+  <!-- 
+  	***************************************************************** 
+  	* logging   
+  	***************************************************************** 
+  	-->
+
+  <record name="${build}/build.log" />
+  
+  <!-- 
+  	***************************************************************** 
+  	* INTERNAL TASKS   
+  	***************************************************************** 
+  	-->
+  
+  <!-- 
+	* cleanup tasks 
+	-->
+
+  <target name="clean.start">
+    <stopwatch name="timer1"/>
+    
+    <delete dir="${temp}" />
+    <delete dir="${install}" />
+    <delete dir="${quality}" />
+    
+    <stopwatch name="timer1" action="total"/>
   </target>
 
-  <target name="compile" depends="init" description="compile the source " >
+  <target name="clean.stop">
+    <stopwatch name="timer2"/>
+    
+    <delete dir="${temp}" />
+    
+    <stopwatch name="timer2" action="total"/>
+  </target>
+
+  <!-- 
+	* compile, build tasks 
+	-->
+
+  <target name="compile">
   	
+    <stopwatch name="timer3"/>
+      
   	<mkdir dir="${classes}"/>
   	
     <!-- Compile the java code from ${src} into ${build} -->
     <javac srcdir="${src}" destdir="${classes}" >
-	      <classpath>
-	        <fileset dir="${libs}">
-	          <include name="**/*.jar" />
-	        </fileset>
-	      </classpath>
+	  <classpath>
+	    <fileset dir="${libs}">
+	      <include name="**/*.jar" />
+	    </fileset>
+	  </classpath>
   	</javac>
+  	
+    <stopwatch name="timer3" action="total"/>
+  	
   </target>
 
-  <target name="dist" depends="compile" description="generate the distribution" >
-    <!-- Create the distribution directory -->
-    <mkdir dir="${dist}/lib"/>
+  <target name="jar" depends="compile">
+      
+    <stopwatch name="timer4"/>
+      
+    <mkdir dir="${install}"/>
 
-    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-    <jar jarfile="${dist}/lib/${jar.jvxee}" basedir="${classes}"/>
+	<!-- buildnumber -->
+    <taskdef name="buildnr" classname="com.sibvisions.addons.ant.AntBuildNumber" classpath="${buildnumber}/addons.jar;${classes}" />
+    <buildnr buildfile="${buildnumber}/buildnr.properties" class="com.sibvisions.rad.persist.jpa.IPackageSetup" versionfield="VERSION" namefield="NAME"/> 
+    
+    <jar jarfile="${install}/${jar.name}" basedir="${classes}">
+	  <manifest>
+   	    <attribute name="Specification-Title" value="${build.versionstring}"/>
+        <attribute name="Specification-Version" value="b${build.number}"/>
+        <attribute name="Specification-Vendor" value="SIB Visions GmbH"/>
+        <attribute name="Implementation-Title" value="${build.versionstring}"/>
+        <attribute name="Implementation-Version" value="b${build.number} ${build.date}"/> 
+        <attribute name="Implementation-Vendor" value="SIB Visions GmbH"/>
+      </manifest>
+    </jar>
+    
+    <stopwatch name="timer4" action="total"/>
+    
   </target>
-
-  <target name="clean" description="clean up" >
-    <!-- Delete the ${build} and ${dist} directory trees -->
-    <delete dir="${dist}"/>
-  	<delete dir="${temp}"/>
-  	<delete dir="${quality}" />
-  </target>	
 	
   <!-- 
 	* quality tasks 
 	-->
 	
   <target name="checkstyle">
-    <stopwatch name="timer8"/>
+    <stopwatch name="timer5"/>
     
     <property name="checkstyle" location="${quality}/checkstyle" />
 
@@ -130,11 +180,12 @@ the License.
       </fileset>
     </delete>
 
-    <stopwatch name="timer8" action="total"/>
+    <stopwatch name="timer5" action="total"/>
   </target>	
 	
  <target name="javadoc">
-    <stopwatch name="timer11"/>
+     
+    <stopwatch name="timer6"/>
     
     <delete dir="${javadoc}" />
  	<mkdir dir="${javadoc}" />
@@ -160,15 +211,23 @@ the License.
         <![CDATA[<h1>JVx EE</h1>]]>
       </doctitle>
       <bottom><![CDATA[<i>Copyright &#169; 2012 SIB Visions GmbH. All Rights Reserved.</i>]]></bottom>
-	  <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
-	  <link href="http://java.sun.com/javaee/5/docs/api/"/>
-      <link href="http://doc.trolltech.com/qtjambi-4.5.2_01/"/>
-      <link href="http://dev.sencha.com/deploy/gxtdocs/"/>
-      <link href="http://google-web-toolkit.googlecode.com/svn/javadoc/2.1/"/>
-      <link href="http://www.jfree.org/jfreechart/api/javadoc/" />
+	  <link href="http://docs.oracle.com/javase/6/docs/api/"/>
+	  <link href="http://docs.oracle.com/javaee/5/api/"/>
+	  <link href="http://www.sibvisions.com/files/jvx/1.1/api/"/>
     </javadoc>
 
-    <stopwatch name="timer11" action="total"/>
+    <stopwatch name="timer6" action="total"/>
+    
   </target>	
 	
+  <!-- 
+  	***************************************************************** 
+  	* PUBLIC START TASKS   
+  	***************************************************************** 
+  	-->
+ 
+  <target name="start.quality" depends="clean.start, checkstyle, javadoc, clean.stop" />
+  
+  <target name="start.complete" depends="clean.start, jar, checkstyle, javadoc, clean.stop"/> 
+ 
 </project>
