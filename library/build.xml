@@ -80,6 +80,31 @@ the License.
   	***************************************************************** 
   	-->
   
+  <!--
+    * setup tasks
+    -->
+  
+  <target name="proxy.check">
+    <condition property="proxy.enabled">
+      <and>
+        <isreachable host="10.0.0.2"/>
+      </and>
+    </condition>
+  </target>
+  
+  <target name="proxy" depends="proxy.check" if="proxy.enabled">
+    <stopwatch name="timer0"/>
+    
+    <property name="proxy.host" value="10.0.0.1"/>
+    <property name="proxy.port" value="3128"/>
+    <property name="proxy.user" value=""/>
+    <property name="proxy.pass" value=""/>
+      
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.password}"/>
+    
+    <stopwatch name="timer0" action="total"/>
+  </target>
+  
   <!-- 
 	* cleanup tasks 
 	-->
@@ -217,7 +242,7 @@ the License.
     <stopwatch name="timer5" action="total"/>
   </target>	
 	
- <target name="javadoc">
+ <target name="javadoc" depends="proxy">
      
     <stopwatch name="timer6"/>
     
@@ -233,6 +258,10 @@ the License.
              windowtitle="JVx EE"
              source="1.5" 
              encoding="ISO-8859-1">
+      <arg value="-J-Dhttp.proxyHost=${proxy.host}"/>
+      <arg value="-J-Dhttp.proxyPort=${proxy.port}"/>
+      <arg value="-J-Dhttp.proxyUser=${proxy.user}"/>
+      <arg value="-J-Dhttp.proxyPassword=${proxy.password}"/>
       <classpath>
         <fileset dir="${libs}">
           <include name="**/*.jar" />
