@@ -168,7 +168,6 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 	 */
 	public Collection<E> findAll() 
 	{
-	
 		CriteriaQuery criteriaQuery = entityManager.getCriteriaBuilder().createQuery();
 		From from = criteriaQuery.from(entityClass);
 		criteriaQuery.select(from);
@@ -179,13 +178,11 @@ public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, P
 		
 		try 
 		{
-			
 	        entityManager.getTransaction().begin();
 	        
-	        objectList = (List<E>) query.getResultList();
+	        objectList = (List<E>)query.getResultList();
 	              
 	        entityManager.getTransaction().commit();
-        
 		}
 		catch (IllegalStateException ise) 
 		{

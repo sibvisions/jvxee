@@ -17,6 +17,7 @@
  * History
  *
  * 09.05.2012 - [SW] - creation
+ * 26.01.2013 - [JR] - executeFetch: throw new DataSourceException was missing
  */
 package com.sibvisions.rad.persist.jpa;
 
@@ -245,7 +246,7 @@ public class JPAStorage extends AbstractCachedStorage
 		} 
 		catch (Exception e) 
 		{
-			new DataSourceException("Fetch was not possible", e);
+			throw new DataSourceException("Fetch was not possible", e);
 		}
 
 		objects.add(null);   
@@ -988,18 +989,20 @@ public class JPAStorage extends AbstractCachedStorage
 						} 
 						else if (attribute.getPersistentAttributeType() == PersistentAttributeType.EMBEDDED) 
 						{
-							
 							JPAEmbeddedKey jpaKey = new JPAEmbeddedKey();
 							
 							EmbeddableType embeddableType = jpaAccess.getEmbeddableType(attribute.getJavaType());
 							
 							Set<Attribute> setAttribute = embeddableType.getAttributes();
 							
+							//an expensive method!
+							String sAttribName = JPAStorageUtil.getNameForAttribute(attribute);
+							
 							for (Attribute attributeEmbedded : setAttribute) 
 							{
 								if (pUseRepresentationColumns && uniqueKeyColumnNames.size() > 0) 
 								{
-									if (uniqueKeyColumnNames.contains(JPAStorageUtil.getNameForAttribute(attribute))) 
+									if (uniqueKeyColumnNames.contains(sAttribName)) 
 									{
 										JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attributeEmbedded, attribute.getJavaType());	
 										jpaKey.addServerColumnMetaData(serverColumnMetaData);											
@@ -1041,9 +1044,7 @@ public class JPAStorage extends AbstractCachedStorage
 					// If there are no Unique Keys then all ColumnNames are Representation ColumnNames
 					smdNew.setRepresentationColumnNames(smdNew.getColumnNames());
 				}
-				
 			}
-		
 		} 
 		catch (Exception e) 
 		{
@@ -1219,7 +1220,6 @@ public class JPAStorage extends AbstractCachedStorage
 					{
 						return attribute;	
 					}
-						
 				}  
 				else 
 				{
@@ -1336,13 +1336,16 @@ public class JPAStorage extends AbstractCachedStorage
 			// Unique Keys can be defined in JPA 2.0 in the Annotation Column from a field
 			Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(attribute, pEntityClass);
 			
+			//an expensive method!
+			String sAttribName = JPAStorageUtil.getNameForAttribute(attribute, annotations);
+			
 			for (Annotation annotation : annotations) 
 			{
 				if (annotation.annotationType() == javax.persistence.Column.class) 
 				{
 					if (((Boolean) annotation.getClass().getMethod("unique").invoke(annotation)).booleanValue()) 
 					{
-						uniqueColumnNames.add(JPAStorageUtil.getNameForAttribute(attribute));
+						uniqueColumnNames.add(sAttribName);
 					}
 				} 
 			}			
@@ -1390,12 +1393,11 @@ public class JPAStorage extends AbstractCachedStorage
 		jpaDataType.setGetterMethodName(JPAStorageUtil.getGetterMethodNameForAttribute(pAttribute));
 		jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(pAttribute));
 		serverColumnMetaData.setJPAMappingType(jpaDataType);
+
+		Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(pAttribute, pEntityClass);
 		
+		serverColumnMetaData.setName(JPAStorageUtil.getNameForAttribute(pAttribute, annotations));
 		serverColumnMetaData.setLabel(JPAStorageUtil.getLabelForAttribute(pAttribute));
-		
-		//TODO which name is corrent?
-		serverColumnMetaData.setName(JPAStorageUtil.getNameForAttribute(pAttribute));
-		serverColumnMetaData.setName(pAttribute.getName().toUpperCase());
 		
 		serverColumnMetaData.setNullable(true);
 		serverColumnMetaData.setPrecision(0);
@@ -1410,8 +1412,6 @@ public class JPAStorage extends AbstractCachedStorage
 		{
 			serverColumnMetaData.setPrecision(Integer.MAX_VALUE);
 		}
-
-		Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(pAttribute, pEntityClass);
 		
 		for (Annotation annotation : annotations) 
 		{
