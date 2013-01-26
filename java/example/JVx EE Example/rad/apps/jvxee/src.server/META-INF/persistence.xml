@@ -22,7 +22,7 @@
 <!-- 			<property name="eclipselink.drop-ddl-jdbc-file-name" value="drop.sql"/> -->
 <!-- 			<property name="eclipselink.create-ddl-jdbc-file-name" value="create.sql"/> -->
  			
-<!--  			<property name="eclipselink.logging.level" value="SEVERE"/>  -->
+  			<property name="eclipselink.logging.level" value="SEVERE"/>
             <property name="eclipselink.logging.exceptions" value="true"/>
 			
 		</properties>
