@@ -55,7 +55,6 @@ public class CustomerEdit extends Session
 
 		if (jpaCustomer == null) 
 		{
-			
 			EntityManager em = getEntityManager();
 			
 			jpaCustomer = new JPAStorage(Customer.class);

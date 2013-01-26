@@ -397,7 +397,7 @@ public class CustomerEditFrame extends UIInternalFrame
 		setLayout(new UIBorderLayout());
 		add(splitMain, UIBorderLayout.CENTER);
 
-		setSize(new UIDimension(600, 500));
+		pack();
 	}
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

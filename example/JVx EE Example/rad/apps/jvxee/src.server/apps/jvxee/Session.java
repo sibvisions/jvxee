@@ -46,7 +46,7 @@ public class Session extends Application
 	{
 	    EntityManagerFactory emf = Persistence.createEntityManagerFactory("jvxee");   
 	    EntityManager entityManager = emf.createEntityManager();
-		
+	    
 	    return entityManager;
 	}		
 

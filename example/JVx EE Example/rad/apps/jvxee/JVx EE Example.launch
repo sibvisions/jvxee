@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/JVx EE Example/libs/client/jvxclient.jar"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.sibvisions.rad.ui.swing.impl.SwingApplication"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="apps.jvxee.JVxEEApplication"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JVx EE Example"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-DConfiguration.basedir=&quot;${workspace_loc:JVx EE Example}&quot;"/>
+</launchConfiguration>

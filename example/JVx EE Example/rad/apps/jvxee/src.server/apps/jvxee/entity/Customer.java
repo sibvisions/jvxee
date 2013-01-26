@@ -60,8 +60,10 @@ public class Customer implements Serializable
 	@ManyToOne
 	private Healthinsurance			healthinsurance;
 
+	@Column(nullable=false)
 	private String					firstname;
 
+	@Column(nullable=false)
 	private String					lastname;
 
 	@Temporal(TemporalType.DATE)
@@ -86,9 +88,12 @@ public class Customer implements Serializable
 	@OneToMany(cascade = ALL, fetch = FetchType.LAZY, mappedBy = "customer")
 	private Collection<Address>		addresses		= new ArrayList<Address>();
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Initialization
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	public Customer() 
 	{
-		
 	}
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
