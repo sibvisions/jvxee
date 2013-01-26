@@ -41,6 +41,7 @@ import javax.rad.genui.layout.UIBorderLayout;
 import javax.rad.genui.layout.UIFormLayout;
 import javax.rad.io.IFileHandle;
 import javax.rad.model.ColumnDefinition;
+import javax.rad.model.ColumnView;
 import javax.rad.model.ModelException;
 import javax.rad.model.RowDefinition;
 import javax.rad.model.condition.ICondition;
@@ -203,6 +204,8 @@ public class CustomerEditFrame extends UIInternalFrame
 		rdbCustomer.setDataSource(dataSource);
 		rdbCustomer.setName("customer");
 		rdbCustomer.open();
+		
+		rdbCustomer.getRowDefinition().setColumnView(null, new ColumnView("FIRSTNAME", "LASTNAME"));
 
 		rdbAddress.setDataSource(dataSource);
 		rdbAddress.setName("address");

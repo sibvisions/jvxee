@@ -44,10 +44,17 @@ public class Session extends Application
 	 */
 	public EntityManager getEntityManager() throws Exception 
 	{
-	    EntityManagerFactory emf = Persistence.createEntityManagerFactory("jvxee");   
-	    EntityManager entityManager = emf.createEntityManager();
-	    
-	    return entityManager;
+		EntityManager em = (EntityManager)get("entityManager");
+		
+		if (em == null)
+		{
+		    EntityManagerFactory emf = Persistence.createEntityManagerFactory("jvxee");   
+		    em = emf.createEntityManager();
+		    
+		    put("entityManager", em);
+		}
+		
+	    return em;
 	}		
 
 }	// Session
