@@ -46,6 +46,7 @@ the License.
   <property name="licence" location="${basedir}" />
   <property name="quality" location="${build}/quality" />
   <property name="classes" location="${temp}/classes" />
+  <property name="example" location="${basedir}/../example/JVx EE Example" />
   
   <property name="src" location="${basedir}/src"/>
   <property name="src.test" location="${basedir}/test" />
@@ -202,7 +203,17 @@ the License.
         <include name="LICENSE.txt" />
       </zipfileset>
     </zip>    
-      
+
+    <zip destfile="${release}/${release.name}-${build.version}_eclipse_example.zip">
+      <zipfileset dir="${example}">
+        <exclude name="**/classes/**"/>
+        <exclude name="**/jvxeeexample.log"/>
+        <exclude name="**/jvxeeexample.lck"/>
+        <exclude name="**/jvxeeexample.tmp/**"/>
+        <exclude name="**/eclipselink-src-2.3.2.v20111125-r10461.zip"/>
+      </zipfileset>
+    </zip>    
+    
   </target>  
 	
   <!-- 
