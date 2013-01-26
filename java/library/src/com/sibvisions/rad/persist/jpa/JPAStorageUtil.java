@@ -27,6 +27,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Id;
 import javax.persistence.metamodel.Attribute;
 import javax.rad.model.datatype.BigDecimalDataType;
 import javax.rad.model.datatype.BinaryDataType;
@@ -35,6 +37,8 @@ import javax.rad.model.datatype.IDataType;
 import javax.rad.model.datatype.ObjectDataType;
 import javax.rad.model.datatype.StringDataType;
 import javax.rad.model.datatype.TimestampDataType;
+
+import com.sibvisions.util.type.StringUtil;
 
 /**
  * Util Methods for the JPA Integration.
@@ -48,8 +52,7 @@ public final class JPAStorageUtil
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	// TODO Check org.apache.commons.lang.ClassUtils: ClassUtils.wrapperToPrimitive(keyClass)
-	/** the WRAPPER_TYPES. **/
+	/** the primitive type wrappers. **/
 	private static final Set<Class>	WRAPPER_TYPES	= new HashSet();
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,7 +61,6 @@ public final class JPAStorageUtil
 
 	static
 	{
-
 		WRAPPER_TYPES.add(Boolean.class);
 		WRAPPER_TYPES.add(Character.class);
 		WRAPPER_TYPES.add(Byte.class);
@@ -71,8 +73,7 @@ public final class JPAStorageUtil
 	}
 
 	/**
-	 * Invisible constructor because <code>JPAStorageUtil</code> is a utility
-	 * class.
+	 * Invisible constructor because <code>JPAStorageUtil</code> is a utility class.
 	 */
 	private JPAStorageUtil()
 	{
@@ -146,9 +147,7 @@ public final class JPAStorageUtil
 
 		for (Annotation annotation : annotations)
 		{
-			//TODO don't compare strings - use the class
-			if (annotation.annotationType().getName().equals("javax.persistence.Id") 
-				|| annotation.annotationType().getName().equals("javax.persistence.EmbeddedId"))
+			if (annotation.annotationType() == Id.class || annotation.annotationType() == EmbeddedId.class)
 			{
 				return true;
 			}
@@ -176,7 +175,7 @@ public final class JPAStorageUtil
 	 */
 	public static String getSetterMethodNameForAttribute(Attribute pAttribute)
 	{
-		return "set" + pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+		return StringUtil.formatMethodName("set", pAttribute.getName());
 	}
 
 	/**
@@ -187,23 +186,18 @@ public final class JPAStorageUtil
 	 */	
 	public static String getGetterMethodNameForAttribute(Attribute pAttribute)
 	{
-
-		String methodName = "get" + pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+		String methodName = StringUtil.formatMethodName("get", pAttribute.getName());
 
 		if (pAttribute.getJavaType() == Boolean.class || pAttribute.getJavaType() == boolean.class)
 		{
-
 			try
 			{
-
 				pAttribute.getDeclaringType().getJavaType().getMethod(methodName);
-
 			}
 			catch (NoSuchMethodException e)
 			{
-				methodName = "is" + pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+				methodName = StringUtil.formatMethodName("is", pAttribute.getName());
 			}
-
 		}
 
 		return methodName;
@@ -217,6 +211,53 @@ public final class JPAStorageUtil
 	 */
 	public static String getNameForAttribute(Attribute pAttribute)
 	{
+		Annotation[] anons;
+		
+		try
+		{
+			anons = getAnnotationsForAttribute(pAttribute, pAttribute.getDeclaringType().getJavaType());
+		}
+		catch (Exception e)
+		{
+			anons = null;
+		}
+		
+		return getNameForAttribute(pAttribute, anons);
+	}
+	
+	/**
+	 * Returns the name for the attribute.
+	 * 
+	 * @param pAttribute the attribute
+	 * @param pAnnotations the attribute annotations
+	 * @return the name for the attribute
+	 */	
+	static String getNameForAttribute(Attribute pAttribute, Annotation[] pAnnotations)
+	{
+		if (pAnnotations != null)
+		{
+			//try to detect the name from Column annotation
+			try
+			{
+				for (Annotation annotation : pAnnotations) 
+				{
+					if (annotation.annotationType() == javax.persistence.Column.class) 
+					{
+						String sName = (String)annotation.getClass().getMethod("name").invoke(annotation);
+						
+						if (sName != null && sName.length() > 0)
+						{
+							return sName;
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				//nothing to be done
+			}
+		}
+		
 		return pAttribute.getName().toUpperCase();
 	}
 
@@ -228,7 +269,7 @@ public final class JPAStorageUtil
 	 */
 	public static String getLabelForAttribute(Attribute pAttribute)
 	{
-		return pAttribute.getName().substring(0, 1).toUpperCase() + pAttribute.getName().substring(1);
+		return StringUtil.formatInitCap(pAttribute.getName());
 	}
 
 	/**
