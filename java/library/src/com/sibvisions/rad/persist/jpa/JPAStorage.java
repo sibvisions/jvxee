@@ -60,21 +60,24 @@ import com.sibvisions.util.type.StringUtil;
  * 
  * @author Stefan Wurm
  */
-public class JPAStorage extends AbstractCachedStorage 
+public class JPAStorage extends AbstractCachedStorage
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/** The internal JPA access object. */
 	private JPAAccess jpaAccess;
-
+	
 	/** The user-defined JPA access object. */
 	private JPAAccess jpaAccessUser;
 	
-	/** The encapsulation for the JPAServerColumnMetaData, JPAPrimaryKey, JPAForeignKey and JPAEmbeddedKey. */
+	/**
+	 * The encapsulation for the JPAServerColumnMetaData, JPAPrimaryKey,
+	 * JPAForeignKey and JPAEmbeddedKey.
+	 */
 	private JPAServerMetaData serverMetaData;
-		
+	
 	/** To create a criteria query for an ICondition. */
 	private ConditionCriteriaMapper criteriaConditionMapper;
 	
@@ -82,31 +85,32 @@ public class JPAStorage extends AbstractCachedStorage
 	private Class masterEntity;
 	
 	/** The EntityClass for the ManyToMany relation. */
-	private Class detailEntity;	
+	private Class detailEntity;
 	
-	/** Determines the automatic link reference mode.  */
-	private Boolean	bAutoLinkReference;	
+	/** Determines the automatic link reference mode. */
+	private Boolean bAutoLinkReference;
 	
 	/** Determines the default automatic link reference mode. */
-	private static boolean bDefaultAutoLinkReference = true;	
+	private static boolean bDefaultAutoLinkReference = true;
 	
 	/** the list of sub storages. */
-	private HashMap<String, IStorage> hmpSubStorages;	
-
+	private HashMap<String, IStorage> hmpSubStorages;
+	
 	/** The open state of this DBStorage. */
-	private boolean	bIsOpen  = false;	
+	private boolean bIsOpen = false;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/**
-	 * Creates a new instance of <code>JPAStorage</code> for the given entity class.
+	 * Creates a new instance of <code>JPAStorage</code> for the given entity
+	 * class.
 	 * 
 	 * @param pMasterEntity the master entity class
 	 * @throws DataSourceException if set master entity fails
 	 */
-	public JPAStorage(Class pMasterEntity) throws DataSourceException 
+	public JPAStorage(Class pMasterEntity) throws DataSourceException
 	{
 		setMasterEntity(pMasterEntity);
 	}
@@ -136,245 +140,245 @@ public class JPAStorage extends AbstractCachedStorage
 	
 	/**
 	 * {@inheritDoc}
-	 */	
-	public List<Object[]> executeFetch(ICondition pFilter, SortDefinition pSort, int pFromRow, int pMinimumRowCount) throws DataSourceException 
+	 */
+	public List<Object[]> executeFetch(ICondition pFilter, SortDefinition pSort, int pFromRow, int pMinimumRowCount) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}		
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
 		List<Object[]> objects = new ArrayList<Object[]>();
 		Collection objectList = new ArrayList();
 		
 		Object entityM = null;
-
-		try 
+		
+		try
 		{
-			if (pFilter != null || pSort != null) 
+			if (pFilter != null || pSort != null)
 			{
-				if (criteriaConditionMapper == null) 
+				if (criteriaConditionMapper == null)
 				{
 					criteriaConditionMapper = new ConditionCriteriaMapper(serverMetaData, jpaAccess.getCriteriaBuilder());
 				}
 				
 				JPAForeignKey jpaForeignKey = serverMetaData.getJPAForeignKeyForCondition(pFilter);
-
-				if (jpaForeignKey != null && jpaForeignKey.hasDetailEntitiesMethode() && pSort == null) 
+				
+				if (jpaForeignKey != null && jpaForeignKey.hasDetailEntitiesMethode() && pSort == null)
 				{
 					Map<String, Object> map = serverMetaData.getValueMapForCondition(pFilter);
 					
 					Object primaryKey = jpaForeignKey.getKeyForEntity(map);
 					
-					if (primaryKey == null) 
+					if (primaryKey == null)
 					{
-				        CriteriaQuery criteriaQuery = criteriaConditionMapper.getCriteriaQuery(pFilter, pSort, masterEntity, null);
+						CriteriaQuery criteriaQuery = criteriaConditionMapper.getCriteriaQuery(pFilter, pSort, masterEntity, null);
 						
-						objectList = jpaAccess.findByCriteria(criteriaQuery);	
-					} 
-					else 
+						objectList = jpaAccess.findByCriteria(criteriaQuery);
+					}
+					else
 					{
 						entityM = jpaAccess.findById(primaryKey, jpaForeignKey.getJPAMappingType().getJavaTypeClass());
 						
 						jpaAccess.refresh(entityM, jpaForeignKey.getJPAMappingType().getJavaTypeClass());
-					
+						
 						Object obj = jpaForeignKey.getDetailEntities(entityM);
 						
-						if (obj != null && obj instanceof Collection) 
+						if (obj != null && obj instanceof Collection)
 						{
-							if (obj instanceof Collection) 
+							if (obj instanceof Collection)
 							{
-								objectList = (Collection) obj;	
-							} 
-							else 
+								objectList = (Collection)obj;
+							}
+							else
 							{
 								objectList.add(obj);
 							}
 						}
 					}
-				} 
-				else 
+				}
+				else
 				{
-					if (serverMetaData.isManyToMany()) 
+					if (serverMetaData.isManyToMany())
 					{
 						CriteriaQuery criteriaQuery = criteriaConditionMapper.getCriteriaQuery(pFilter, null, masterEntity, null);
 						
 						Collection col = jpaAccess.findByCriteria(criteriaQuery);
 						
-						if (col.size() == 1) 
+						if (col.size() == 1)
 						{
-							entityM = col.iterator().next();	
+							entityM = col.iterator().next();
 						}
 						
-						criteriaQuery = criteriaConditionMapper.getCriteriaQuery(pFilter, pSort, masterEntity, 
-								                                                 getDetailRelationAttribute(masterEntity, detailEntity, 
-								                                                		                    PersistentAttributeType.MANY_TO_MANY).getName());
-						
-						objectList = jpaAccess.findByCriteria(criteriaQuery);	
-					} 
-					else 
+						criteriaQuery = criteriaConditionMapper.getCriteriaQuery(pFilter, pSort, masterEntity,
+								getDetailRelationAttribute(masterEntity, detailEntity,
+										PersistentAttributeType.MANY_TO_MANY).getName());
+										
+						objectList = jpaAccess.findByCriteria(criteriaQuery);
+					}
+					else
 					{
-				        CriteriaQuery criteriaQuery = criteriaConditionMapper.getCriteriaQuery(pFilter, pSort, masterEntity, null);
-
-						objectList = jpaAccess.findByCriteria(criteriaQuery);	
+						CriteriaQuery criteriaQuery = criteriaConditionMapper.getCriteriaQuery(pFilter, pSort, masterEntity, null);
+						
+						objectList = jpaAccess.findByCriteria(criteriaQuery);
 					}
 				}
-			} 
-			else 
-			{
-				objectList = (Collection) jpaAccess.findAll(masterEntity);
 			}
-
-	        for (Object entityD : objectList) 
-	        {
-	        	if (serverMetaData.isManyToMany()) 
-	        	{
-    	        	Object[] dataRow = getDataRowForEntities(entityM, entityD);
-    		        objects.add(dataRow);
-
-	        	} 
-	        	else 
-	        	{
-		        	Object[] dataRow = getDataRowForEntity(entityD); 	       
-			        objects.add(dataRow);	        		
-	        	}
-	        }	
-		} 
-		catch (DataSourceException dse) 
+			else
+			{
+				objectList = (Collection)jpaAccess.findAll(masterEntity);
+			}
+			
+			for (Object entityD : objectList)
+			{
+				if (serverMetaData.isManyToMany())
+				{
+					Object[] dataRow = getDataRowForEntities(entityM, entityD);
+					objects.add(dataRow);
+					
+				}
+				else
+				{
+					Object[] dataRow = getDataRowForEntity(entityD);
+					objects.add(dataRow);
+				}
+			}
+		}
+		catch (DataSourceException dse)
 		{
 			throw dse;
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			throw new DataSourceException("Fetch was not possible", e);
 		}
-
-		objects.add(null);   
-
+		
+		objects.add(null);
+		
 		return objects;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
-	 */	
-	public Object[] executeRefetchRow(Object[] pDataRow) throws DataSourceException 
+	 */
+	public Object[] executeRefetchRow(Object[] pDataRow) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}			
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
-		Object [] dataRow = null;
+		Object[] dataRow = null;
 		
-		try 
+		try
 		{
 			Object primaryKey = serverMetaData.getJPAPrimaryKey().getKeyForEntity(serverMetaData.getMapForDataRow(pDataRow));
-	
+			
 			Object entityForFetch = jpaAccess.findById(primaryKey, masterEntity);
 			
 			dataRow = getDataRowForEntity(entityForFetch);
-		} 
-		catch (DataSourceException dse) 
+		}
+		catch (DataSourceException dse)
 		{
 			throw dse;
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			new DataSourceException("Refetch was not possible", e);
 		}
 		
 		return dataRow;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	public Object[] executeInsert(Object[] pDataRow) throws DataSourceException 
+	public Object[] executeInsert(Object[] pDataRow) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}			
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
-		Object [] dataRow = null;
-			
-		try 
+		Object[] dataRow = null;
+		
+		try
 		{
-			if (serverMetaData.isManyToMany()) 
+			if (serverMetaData.isManyToMany())
 			{
 				JPAForeignKey foreignKey1 = serverMetaData.getJPAPrimaryKey().getForeignKey(masterEntity);
 				JPAForeignKey foreignKey2 = serverMetaData.getJPAPrimaryKey().getForeignKey(detailEntity);
-
+				
 				Object primaryKey1 = foreignKey1.getKeyForEntity(serverMetaData.getMapForDataRow(pDataRow));
 				Object primaryKey2 = foreignKey2.getKeyForEntity(serverMetaData.getMapForDataRow(pDataRow));
 				
-				if (primaryKey1 != null && primaryKey2 != null) 
+				if (primaryKey1 != null && primaryKey2 != null)
 				{
 					Object entity1 = jpaAccess.findById(primaryKey1, masterEntity);
 					
-					Collection objectList = (Collection) foreignKey1.getDetailEntities(entity1);
-	
+					Collection objectList = (Collection)foreignKey1.getDetailEntities(entity1);
+					
 					Object entity2 = jpaAccess.findById(primaryKey2, detailEntity);
-	
+					
 					objectList.add(entity2);
 					
 					jpaAccess.update(entity1, masterEntity);
 					
 					dataRow = getDataRowForEntities(entity1, entity2);
 				}
-			} 
-			else 
+			}
+			else
 			{
 				Object entityForInsert = masterEntity.newInstance();
-			
+				
 				mappeDataRowToEntity(pDataRow, entityForInsert);
 				
 				entityForInsert = jpaAccess.insert(entityForInsert, masterEntity);
 				
 				dataRow = getDataRowForEntity(entityForInsert);
 			}
-		} 
-		catch (DataSourceException dse) 
+		}
+		catch (DataSourceException dse)
 		{
 			throw dse;
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			throw new DataSourceException("Insert was not possible", e);
 		}
 		
 		return dataRow;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	public Object[] executeUpdate(Object[] pOldDataRow, Object[] pNewDataRow) throws DataSourceException 
+	public Object[] executeUpdate(Object[] pOldDataRow, Object[] pNewDataRow) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}			
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
-		Object [] dataRow = null;
+		Object[] dataRow = null;
 		
-		try 
+		try
 		{
-			if (serverMetaData.isManyToMany()) 
+			if (serverMetaData.isManyToMany())
 			{
 				JPAForeignKey foreignKey1 = serverMetaData.getJPAPrimaryKey().getForeignKey(masterEntity);
 				JPAForeignKey foreignKey2 = serverMetaData.getJPAPrimaryKey().getForeignKey(detailEntity);
-
+				
 				Object primaryKey1 = foreignKey1.getKeyForEntity(serverMetaData.getMapForDataRow(pOldDataRow));
 				Object primaryKeyOld2 = foreignKey2.getKeyForEntity(serverMetaData.getMapForDataRow(pOldDataRow));
 				Object primaryKeyNew2 = foreignKey2.getKeyForEntity(serverMetaData.getMapForDataRow(pNewDataRow));
 				
 				Object entity1 = jpaAccess.findById(primaryKey1, masterEntity);
-
-				Collection objectList = (Collection) foreignKey1.getDetailEntities(entity1);
-
+				
+				Collection objectList = (Collection)foreignKey1.getDetailEntities(entity1);
+				
 				Object entityOld2 = jpaAccess.findById(primaryKeyOld2, detailEntity);
-
+				
 				objectList.remove(entityOld2);
 				
 				Object entityNew2 = jpaAccess.findById(primaryKeyNew2, detailEntity);
@@ -384,25 +388,25 @@ public class JPAStorage extends AbstractCachedStorage
 				jpaAccess.update(entity1, masterEntity);
 				
 				dataRow = getDataRowForEntities(entity1, entityNew2);
-			} 
-			else 
+			}
+			else
 			{
 				Object primaryKey = serverMetaData.getJPAPrimaryKey().getKeyForEntity(serverMetaData.getMapForDataRow(pOldDataRow));
 				
 				Object entityForUpdate = jpaAccess.findById(primaryKey, masterEntity);
-		
+				
 				mappeDataRowToEntity(pNewDataRow, entityForUpdate);
 				
 				jpaAccess.update(entityForUpdate, masterEntity);
 				
 				dataRow = getDataRowForEntity(entityForUpdate);
 			}
-		} 
-		catch (DataSourceException dse) 
+		}
+		catch (DataSourceException dse)
 		{
 			throw dse;
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			throw new DataSourceException("Update was not possible", e);
 		}
@@ -413,34 +417,34 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * {@inheritDoc}
 	 */
-	public void executeDelete(Object[] pDeleteDataRow) throws DataSourceException 
+	public void executeDelete(Object[] pDeleteDataRow) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}			
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
-		try 
+		try
 		{
-			if (serverMetaData.isManyToMany()) 
+			if (serverMetaData.isManyToMany())
 			{
 				JPAForeignKey foreignKey1 = serverMetaData.getJPAPrimaryKey().getForeignKey(masterEntity);
 				JPAForeignKey foreignKey2 = serverMetaData.getJPAPrimaryKey().getForeignKey(detailEntity);
-
+				
 				Object primaryKey1 = foreignKey1.getKeyForEntity(serverMetaData.getMapForDataRow(pDeleteDataRow));
 				Object primaryKey2 = foreignKey2.getKeyForEntity(serverMetaData.getMapForDataRow(pDeleteDataRow));
 				
 				Object entity1 = jpaAccess.findById(primaryKey1, masterEntity);
-
-				Collection objectList = (Collection) foreignKey1.getDetailEntities(entity1);
-					
+				
+				Collection objectList = (Collection)foreignKey1.getDetailEntities(entity1);
+				
 				Object entity2 = jpaAccess.findById(primaryKey2, detailEntity);
-
+				
 				objectList.remove(entity2);
 				
 				jpaAccess.update(entity1, masterEntity);
-			} 
-			else 
+			}
+			else
 			{
 				Object primaryKey = serverMetaData.getJPAPrimaryKey().getKeyForEntity(serverMetaData.getMapForDataRow(pDeleteDataRow));
 				
@@ -448,12 +452,12 @@ public class JPAStorage extends AbstractCachedStorage
 				
 				jpaAccess.delete(entityForDelete, masterEntity);
 			}
-		} 
-		catch (DataSourceException dse) 
+		}
+		catch (DataSourceException dse)
 		{
-			throw dse;			
-		} 
-		catch (Exception e) 
+			throw dse;
+		}
+		catch (Exception e)
 		{
 			throw new DataSourceException("Delete was not possible", e);
 		}
@@ -462,28 +466,28 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * {@inheritDoc}
 	 */
-	public MetaData executeGetMetaData() throws DataSourceException 
+	public MetaData executeGetMetaData() throws DataSourceException
 	{
 		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
+			throw new DataSourceException("JPAStorage isn't open!");
 		}
 		
 		return serverMetaData.getMetaData();
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	public int getEstimatedRowCount(ICondition pFilter) throws DataSourceException 
+	public int getEstimatedRowCount(ICondition pFilter) throws DataSourceException
 	{
 		CriteriaQuery<Long> countCriteriaQuery = criteriaConditionMapper.getCountCriteriaQuery(pFilter, masterEntity, null);
 		
-		Long count = jpaAccess.countByCriteria(countCriteriaQuery);	
+		Long count = jpaAccess.countByCriteria(countCriteriaQuery);
 		
 		return count.intValue();
-	}	
-
+	}
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -494,30 +498,31 @@ public class JPAStorage extends AbstractCachedStorage
 	 * @param pMasterEntity the master entity class
 	 * @throws DataSourceException if entity check fails
 	 */
-	public void setMasterEntity(Class pMasterEntity) throws DataSourceException 
+	public void setMasterEntity(Class pMasterEntity) throws DataSourceException
 	{
-		checkEntity(pMasterEntity);	
+		checkEntity(pMasterEntity);
 		
 		masterEntity = pMasterEntity;
 	}
-
+	
 	/**
 	 * Returns the master entity class of the JPAStorage.
 	 * 
 	 * @return the master entity class
 	 */
-	public Class getMasterEntity() 
+	public Class getMasterEntity()
 	{
 		return masterEntity;
-	}	
+	}
 	
 	/**
-	 * Sets the Detail Entity-Class for the JPAStorage. This is needed for a Many-to-Many Relationship between entities.
+	 * Sets the Detail Entity-Class for the JPAStorage. This is needed for a
+	 * Many-to-Many Relationship between entities.
 	 * 
 	 * @param pDetailEntity the detail Entity Class
 	 * @throws DataSourceException if check entity fails
 	 */
-	public void setDetailEntity(Class pDetailEntity) throws DataSourceException  
+	public void setDetailEntity(Class pDetailEntity) throws DataSourceException
 	{
 		checkEntity(pDetailEntity);
 		
@@ -529,10 +534,10 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @return the detail entity class
 	 */
-	public Class getDetailEntity() 
+	public Class getDetailEntity()
 	{
 		return detailEntity;
-	}		
+	}
 	
 	/**
 	 * Checks if the given Class is an entity.
@@ -540,45 +545,46 @@ public class JPAStorage extends AbstractCachedStorage
 	 * @param pEntityClass the entity class
 	 * @throws DataSourceException zf the given Class is no entity
 	 */
-	private void checkEntity(Class pEntityClass) throws DataSourceException 
+	private void checkEntity(Class pEntityClass) throws DataSourceException
 	{
-		try 
+		try
 		{
 			
 			Annotation[] annotations = pEntityClass.getAnnotations();
 			
-			for (Annotation annotation : annotations) 
+			for (Annotation annotation : annotations)
 			{
-				if (annotation.annotationType() == javax.persistence.Entity.class) 
+				if (annotation.annotationType() == javax.persistence.Entity.class)
 				{
 					return;
 				}
 			}
-		} 
+		}
 		catch (Exception e)
 		{
 			//nothing to be done
 		}
-
+		
 		throw new DataSourceException("Class " + pEntityClass.getName() + " is no Entity");
 	}
 	
 	/**
-	 * Creates a <code>JPAAccess</code> with the given <code>EntityManager</code> for this JPAStorage.
-	 * There have to be one JPAAccess per JPAStorage.
+	 * Creates a <code>JPAAccess</code> with the given
+	 * <code>EntityManager</code> for this JPAStorage. There have to be one
+	 * JPAAccess per JPAStorage.
 	 * 
 	 * @param pEntityManager The EntityManager
 	 * @throws DataSourceException If the EntityManager is not open or null
 	 */
-	public void setEntityManager(EntityManager pEntityManager) throws DataSourceException 
+	public void setEntityManager(EntityManager pEntityManager) throws DataSourceException
 	{
 		
-		if (pEntityManager == null) 
+		if (pEntityManager == null)
 		{
 			throw new DataSourceException("EntityManager is null");
 		}
 		
-		if (pEntityManager.isOpen()) 
+		if (pEntityManager.isOpen())
 		{
 			if (jpaAccessUser != null)
 			{
@@ -588,32 +594,32 @@ public class JPAStorage extends AbstractCachedStorage
 			{
 				JPAAccess jpa = new JPAAccess();
 				jpa.setEntityManager(pEntityManager);
-			
+				
 				setJPAAccessIntern(jpa);
 			}
-		} 
-		else 
+		}
+		else
 		{
 			throw new DataSourceException("EntityManager is not open");
 		}
-	}		
+	}
 	
 	/**
 	 * Returns the JPAAccess for the storage.
 	 * 
 	 * @return The JPAAcces
 	 */
-	public JPAAccess getJPAAccess() 
+	public JPAAccess getJPAAccess()
 	{
 		return jpaAccess;
 	}
-
+	
 	/**
 	 * Sets the user-defined JPA access for the storage.
 	 * 
 	 * @param pJPAAccess The JPA access
 	 */
-	public void setJPAAccess(JPAAccess pJPAAccess) 
+	public void setJPAAccess(JPAAccess pJPAAccess)
 	{
 		jpaAccessUser = pJPAAccess;
 		
@@ -641,29 +647,30 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @throws DataSourceException if the JPA access is null.
 	 */
-	public void open() throws DataSourceException 
+	public void open() throws DataSourceException
 	{
 		openInternal(false);
-	}	
+	}
 	
 	/**
 	 * Opens the JPA Storage and checks if the JPA access is set.
 	 * 
-	 * @param pUseRepresentationColumnsAsQueryColumns <code>yes</code> if the QueryColumns are set with 
-	 *                                                all representation columns including the Primary Key columns.
+	 * @param pUseRepresentationColumnsAsQueryColumns <code>yes</code> if the
+	 *            QueryColumns are set with all representation columns including
+	 *            the Primary Key columns.
 	 * @throws DataSourceException if the JPA access is null.
 	 */
-	public void openInternal(boolean pUseRepresentationColumnsAsQueryColumns) throws DataSourceException 
+	public void openInternal(boolean pUseRepresentationColumnsAsQueryColumns) throws DataSourceException
 	{
-		if (jpaAccess == null) 
+		if (jpaAccess == null)
 		{
 			throw new DataSourceException("EntityManager is not set. Call setEntityManager first.");
 		}
 		
 		serverMetaData = createServerMetaData(pUseRepresentationColumnsAsQueryColumns);
-	
+		
 		bIsOpen = true;
-	}		
+	}
 	
 	/**
 	 * Returns if the JPA Storage is open.
@@ -673,24 +680,26 @@ public class JPAStorage extends AbstractCachedStorage
 	public boolean isOpen()
 	{
 		return bIsOpen;
-	}	
+	}
 	
 	/**
-	 * Sets if the automatic link reference detection is en- or disabled. The automatic link reference is defined
-	 * through a foreign key reference in the entity.
+	 * Sets if the automatic link reference detection is en- or disabled. The
+	 * automatic link reference is defined through a foreign key reference in
+	 * the entity.
 	 *
-	 * @param pAutoLinkReference true if the automatic link reference mode is on, <code>false</code> to disable 
-	 *                           auto link reference mode
+	 * @param pAutoLinkReference true if the automatic link reference mode is
+	 *            on, <code>false</code> to disable auto link reference mode
 	 */
 	public void setAutoLinkReference(boolean pAutoLinkReference)
 	{
 		bAutoLinkReference = Boolean.valueOf(pAutoLinkReference);
-	}	
+	}
 	
 	/**
-	 * Returns if the automatic link reference mode is on or off.	
+	 * Returns if the automatic link reference mode is on or off.
 	 *
-	 * @return <code>true</code>if the automatic link reference mode is on, otherwise <code>false</code>
+	 * @return <code>true</code>if the automatic link reference mode is on,
+	 *         otherwise <code>false</code>
 	 * @see #setAutoLinkReference(boolean)
 	 */
 	public boolean isAutoLinkReference()
@@ -704,12 +713,14 @@ public class JPAStorage extends AbstractCachedStorage
 	}
 	
 	/**
-	 * Creates and sets a new <code>StorageReferenceDefinition</code> for the Columns of the <code>JPAForeignKey</code>
-	 * e.g. its used to make an automatic linked celleditor from a custom written view and set it on all Columns of the <code>JPAForeignKey</code>. 
+	 * Creates and sets a new <code>StorageReferenceDefinition</code> for the
+	 * Columns of the <code>JPAForeignKey</code> e.g. its used to make an
+	 * automatic linked celleditor from a custom written view and set it on all
+	 * Columns of the <code>JPAForeignKey</code>.
 	 * 
 	 * @param pJPAForeignKey The JPAForeignKey
 	 * @param pMasterEntity The Entity for the AutoLinkReference
-	 * @throws ModelException 
+	 * @throws ModelException
 	 */
 	public void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, Class pMasterEntity) throws ModelException
 	{
@@ -717,85 +728,87 @@ public class JPAStorage extends AbstractCachedStorage
 	}
 	
 	/**
-	 * Creates a new <code>JPAStorage</code> which is configured for automatic link cell editors. The auto link
-	 * reference feature is disabled for this storage.
+	 * Creates a new <code>JPAStorage</code> which is configured for automatic
+	 * link cell editors. The auto link reference feature is disabled for this
+	 * storage.
 	 * 
 	 * @param pMasterEntity The Entity for the Storage
 	 * @return the newly created storage
-	 * @throws DataSourceException if the from clause causes errors or the metadata are not available
+	 * @throws DataSourceException if the from clause causes errors or the
+	 *             metadata are not available
 	 */
 	protected JPAStorage createAutomaticLinkStorage(Class pMasterEntity) throws DataSourceException
 	{
 		JPAStorage jpaStorage = new JPAStorage(pMasterEntity);
 		jpaStorage.setEntityManager((getJPAAccess().getEntityManager()));
 		jpaStorage.setAutoLinkReference(false);
-		jpaStorage.openInternal(true);		
-				
+		jpaStorage.openInternal(true);
+		
 		return jpaStorage;
-	}	
+	}
 	
 	/**
-	 * Creates and sets a new <code>StorageReferenceDefinition</code> with the specified <code>JPAStorage</code> for
-	 * the <code>JPAForeignKey</code> Columns. 
+	 * Creates and sets a new <code>StorageReferenceDefinition</code> with the
+	 * specified <code>JPAStorage</code> for the <code>JPAForeignKey</code>
+	 * Columns.
 	 * 
 	 * @param pJPAForeignKey The JPAForeignKey
-	 * @param pJPAStorage The Storage Object 
-	 * @throws ModelException 
+	 * @param pJPAStorage The Storage Object
+	 * @throws ModelException
 	 */
-	protected void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, AbstractStorage pJPAStorage) throws ModelException 
+	protected void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, AbstractStorage pJPAStorage) throws ModelException
 	{
 		String sStorageName = pJPAStorage.getName();
 		
 		putSubStorage(sStorageName, pJPAStorage);
-	   						
+		
 		// The storage has to be referenced by the getSubStorages method from outside.
-		StorageReferenceDefinition srdLink = new StorageReferenceDefinition(pJPAForeignKey.getColumnNames(), ".subStorages." + sStorageName, 
-				                                                            pJPAForeignKey.getReferencedColumnNames());
-			
-		for (JPAServerColumnMetaData serverColumnMetaData : pJPAForeignKey.getServerColumnMetaDataAsCollection()) 
+		StorageReferenceDefinition srdLink = new StorageReferenceDefinition(pJPAForeignKey.getColumnNames(), ".subStorages." + sStorageName,
+				pJPAForeignKey.getReferencedColumnNames());
+				
+		for (JPAServerColumnMetaData serverColumnMetaData : pJPAForeignKey.getServerColumnMetaDataAsCollection())
 		{
 			serverColumnMetaData.setLinkReference(srdLink);
 		}
-	}	
+	}
 	
 	/**
 	 * Adds a sub storage to the internal list of all sub storages.
 	 * 
-	 * @param pSubStorage	the sub storage to use.
-	 * @param pStorageName	the storage name to use.
-	 * @return previous sub storage which was associated with the storage name  
+	 * @param pSubStorage the sub storage to use.
+	 * @param pStorageName the storage name to use.
+	 * @return previous sub storage which was associated with the storage name
 	 */
 	private IStorage putSubStorage(String pStorageName, IStorage pSubStorage)
 	{
 		if (hmpSubStorages == null)
 		{
 			hmpSubStorages = new HashMap<String, IStorage>();
-		}		
+		}
 		
 		return hmpSubStorages.put(pStorageName, pSubStorage);
-	}	
-	
+	}
 	
 	/**
 	 * Gets all known sub storages as key / value pair.
 	 * 
-	 * @return the key / value pair with subtablename and substorage or <code>null</code> if no substorages are
-	 *         known
+	 * @return the key / value pair with subtablename and substorage or
+	 *         <code>null</code> if no substorages are known
 	 */
 	public Map<String, IStorage> getSubStorages()
 	{
 		return hmpSubStorages;
-	}	
-
+	}
+	
 	@Override
 	public void writeCSV(OutputStream pStream, String[] pColumnNames,
-			             String[] pLabels, ICondition pFilter, SortDefinition pSort,
-			             String pSeparator) throws Exception 
+			String[] pLabels, ICondition pFilter, SortDefinition pSort,
+			String pSeparator) throws Exception
 	{
 		OutputStreamWriter out = new OutputStreamWriter(pStream, "ISO-8859-1");
-
+		
 		try
-		{	
+		{
 			List<Object[]> lResult = this.executeFetch(pFilter, pSort, 0, 0);
 			
 			if (pColumnNames == null)
@@ -838,7 +851,7 @@ public class JPAStorage extends AbstractCachedStorage
 			}
 			
 			IBean bnRowData;
-	
+			
 			//write rows (last row
 			for (int i = 0; i < lResult.size() - 1; i++)
 			{
@@ -852,10 +865,10 @@ public class JPAStorage extends AbstractCachedStorage
 					}
 					
 					DataBookUtil.writeQuoted(out, dataTypes[j], bnRowData.get(pColumnNames[j]), pSeparator);
-				}			
-				out.write("\n");			
+				}
+				out.write("\n");
 			}
-				
+			
 			out.flush();
 		}
 		finally
@@ -874,99 +887,102 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Creates the <code>JPAServerMetaData</code> for this JPAStorage.
 	 * 
-	 * @param pUseRepresentationColumns If the representation Column Names should be used
+	 * @param pUseRepresentationColumns If the representation Column Names
+	 *            should be used
 	 * @return The <code>JPAServerMetaData</code> for this JPAStorage
 	 * @throws DataSourceException if create server metadata fails
 	 */
-	private JPAServerMetaData createServerMetaData(boolean pUseRepresentationColumns) throws DataSourceException 
+	private JPAServerMetaData createServerMetaData(boolean pUseRepresentationColumns) throws DataSourceException
 	{
 		JPAServerMetaData smdNew = new JPAServerMetaData();
-
-		try 
+		
+		try
 		{
 			// Is a Many-to-Many Relation
-			if (masterEntity != null && detailEntity != null) 
-			{ 
+			if (masterEntity != null && detailEntity != null)
+			{
 				JPAPrimaryKey jpaPrimaryKey = new JPAPrimaryKey();
 				
 				JPAForeignKey jpaForeignKey = createForeignKey(masterEntity);
 				
 				JPAMappingType jpaDataType = new JPAMappingType();
 				
-				jpaDataType.setEntityClass(null); // By a ManyToMany Relation there exists no Entity Class 
+				// By a ManyToMany Relation there exists no Entity Class
+				jpaDataType.setEntityClass(null);
 				jpaDataType.setJavaTypeClass(masterEntity);
 				
-				jpaForeignKey.setJPAMappingType(jpaDataType);		
+				jpaForeignKey.setJPAMappingType(jpaDataType);
 				
 				Attribute detailRelationAttribute = getDetailRelationAttribute(masterEntity, detailEntity, PersistentAttributeType.MANY_TO_MANY);
 				
-				if (detailRelationAttribute != null) 
+				if (detailRelationAttribute != null)
 				{
 					jpaForeignKey.setDetailEntitiesMethode(JPAStorageUtil.getGetterMethodNameForAttribute(detailRelationAttribute));
-				}				
+				}
 				
 				smdNew.addJPAForeignKey(jpaForeignKey);
 				
-				jpaPrimaryKey.addForeignKey(masterEntity, jpaForeignKey);				
+				jpaPrimaryKey.addForeignKey(masterEntity, jpaForeignKey);
 				
 				jpaForeignKey = createForeignKey(detailEntity);
 				
 				jpaDataType = new JPAMappingType();
 				
-				jpaDataType.setEntityClass(null); // By a ManyToMany Relation there exists no Entity Class 
+				// By a ManyToMany Relation there exists no Entity Class
+				jpaDataType.setEntityClass(null); 
 				jpaDataType.setJavaTypeClass(detailEntity);
 				
-				jpaForeignKey.setJPAMappingType(jpaDataType);		
+				jpaForeignKey.setJPAMappingType(jpaDataType);
 				
 				smdNew.addJPAForeignKey(jpaForeignKey);
 				
-				jpaPrimaryKey.addForeignKey(detailEntity, jpaForeignKey);	
-	
+				jpaPrimaryKey.addForeignKey(detailEntity, jpaForeignKey);
+				
 				smdNew.setManyToMany(true);
 				smdNew.setJPAPrimaryKey(jpaPrimaryKey);
-			} 
-			else 
+			}
+			else
 			{
 				JPAPrimaryKey jpaPrimaryKey = createPrimaryKey(masterEntity);
 				
 				smdNew.setJPAPrimaryKey(jpaPrimaryKey);
-
+				
 				ArrayList<String> uniqueKeyColumnNames = getUniqueKeyColumnNames(masterEntity);
 				
 				Set<Attribute> attributes = jpaAccess.getAttributes(masterEntity);
-	
-				for (Attribute attribute : attributes) 
+				
+				for (Attribute attribute : attributes)
 				{
 					// PrimaryKey Attributes already initialized
-					if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute, masterEntity)) 
+					if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute, masterEntity))
 					{
-						if (attribute.getPersistentAttributeType() == PersistentAttributeType.BASIC) 
+						if (attribute.getPersistentAttributeType() == PersistentAttributeType.BASIC)
 						{
-							if (pUseRepresentationColumns && uniqueKeyColumnNames.size() > 0) 
+							if (pUseRepresentationColumns && uniqueKeyColumnNames.size() > 0)
 							{
-								if (uniqueKeyColumnNames.contains(JPAStorageUtil.getNameForAttribute(attribute))) 
+								if (uniqueKeyColumnNames.contains(JPAStorageUtil.getNameForAttribute(attribute)))
 								{
 									JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attribute, masterEntity);
-			
+									
 									smdNew.addServerColumnMetaData(serverColumnMetaData);
 								}
-							} 
-							else 
+							}
+							else
 							{
 								JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attribute, masterEntity);
 								
 								smdNew.addServerColumnMetaData(serverColumnMetaData);
 							}
-						} 
-						else if (!pUseRepresentationColumns 
-								 && (attribute.getPersistentAttributeType() == PersistentAttributeType.MANY_TO_ONE 
-								     || attribute.getPersistentAttributeType() == PersistentAttributeType.ONE_TO_ONE)) 
+						}
+						else if (!pUseRepresentationColumns
+								&& (attribute.getPersistentAttributeType() == PersistentAttributeType.MANY_TO_ONE
+										|| attribute.getPersistentAttributeType() == PersistentAttributeType.ONE_TO_ONE))
 						{
 							JPAForeignKey jpaForeignKey = createForeignKey(attribute.getJavaType());
 							
 							Attribute detailRelationAttribute = getDetailRelationAttribute(attribute.getJavaType(), masterEntity, PersistentAttributeType.ONE_TO_MANY);
 							
-							if (detailRelationAttribute != null) 
+							if (detailRelationAttribute != null)
 							{
 								jpaForeignKey.setDetailEntitiesMethode(JPAStorageUtil.getGetterMethodNameForAttribute(detailRelationAttribute));
 							}
@@ -977,17 +993,17 @@ public class JPAStorage extends AbstractCachedStorage
 							jpaDataType.setDataType(JPAStorageUtil.getDataTypeIdentifierForJavaType(attribute.getJavaType()));
 							jpaDataType.setGetterMethodName(JPAStorageUtil.getGetterMethodNameForAttribute(attribute));
 							jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(attribute));
-		
+							
 							jpaForeignKey.setJPAMappingType(jpaDataType);
 							
-							for (JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey.getServerColumnMetaDataAsCollection()) 
+							for (JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey.getServerColumnMetaDataAsCollection())
 							{
 								serverColumnMetaData.getJPAMappingType().addPathNavigation(attribute.getName());
 							}
 							
 							smdNew.addJPAForeignKey(jpaForeignKey);
-						} 
-						else if (attribute.getPersistentAttributeType() == PersistentAttributeType.EMBEDDED) 
+						}
+						else if (attribute.getPersistentAttributeType() == PersistentAttributeType.EMBEDDED)
 						{
 							JPAEmbeddedKey jpaKey = new JPAEmbeddedKey();
 							
@@ -998,20 +1014,20 @@ public class JPAStorage extends AbstractCachedStorage
 							//an expensive method!
 							String sAttribName = JPAStorageUtil.getNameForAttribute(attribute);
 							
-							for (Attribute attributeEmbedded : setAttribute) 
+							for (Attribute attributeEmbedded : setAttribute)
 							{
-								if (pUseRepresentationColumns && uniqueKeyColumnNames.size() > 0) 
+								if (pUseRepresentationColumns && uniqueKeyColumnNames.size() > 0)
 								{
-									if (uniqueKeyColumnNames.contains(sAttribName)) 
+									if (uniqueKeyColumnNames.contains(sAttribName))
 									{
-										JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attributeEmbedded, attribute.getJavaType());	
-										jpaKey.addServerColumnMetaData(serverColumnMetaData);											
+										JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attributeEmbedded, attribute.getJavaType());
+										jpaKey.addServerColumnMetaData(serverColumnMetaData);
 									}
-								} 
-								else 
+								}
+								else
 								{
-									JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attributeEmbedded, attribute.getJavaType());	
-									jpaKey.addServerColumnMetaData(serverColumnMetaData);									
+									JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attributeEmbedded, attribute.getJavaType());
+									jpaKey.addServerColumnMetaData(serverColumnMetaData);
 								}
 							}
 							
@@ -1020,133 +1036,133 @@ public class JPAStorage extends AbstractCachedStorage
 							jpaDataType.setJavaTypeClass(attribute.getJavaType());
 							jpaDataType.setDataType(JPAStorageUtil.getDataTypeIdentifierForJavaType(attribute.getJavaType()));
 							jpaDataType.setGetterMethodName(JPAStorageUtil.getGetterMethodNameForAttribute(attribute));
-							jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(attribute));						
-		
-							jpaKey.setJPAMappingType(jpaDataType);	
+							jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(attribute));
 							
-							for (JPAServerColumnMetaData serverColumnMetaData : jpaKey.getServerColumnMetaDataAsCollection()) 
+							jpaKey.setJPAMappingType(jpaDataType);
+							
+							for (JPAServerColumnMetaData serverColumnMetaData : jpaKey.getServerColumnMetaDataAsCollection())
 							{
 								serverColumnMetaData.getJPAMappingType().addPathNavigation(attribute.getName());
-							}							
+							}
 							
-							smdNew.addJPAEmbeddedKey(jpaKey);			
-						} 
+							smdNew.addJPAEmbeddedKey(jpaKey);
+						}
 					}
 				}
-								
-				if (uniqueKeyColumnNames.size() > 0) 
+				
+				if (uniqueKeyColumnNames.size() > 0)
 				{
 					// All Unique Keys are Representation Column Names				
-					smdNew.setRepresentationColumnNames(uniqueKeyColumnNames.toArray(new String [0]));
-				} 
-				else 
+					smdNew.setRepresentationColumnNames(uniqueKeyColumnNames.toArray(new String[0]));
+				}
+				else
 				{
 					// If there are no Unique Keys then all ColumnNames are Representation ColumnNames
 					smdNew.setRepresentationColumnNames(smdNew.getColumnNames());
 				}
 			}
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			throw new DataSourceException("Create metadata failed!", e);
 		}
 		
 		return smdNew;
 	}
-
+	
 	/**
 	 * Creates the <code>JPAPrimaryKey</code> for the given entity class.
 	 * 
 	 * @param pEntityClass The Class for generating the JPAPrimaryKey
 	 * @return the <code>JPAPrimaryKey</code>
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private JPAPrimaryKey createPrimaryKey(Class pEntityClass) throws Exception
 	{
 		EntityType entityType = jpaAccess.getEntityType(pEntityClass);
 		
-		JPAPrimaryKey jpaPrimaryKey = new JPAPrimaryKey();	
+		JPAPrimaryKey jpaPrimaryKey = new JPAPrimaryKey();
 		JPAMappingType jpaDataType = new JPAMappingType();
 		
 		jpaPrimaryKey.setSingleIdAttribute(entityType.hasSingleIdAttribute());
-				
-		if (entityType.hasSingleIdAttribute()) 
+		
+		if (entityType.hasSingleIdAttribute())
 		{
-			if (JPAStorageUtil.isPrimitiveOrWrapped(entityType.getIdType().getJavaType())) 
+			if (JPAStorageUtil.isPrimitiveOrWrapped(entityType.getIdType().getJavaType()))
 			{
 				Class idClass = entityType.getIdType().getJavaType();
-
+				
 				jpaDataType.setEntityClass(pEntityClass);
 				jpaDataType.setJavaTypeClass(idClass);
-				jpaDataType.setDataType(JPAStorageUtil.getDataTypeIdentifierForJavaType(idClass));		
+				jpaDataType.setDataType(JPAStorageUtil.getDataTypeIdentifierForJavaType(idClass));
 				
-				for (Attribute attribute : jpaAccess.getAttributes(pEntityClass)) 
+				for (Attribute attribute : jpaAccess.getAttributes(pEntityClass))
 				{
-					if (JPAStorageUtil.isPrimaryKeyAttribute(attribute, pEntityClass)) 
+					if (JPAStorageUtil.isPrimaryKeyAttribute(attribute, pEntityClass))
 					{
 						jpaDataType.setGetterMethodName(JPAStorageUtil.getGetterMethodNameForAttribute(attribute));
 						jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(attribute));
 						
 						JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attribute, pEntityClass);
 						serverColumnMetaData.setKeyAttribute(true);
-
-						jpaPrimaryKey.addServerColumnMetaData(serverColumnMetaData);	
+						
+						jpaPrimaryKey.addServerColumnMetaData(serverColumnMetaData);
 					}
 				}
-			} 
-			else 
-			{ 
+			}
+			else
+			{
 				//EmbeddedId Key Class
 				
 				Class idClass = entityType.getIdType().getJavaType();
-
+				
 				jpaDataType.setEntityClass(pEntityClass);
 				jpaDataType.setJavaTypeClass(idClass);
-				jpaDataType.setDataType(JPAStorageUtil.getDataTypeIdentifierForJavaType(idClass));				
+				jpaDataType.setDataType(JPAStorageUtil.getDataTypeIdentifierForJavaType(idClass));
 				
 				Attribute attribute = entityType.getId(idClass);
 				
 				jpaDataType.setGetterMethodName(JPAStorageUtil.getGetterMethodNameForAttribute(attribute));
 				jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(attribute));
-
+				
 				EmbeddableType embeddableType = jpaAccess.getEmbeddableType(entityType.getIdType().getJavaType());
 				
 				Set<Attribute> setAttribute = embeddableType.getAttributes();
 				
-				for (Attribute attributeEmbedded : setAttribute) 
+				for (Attribute attributeEmbedded : setAttribute)
 				{
 					JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attributeEmbedded, idClass);
 					serverColumnMetaData.getJPAMappingType().addPathNavigation(attribute.getName());
 					serverColumnMetaData.setKeyAttribute(true);
-
+					
 					jpaPrimaryKey.addServerColumnMetaData(serverColumnMetaData);
-				}		
+				}
 				
 				jpaPrimaryKey.setEmbedded(true);
-			}	
-		} 
-		else 
+			}
+		}
+		else
 		{
 			Class idClass = entityType.getIdType().getJavaType();
-
+			
 			jpaDataType.setEntityClass(pEntityClass);
 			jpaDataType.setJavaTypeClass(idClass);
 			jpaDataType.setDataType(JPAStorageUtil.getDataTypeIdentifierForJavaType(idClass));
-
+			
 			Set<Attribute> setAttribute = entityType.getIdClassAttributes();
 			
-			for (Attribute attribute : setAttribute) 
+			for (Attribute attribute : setAttribute)
 			{
 				JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaData(attribute, pEntityClass);
 				serverColumnMetaData.setKeyAttribute(true);
-
+				
 				jpaPrimaryKey.addServerColumnMetaData(serverColumnMetaData);
-			}			
+			}
 		}
-
-		jpaPrimaryKey.setJPAMappingType(jpaDataType);			
 		
-		return jpaPrimaryKey;	
+		jpaPrimaryKey.setJPAMappingType(jpaDataType);
+		
+		return jpaPrimaryKey;
 	}
 	
 	/**
@@ -1154,47 +1170,47 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pEntityClass The Class of the entity
 	 * @return The <code>JPAForeignKey</code> for the given entity class
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private JPAForeignKey createForeignKey(Class pEntityClass) throws Exception 
+	private JPAForeignKey createForeignKey(Class pEntityClass) throws Exception
 	{
 		EntityType entityType = jpaAccess.getEntityType(pEntityClass);
-
+		
 		JPAForeignKey jpaForeignKey = new JPAForeignKey();
 		jpaForeignKey.setSingleIdAttribute(entityType.hasSingleIdAttribute());
 		
 		JPAPrimaryKey jpaPrimaryKey = createPrimaryKey(pEntityClass);
-				
+		
 		Attribute bestAttributeForStorageReference = getBestAttributeForStorageReference(pEntityClass);
 		
-		if (isAutoLinkReference() && bestAttributeForStorageReference != null) 
-		{ 
-			JPAServerColumnMetaData serverColumnMetaDataForStorageReference = getServerColumnMetaData(bestAttributeForStorageReference, 
-					                                                                                  bestAttributeForStorageReference.getDeclaringType().getJavaType());
+		if (isAutoLinkReference() && bestAttributeForStorageReference != null)
+		{
+			JPAServerColumnMetaData serverColumnMetaDataForStorageReference = getServerColumnMetaData(bestAttributeForStorageReference,
+					bestAttributeForStorageReference.getDeclaringType().getJavaType());
 			serverColumnMetaDataForStorageReference.setStorageReference(true);
 			
 			jpaPrimaryKey.addServerColumnMetaData(serverColumnMetaDataForStorageReference);
 			
 		}
 		
-		jpaForeignKey.setReferencedColumnNames(jpaPrimaryKey.getColumnNames());	
+		jpaForeignKey.setReferencedColumnNames(jpaPrimaryKey.getColumnNames());
 		
 		jpaForeignKey.setKeyClass(entityType.getIdType().getJavaType());
-
-		for (JPAServerColumnMetaData serverColumnMetaData : jpaPrimaryKey.getServerColumnMetaDataAsArray()) 
+		
+		for (JPAServerColumnMetaData serverColumnMetaData : jpaPrimaryKey.getServerColumnMetaDataAsArray())
 		{
-			String foreignKeyName = entityType.getName().toUpperCase() + "_" + serverColumnMetaData.getName();			
+			String foreignKeyName = entityType.getName().toUpperCase() + "_" + serverColumnMetaData.getName();
 			
 			serverColumnMetaData.setName(foreignKeyName);
 			jpaForeignKey.addServerColumnMetaData(serverColumnMetaData);
 		}
-
-		if (isAutoLinkReference() && bestAttributeForStorageReference != null) 
+		
+		if (isAutoLinkReference() && bestAttributeForStorageReference != null)
 		{
 			createAutomaticLinkReference(jpaForeignKey, pEntityClass);
 		}
-			
-		return jpaForeignKey;		
+		
+		return jpaForeignKey;
 	}
 	
 	/**
@@ -1202,106 +1218,98 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pEntityClass The Class to search for the best attribute
 	 * @return The Attribute for the automatic link reference
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private Attribute getBestAttributeForStorageReference(Class pEntityClass) throws Exception 
+	private Attribute getBestAttributeForStorageReference(Class pEntityClass) throws Exception
 	{
 		ArrayList<String> uniqueKeys = getUniqueKeyColumnNames(pEntityClass);
-
+		
 		Set<Attribute> attributes = jpaAccess.getAttributes(pEntityClass);
 		
-		for (Attribute attribute : attributes) 
-		{	
-			if (attribute.getJavaType() == java.lang.String.class) 
+		for (Attribute attribute : attributes)
+		{
+			if (attribute.getJavaType() == java.lang.String.class)
 			{
-				if (uniqueKeys.size() > 0) 
+				if (uniqueKeys.size() > 0)
 				{
-					if (uniqueKeys.contains(JPAStorageUtil.getNameForAttribute(attribute))) 
+					if (uniqueKeys.contains(JPAStorageUtil.getNameForAttribute(attribute)))
 					{
-						return attribute;	
+						return attribute;
 					}
-				}  
-				else 
+				}
+				else
 				{
 					return attribute;
 				}
 			}
-		}	
+		}
 		
-		for (Attribute attribute : attributes) 
-		{	
-			if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute, pEntityClass)) 
+		for (Attribute attribute : attributes)
+		{
+			if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute, pEntityClass))
 			{
-				if (uniqueKeys.size() > 0) 
+				if (uniqueKeys.size() > 0)
 				{
-					if (uniqueKeys.contains(JPAStorageUtil.getNameForAttribute(attribute))) 
+					if (uniqueKeys.contains(JPAStorageUtil.getNameForAttribute(attribute)))
 					{
-						return attribute;	
+						return attribute;
 					}
-				}  
-				else 
+				}
+				else
 				{
 					return attribute;
-				}				
+				}
 			}
 		}
-
+		
 		return null;
-	}	
-
+	}
+	
 	/**
 	 * Returns the attribute which is the Detail of a Master Entity.
 	 * 
 	 * Example:
 	 * 
-	 * @Entity
-	 * public class Customer {
-	 *   ...
-	 *   @OnToMany
-	 *   Collection&lt;Address&gt; addresses = new Collection&lt;Address&gt;
-	 *   ...
-	 * }
-	 * 
-	 * @Entity
-	 * public class Address {
-	 *   ...
-	 *   String street;
-	 *   ....
-	 * }
-	 * 
-	 * For this example the returned Attribute is "addresses"
-	 * 
+	 * @Entity public class Customer { ...
+	 * @OnToMany Collection&lt;Address&gt; addresses = new
+	 *           Collection&lt;Address&gt; ... }
+	 * 			
+	 * @Entity public class Address { ... String street; .... }
+	 * 		
+	 *         For this example the returned Attribute is "addresses"
+	 * 		
 	 * @param pMasterEntity the Master Entity (in the example "Customer")
 	 * @param pDetailEntity the Detail Entity (in the example "Address")
-	 * @param pPersistentAttributeType the PersistentAttributeType (OneToMany or ManyToMany)
+	 * @param pPersistentAttributeType the PersistentAttributeType (OneToMany or
+	 *            ManyToMany)
 	 * @return The Attribute for the detail Relation
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private Attribute getDetailRelationAttribute(Class pMasterEntity, Class pDetailEntity, PersistentAttributeType pPersistentAttributeType) throws Exception 
+	private Attribute getDetailRelationAttribute(Class pMasterEntity, Class pDetailEntity, PersistentAttributeType pPersistentAttributeType) throws Exception
 	{
 		Set<Attribute> targetAttributes = jpaAccess.getAttributes(pMasterEntity);
 		
-		for (Attribute targetAttribute : targetAttributes) 
+		for (Attribute targetAttribute : targetAttributes)
 		{
-			if (targetAttribute.getPersistentAttributeType() == pPersistentAttributeType) 
-			{	
-				if (targetAttribute.isCollection()) 
+			if (targetAttribute.getPersistentAttributeType() == pPersistentAttributeType)
+			{
+				if (targetAttribute.isCollection())
 				{
 					Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(targetAttribute, pMasterEntity);
 					
-					for (Annotation annotation : annotations) 
+					for (Annotation annotation : annotations)
 					{
-						if (annotation.annotationType() == javax.persistence.ManyToMany.class 
-							|| annotation.annotationType() == javax.persistence.OneToMany.class) 
+						if (annotation.annotationType() == javax.persistence.ManyToMany.class
+								|| annotation.annotationType() == javax.persistence.OneToMany.class)
 						{
-							Class typeClass = JPAStorageUtil.getTypeClassForAttribute(targetAttribute);		
+							Class typeClass = JPAStorageUtil.getTypeClassForAttribute(targetAttribute);
 							
-							if (typeClass == null) 
+							if (typeClass == null)
 							{
-								typeClass = (Class)annotation.getClass().getMethod("targetEntity").invoke(annotation);													
-							}											
+								typeClass = (Class)annotation.getClass().getMethod("targetEntity").invoke(annotation);
+							}
 							
-							if (typeClass == pDetailEntity) 
+							if (typeClass == pDetailEntity)
 							{
 								return targetAttribute;
 							}
@@ -1309,66 +1317,66 @@ public class JPAStorage extends AbstractCachedStorage
 						}
 						
 					}
-	
+					
 				}
-			
-			}				
+				
+			}
 		}
 		
 		return null;
-	}	
-
+	}
+	
 	/**
 	 * Returns the UniqueKey Column Names for the given entity.
 	 * 
 	 * @param pEntityClass The Class of the entity
 	 * @return A List with the UniqueKey Column Names
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private ArrayList<String> getUniqueKeyColumnNames(Class pEntityClass) throws Exception 
+	private ArrayList<String> getUniqueKeyColumnNames(Class pEntityClass) throws Exception
 	{
 		ArrayList<String> uniqueColumnNames = new ArrayList<String>();
 		
 		Set<Attribute> attributes = jpaAccess.getAttributes(pEntityClass);
 		
-		for (Attribute attribute : attributes) 
-		{ 
+		for (Attribute attribute : attributes)
+		{
 			// Unique Keys can be defined in JPA 2.0 in the Annotation Column from a field
 			Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(attribute, pEntityClass);
 			
 			//an expensive method!
 			String sAttribName = JPAStorageUtil.getNameForAttribute(attribute, annotations);
 			
-			for (Annotation annotation : annotations) 
+			for (Annotation annotation : annotations)
 			{
-				if (annotation.annotationType() == javax.persistence.Column.class) 
+				if (annotation.annotationType() == javax.persistence.Column.class)
 				{
-					if (((Boolean) annotation.getClass().getMethod("unique").invoke(annotation)).booleanValue()) 
+					if (((Boolean)annotation.getClass().getMethod("unique").invoke(annotation)).booleanValue())
 					{
 						uniqueColumnNames.add(sAttribName);
 					}
-				} 
-			}			
+				}
+			}
 		}
 		
 		Annotation[] annotations = pEntityClass.getAnnotations();
-
-		for (Annotation annotation : annotations) 
-		{  
+		
+		for (Annotation annotation : annotations)
+		{
 			// Unique Keys can also be defined in the Entity Class in the Annotation UniqueConstraint
-			if (annotation.annotationType() == javax.persistence.Table.class) 
+			if (annotation.annotationType() == javax.persistence.Table.class)
 			{
-				javax.persistence.UniqueConstraint uniqueConstraint = (javax.persistence.UniqueConstraint) annotation.getClass().getMethod("uniqueConstraints").invoke(annotation);
-					
-				for (String columnName : uniqueConstraint.columnNames()) 
+				javax.persistence.UniqueConstraint uniqueConstraint = (javax.persistence.UniqueConstraint)annotation.getClass().getMethod("uniqueConstraints").invoke(annotation);
+				
+				for (String columnName : uniqueConstraint.columnNames())
 				{
-					if (!uniqueColumnNames.contains(columnName.toUpperCase())) 
+					if (!uniqueColumnNames.contains(columnName.toUpperCase()))
 					{
 						uniqueColumnNames.add(columnName.toUpperCase());
 					}
 				}
-			} 
-		}	
+			}
+		}
 		
 		return uniqueColumnNames;
 	}
@@ -1376,15 +1384,15 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Returns the JPAServerColumnMetaData for the given Attribute.
 	 * 
-	 * @param pAttribute 
-	 * @param pEntityClass 
+	 * @param pAttribute
+	 * @param pEntityClass
 	 * @return the JPAServerColumnMetaData for the given Attribute
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private JPAServerColumnMetaData getServerColumnMetaData(Attribute pAttribute, Class pEntityClass) throws Exception 
+	private JPAServerColumnMetaData getServerColumnMetaData(Attribute pAttribute, Class pEntityClass) throws Exception
 	{
 		JPAServerColumnMetaData serverColumnMetaData = new JPAServerColumnMetaData();
-
+		
 		JPAMappingType jpaDataType = new JPAMappingType();
 		jpaDataType.setEntityClass(pAttribute.getDeclaringType().getJavaType());
 		jpaDataType.setJavaTypeClass(pAttribute.getJavaType());
@@ -1393,7 +1401,7 @@ public class JPAStorage extends AbstractCachedStorage
 		jpaDataType.setGetterMethodName(JPAStorageUtil.getGetterMethodNameForAttribute(pAttribute));
 		jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(pAttribute));
 		serverColumnMetaData.setJPAMappingType(jpaDataType);
-
+		
 		Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(pAttribute, pEntityClass);
 		
 		serverColumnMetaData.setName(JPAStorageUtil.getNameForAttribute(pAttribute, annotations));
@@ -1402,89 +1410,89 @@ public class JPAStorage extends AbstractCachedStorage
 		serverColumnMetaData.setNullable(true);
 		serverColumnMetaData.setPrecision(0);
 		serverColumnMetaData.setScale(0);
-		serverColumnMetaData.setDefaultValue(JPAStorageUtil.getDefaultValueForAttribute(pAttribute, pEntityClass));	
+		serverColumnMetaData.setDefaultValue(JPAStorageUtil.getDefaultValueForAttribute(pAttribute, pEntityClass));
 		
-		if (jpaDataType.getDataType() == StringDataType.TYPE_IDENTIFIER) 
+		if (jpaDataType.getDataType() == StringDataType.TYPE_IDENTIFIER)
 		{
 			serverColumnMetaData.setPrecision(Integer.MAX_VALUE);
-		}  
-		else if (jpaDataType.getDataType() == BinaryDataType.TYPE_IDENTIFIER) 
+		}
+		else if (jpaDataType.getDataType() == BinaryDataType.TYPE_IDENTIFIER)
 		{
 			serverColumnMetaData.setPrecision(Integer.MAX_VALUE);
 		}
 		
-		for (Annotation annotation : annotations) 
+		for (Annotation annotation : annotations)
 		{
-			if (annotation.annotationType() == javax.persistence.Column.class) 
+			if (annotation.annotationType() == javax.persistence.Column.class)
 			{
-				serverColumnMetaData.setNullable(((Boolean) annotation.getClass().getMethod("nullable").invoke(annotation)).booleanValue());
-				serverColumnMetaData.setPrecision(((Integer) annotation.getClass().getMethod("precision").invoke(annotation)).intValue());
-				serverColumnMetaData.setScale(((Integer) annotation.getClass().getMethod("scale").invoke(annotation)).intValue());			
+				serverColumnMetaData.setNullable(((Boolean)annotation.getClass().getMethod("nullable").invoke(annotation)).booleanValue());
+				serverColumnMetaData.setPrecision(((Integer)annotation.getClass().getMethod("precision").invoke(annotation)).intValue());
+				serverColumnMetaData.setScale(((Integer)annotation.getClass().getMethod("scale").invoke(annotation)).intValue());
 				
-				if (jpaDataType.getDataType() == BinaryDataType.TYPE_IDENTIFIER) 
+				if (jpaDataType.getDataType() == BinaryDataType.TYPE_IDENTIFIER)
 				{
-					if (serverColumnMetaData.getPrecision() == 0) 
+					if (serverColumnMetaData.getPrecision() == 0)
 					{
 						serverColumnMetaData.setPrecision(Integer.MAX_VALUE);
 					}
 				}
 				
-				if (jpaDataType.getDataType() == StringDataType.TYPE_IDENTIFIER 
-					|| jpaDataType.getDataType() == BinaryDataType.TYPE_IDENTIFIER) 
+				if (jpaDataType.getDataType() == StringDataType.TYPE_IDENTIFIER
+						|| jpaDataType.getDataType() == BinaryDataType.TYPE_IDENTIFIER)
 				{
-					serverColumnMetaData.setPrecision(((Integer) annotation.getClass().getMethod("length").invoke(annotation)).intValue());
+					serverColumnMetaData.setPrecision(((Integer)annotation.getClass().getMethod("length").invoke(annotation)).intValue());
 				}
-			} 
-			else if (annotation.annotationType() == javax.persistence.GeneratedValue.class) 
+			}
+			else if (annotation.annotationType() == javax.persistence.GeneratedValue.class)
 			{
-				serverColumnMetaData.setAutoIncrement(true);					
+				serverColumnMetaData.setAutoIncrement(true);
 			}
 		}
-
+		
 		return serverColumnMetaData;
 		
-	}		
+	}
 	
 	/**
 	 * Returns the DataRow for a ManyToMany relation between to Entities.
 	 * 
-	 * @param pEntity1 
-	 * @param pEntity2 
+	 * @param pEntity1
+	 * @param pEntity2
 	 * @return The DataRow
-	 * @throws DataSourceException 
+	 * @throws DataSourceException
 	 */
-	protected Object[] getDataRowForEntities(Object pEntity1, Object pEntity2) throws DataSourceException 
+	protected Object[] getDataRowForEntities(Object pEntity1, Object pEntity2) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}			
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
-		try 
+		try
 		{
 			ArrayList dataRow = new ArrayList();
 			
 			JPAForeignKey jpaForeignKey1 = serverMetaData.getJPAPrimaryKey().getForeignKey(pEntity1.getClass());
-	
+			
 			Object primaryKey1 = jpaAccess.getIdentifier(pEntity1);
 			
-			for (JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey1.getServerColumnMetaDataAsArray()) 
+			for (JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey1.getServerColumnMetaDataAsArray())
 			{
-				if (serverColumnMetaData.isKeyAttribute()) 
+				if (serverColumnMetaData.isKeyAttribute())
 				{
-		    		if (JPAStorageUtil.isPrimitiveOrWrapped(primaryKey1.getClass()))
-		    		{
-		    			dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(pEntity1));   	
-		    		} 
-		    		else 
-		    		{
-		    			dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(primaryKey1)); 
-		    		}					
+					if (JPAStorageUtil.isPrimitiveOrWrapped(primaryKey1.getClass()))
+					{
+						dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(pEntity1));
+					}
+					else
+					{
+						dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(primaryKey1));
+					}
 					
-				} 
-				else 
+				}
+				else
 				{
-						dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(pEntity1)); 
+					dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(pEntity1));
 				}
 			}
 			
@@ -1492,203 +1500,203 @@ public class JPAStorage extends AbstractCachedStorage
 			
 			Object primaryKey2 = jpaAccess.getIdentifier(pEntity2);
 			
-			for (JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey2.getServerColumnMetaDataAsArray()) 
+			for (JPAServerColumnMetaData serverColumnMetaData : jpaForeignKey2.getServerColumnMetaDataAsArray())
 			{
-				if (serverColumnMetaData.isKeyAttribute()) 
+				if (serverColumnMetaData.isKeyAttribute())
 				{
-		    		if (JPAStorageUtil.isPrimitiveOrWrapped(primaryKey2.getClass())) 
-		    		{
-		    			dataRow.add(primaryKey2);    	
-		    		} 
-		    		else 
-		    		{
-		    			dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(primaryKey2)); 
-		    		}
-				} 
-				else 
+					if (JPAStorageUtil.isPrimitiveOrWrapped(primaryKey2.getClass()))
+					{
+						dataRow.add(primaryKey2);
+					}
+					else
+					{
+						dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(primaryKey2));
+					}
+				}
+				else
 				{
-					dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(pEntity2)); 
-				}	    		
-			}	
+					dataRow.add(serverColumnMetaData.getJPAMappingType().getValue(pEntity2));
+				}
+			}
 			
 			return dataRow.toArray();
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
-    		throw new DataSourceException("Problems by mapping entities to a DataRow", e);				
-		}		
-	}		
-
+			throw new DataSourceException("Problems by mapping entities to a DataRow", e);
+		}
+	}
+	
 	/**
 	 * Returns the DataRow for the given entity-object.
 	 * 
-	 * @param pEntity 
+	 * @param pEntity
 	 * @return The DataRow
-	 * @throws DataSourceException 
+	 * @throws DataSourceException
 	 */
-	protected Object[] getDataRowForEntity(Object pEntity) throws DataSourceException 
+	protected Object[] getDataRowForEntity(Object pEntity) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}			
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
-		try 
+		try
 		{
-	    	Object[] dataRow = new Object[serverMetaData.getMetaData().getColumnMetaData().length];
-	    	
-	    	Object primaryKey = jpaAccess.getIdentifier(pEntity);
-	    	 	
-	    	// PrimaryKey Columns
-	    	for (JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getJPAPrimaryKey().getServerColumnMetaDataAsArray()) 
-	    	{
-	    		int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
-	
-	        	dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(primaryKey);    
-	    	}
-	    	
-	    	// Columns from the Entity
-			for	(JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getServerColumnMetaData()) 
+			Object[] dataRow = new Object[serverMetaData.getMetaData().getColumnMetaData().length];
+			
+			Object primaryKey = jpaAccess.getIdentifier(pEntity);
+			
+			// PrimaryKey Columns
+			for (JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getJPAPrimaryKey().getServerColumnMetaDataAsArray())
 			{
 				int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
 				
-				dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(pEntity);			
+				dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(primaryKey);
+			}
+			
+			// Columns from the Entity
+			for (JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getServerColumnMetaData())
+			{
+				int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
+				
+				dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(pEntity);
 			}
 			
 			// Embedded Columns
-			for (JPAEmbeddedKey jpaEmbeddedKey : serverMetaData.getJPAEmbeddedKeys()) 
+			for (JPAEmbeddedKey jpaEmbeddedKey : serverMetaData.getJPAEmbeddedKeys())
 			{
 				Object entityInEntity = jpaEmbeddedKey.getJPAMappingType().getValue(pEntity);
 				
-				if (entityInEntity != null) 
+				if (entityInEntity != null)
 				{
-					for (JPAServerColumnMetaData serverColumnMetaData : jpaEmbeddedKey.getServerColumnMetaDataAsArray()) 
-					{
-						int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
-	
-		    			dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(entityInEntity); 
-					}
-				}
-			}		
-			
-			// ForeignKey Columns
-			for (JPAForeignKey foreignKey : serverMetaData.getJPAForeignKeys()) 
-			{
-				Object entityInEntity = foreignKey.getJPAMappingType().getValue(pEntity);
-				
-				if (entityInEntity != null) 
-				{
-					primaryKey = jpaAccess.getIdentifier(entityInEntity);
-				
-					for (JPAServerColumnMetaData serverColumnMetaData : foreignKey.getServerColumnMetaDataAsArray()) 
+					for (JPAServerColumnMetaData serverColumnMetaData : jpaEmbeddedKey.getServerColumnMetaDataAsArray())
 					{
 						int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
 						
-						if (serverColumnMetaData.isKeyAttribute()) 
+						dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(entityInEntity);
+					}
+				}
+			}
+			
+			// ForeignKey Columns
+			for (JPAForeignKey foreignKey : serverMetaData.getJPAForeignKeys())
+			{
+				Object entityInEntity = foreignKey.getJPAMappingType().getValue(pEntity);
+				
+				if (entityInEntity != null)
+				{
+					primaryKey = jpaAccess.getIdentifier(entityInEntity);
+					
+					for (JPAServerColumnMetaData serverColumnMetaData : foreignKey.getServerColumnMetaDataAsArray())
+					{
+						int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
+						
+						if (serverColumnMetaData.isKeyAttribute())
 						{
-			        		dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(primaryKey);    
-						} 
-						else 
+							dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(primaryKey);
+						}
+						else
 						{
-							dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(entityInEntity); 
+							dataRow[index] = serverColumnMetaData.getJPAMappingType().getValue(entityInEntity);
 						}
 					}
 				}
 			}
-		
+			
 			return dataRow;
-		} 
-		catch (Exception e) 
-		{
-    		throw new DataSourceException("Problems by mapping an entity to a DataRow", e);				
 		}
-	}	
-
+		catch (Exception e)
+		{
+			throw new DataSourceException("Problems by mapping an entity to a DataRow", e);
+		}
+	}
+	
 	/**
 	 * Writes all values from the DataRow to the entity-object.
 	 * 
 	 * @param pDataRow The DataRow
 	 * @param pEntity The entity-object
-	 * @throws DataSourceException 
+	 * @throws DataSourceException
 	 */
-	protected void mappeDataRowToEntity(Object[] pDataRow, Object pEntity) throws DataSourceException 
+	protected void mappeDataRowToEntity(Object[] pDataRow, Object pEntity) throws DataSourceException
 	{
-		if (!isOpen()) 
+		if (!isOpen())
 		{
-			throw new DataSourceException("JPAStorage isn't open!");			
-		}			
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
 		
-		try 
+		try
 		{
-	    	// PrimaryKey Columns
-	    	for (JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getJPAPrimaryKey().getServerColumnMetaDataAsArray()) 
-	    	{
-	    		int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());	
-	    		
-	    		if (serverMetaData.getJPAPrimaryKey().isEmbedded()) 
-	    		{
-	    			Object primaryKey = serverMetaData.getJPAPrimaryKey().getKeyForEntity(serverMetaData.getMapForDataRow(pDataRow));
-	    			
-	    			serverMetaData.getJPAPrimaryKey().getJPAMappingType().setValue(pEntity, primaryKey);
-	    			
-	    			break;
-	    		} 
-	    		else 
-	    		{
-	    			serverColumnMetaData.getJPAMappingType().setValue(pEntity, pDataRow[index]);    			
-	    		}
-	    	}		
-			
-	    	// Columns from the Entity
-			for (JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getServerColumnMetaData()) 
+			// PrimaryKey Columns
+			for (JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getJPAPrimaryKey().getServerColumnMetaDataAsArray())
 			{
-	    		int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());			
-	
+				int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
+				
+				if (serverMetaData.getJPAPrimaryKey().isEmbedded())
+				{
+					Object primaryKey = serverMetaData.getJPAPrimaryKey().getKeyForEntity(serverMetaData.getMapForDataRow(pDataRow));
+					
+					serverMetaData.getJPAPrimaryKey().getJPAMappingType().setValue(pEntity, primaryKey);
+					
+					break;
+				}
+				else
+				{
+					serverColumnMetaData.getJPAMappingType().setValue(pEntity, pDataRow[index]);
+				}
+			}
+			
+			// Columns from the Entity
+			for (JPAServerColumnMetaData serverColumnMetaData : serverMetaData.getServerColumnMetaData())
+			{
+				int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
+				
 				serverColumnMetaData.getJPAMappingType().setValue(pEntity, pDataRow[index]);
 			}
 			
 			// Embedded Columns
-			for (JPAEmbeddedKey jpaEmbeddedKey : serverMetaData.getJPAEmbeddedKeys()) 
+			for (JPAEmbeddedKey jpaEmbeddedKey : serverMetaData.getJPAEmbeddedKeys())
 			{
 				Object embeddedEntity = jpaEmbeddedKey.getJPAMappingType().getValue(pEntity);
 				
-				if (embeddedEntity == null) 
-				{ 
+				if (embeddedEntity == null)
+				{
 					// If the embeddedEntity is null, it has to be instantiated
 					
 					embeddedEntity = jpaEmbeddedKey.getJPAMappingType().getJavaTypeClass().newInstance();
 				}
 				
-				for (JPAServerColumnMetaData serverColumnMetaData : jpaEmbeddedKey.getServerColumnMetaDataAsArray()) 
+				for (JPAServerColumnMetaData serverColumnMetaData : jpaEmbeddedKey.getServerColumnMetaDataAsArray())
 				{
-					int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());	
+					int index = serverMetaData.getColumnMetaDataIndex(serverColumnMetaData.getName());
 					
 					serverColumnMetaData.getJPAMappingType().setValue(embeddedEntity, pDataRow[index]);
 				}
 				
 				jpaEmbeddedKey.getJPAMappingType().setValue(pEntity, embeddedEntity);
-			}			
+			}
 			
 			// ForeignKey Columns
-			for (JPAForeignKey foreignKey : serverMetaData.getJPAForeignKeys()) 
+			for (JPAForeignKey foreignKey : serverMetaData.getJPAForeignKeys())
 			{
 				Object primaryKey = foreignKey.getKeyForEntity(serverMetaData.getMapForDataRow(pDataRow));
 				
-				if (primaryKey != null) 
+				if (primaryKey != null)
 				{
 					Object entityInEntity = jpaAccess.findById(primaryKey, foreignKey.getJPAMappingType().getJavaTypeClass());
-	
-					if (entityInEntity != null) 
+					
+					if (entityInEntity != null)
 					{
-						foreignKey.getJPAMappingType().setValue(pEntity, entityInEntity);				
+						foreignKey.getJPAMappingType().setValue(pEntity, entityInEntity);
 					}
 				}
 			}
-		} 
-		catch (Exception e) 
-		{
-    		throw new DataSourceException("Problems by mapping a DataRow to an entity", e);			
 		}
-	}	
+		catch (Exception e)
+		{
+			throw new DataSourceException("Problems by mapping a DataRow to an entity", e);
+		}
+	}
 	
 }	// JPAStorage
