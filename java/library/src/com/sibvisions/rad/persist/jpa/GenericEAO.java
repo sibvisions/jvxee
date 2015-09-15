@@ -30,189 +30,187 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 
 /**
- * Implemented Methods to access the database by entities and primary keys.
+ * The {@link GenericEAO} implements methods to access the database by entities
+ * and primary keys.
  * 
  * @author Stefan Wurm
- *
- * @param <E> The Type of the Entity
- * @param <PK> The Type of the Primary Key
+ * 		
+ * @param <E> The Type of the Entity.
+ * @param <PK> The Type of the Primary Key.
  */
-public class GenericEAO<E, PK  extends Serializable> implements IGenericEAO<E, PK> 
+public class GenericEAO<E, PK extends Serializable> implements IGenericEAO<E, PK>
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	/** The Entity Manager. */
+	
+	/** The {@link EntityManager}. */
 	private EntityManager entityManager;
 	
-	/** The Class for the entity. */
+	/** The {@link Class} for the entity. */
 	private Class<E> entityClass;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/**
-	 * To set the Entity Manager.
-	 * 
-	 * @param pEntityManager The Entity Manager
+	 * Creates a new instance of {@link GenericEAO}.
+	 *
+	 * @param pEntityManager the {@link EntityManager entity manager}.
 	 */
-	public GenericEAO(EntityManager pEntityManager) 
-	{	
+	public GenericEAO(EntityManager pEntityManager)
+	{
 		setEntityManager(pEntityManager);
 	}
-
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Interface implementation
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public E insert(E entity) 
-	{
-		try 
-		{
-			
-	        entityManager.getTransaction().begin();
-	
-	        entityManager.persist(entity);
-	                
-	        entityManager.getTransaction().commit();
-	        
-		}  
-		catch (IllegalStateException ise) 
-		{
-			// getTransaction throws an IllegalStateException if the entityManager is container managed
-			entityManager.persist(entity);
-		}
-
-        return entity;
-	}
-		
-	/**
-	 * {@inheritDoc}
-	 */
-	public void update(E entity) 
-	{
-		
-		try 
-		{
-			
-	        entityManager.getTransaction().begin();
-	    	
-	        entityManager.merge(entity);
-	        
-	        entityManager.getTransaction().commit();
-        
-		} 
-		catch (IllegalStateException ise) 
-		{
-			// getTransaction throws an IllegalStateException if the entityManager is container managed
-			entityManager.merge(entity);
-		}        
-	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public void delete(E entity) 
+	public void delete(E entity)
 	{
-		try 
+		try
 		{
+			entityManager.getTransaction().begin();
 			
-        entityManager.getTransaction().begin();
-    	
-        entityManager.remove(entity);
-        
-        entityManager.getTransaction().commit();	
-        
-		} 
-		catch (IllegalStateException ise) 
-		{
-			// getTransaction throws an IllegalStateException if the entityManager is container managed
 			entityManager.remove(entity);
-		}        
+			
+			entityManager.getTransaction().commit();
+		}
+		catch (IllegalStateException ise)
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed.
+			entityManager.remove(entity);
+		}
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public E findById(PK id) 
+	public E findById(PK id)
 	{
-		
 		E entity = null;
 		
-		try 
+		try
 		{
+			entityManager.getTransaction().begin();
 			
-	        entityManager.getTransaction().begin();
-	    	
-	        entity = entityManager.find(entityClass, id);
-	
-	        entityManager.getTransaction().commit();
-        
-		}
-		catch (IllegalStateException ise) 
-		{
-			// getTransaction throws an IllegalStateException if the entityManager is container managed
 			entity = entityManager.find(entityClass, id);
-		}   
-        
-        return entity;
+			
+			entityManager.getTransaction().commit();
+		}
+		catch (IllegalStateException ise)
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed.
+			entity = entityManager.find(entityClass, id);
+		}
+		
+		return entity;
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<E> findAll() 
+	public Collection<E> findAll()
 	{
 		CriteriaQuery criteriaQuery = entityManager.getCriteriaBuilder().createQuery();
 		From from = criteriaQuery.from(entityClass);
 		criteriaQuery.select(from);
 		
-        Query query = entityManager.createQuery(criteriaQuery);
-        
-        List<E> objectList = null;
+		Query query = entityManager.createQuery(criteriaQuery);
 		
-		try 
+		List<E> objectList = null;
+		
+		try
 		{
-	        entityManager.getTransaction().begin();
-	        
-	        objectList = (List<E>)query.getResultList();
-	              
-	        entityManager.getTransaction().commit();
+			entityManager.getTransaction().begin();
+			
+			objectList = (List<E>)query.getResultList();
+			
+			entityManager.getTransaction().commit();
 		}
-		catch (IllegalStateException ise) 
+		catch (IllegalStateException ise)
 		{
 			// getTransaction throws an IllegalStateException if the entityManager is container managed
-			objectList = (List<E>) query.getResultList();
-		}           
-        
-        return objectList;
+			objectList = (List<E>)query.getResultList();
+		}
+		
+		return objectList;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public E insert(E entity)
+	{
+		try
+		{
+			entityManager.getTransaction().begin();
+			
+			entityManager.persist(entity);
+			
+			entityManager.getTransaction().commit();
+		}
+		catch (IllegalStateException ise)
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed
+			entityManager.persist(entity);
+		}
+		
+		return entity;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void update(E entity)
+	{
+		try
+		{
+			entityManager.getTransaction().begin();
+			
+			entityManager.merge(entity);
+			
+			entityManager.getTransaction().commit();
+		}
+		catch (IllegalStateException ise)
+		{
+			// getTransaction throws an IllegalStateException if the entityManager is container managed
+			entityManager.merge(entity);
+		}
+	}
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Setter Methode for the Entity Manager.
-	 * 
-	 * @param pEntityManager The Entity Manager for the entities
+	 * Sets the {@link EntityManager entity manager}.
+	 *
+	 * @param pEntityManager the new {@link EntityManager entity manager}.
+	 * @throws IllegalArgumentException if the {@link EntityManager entity
+	 *             manager} is {@code null}.
 	 */
-	public void setEntityManager(EntityManager pEntityManager) 
+	public void setEntityManager(EntityManager pEntityManager)
 	{
+		if (pEntityManager == null)
+		{
+			throw new IllegalArgumentException("Entity manager can not be null!");
+		}
+		
 		entityManager = pEntityManager;
 	}
-
+	
 	/**
-	 * Sets the class of the entity the DAO.
+	 * Sets the {@link Class} of the entity.
 	 * 
-	 * @param pEntityClass The Class for the entity
+	 * @param pEntityClass The {@link Class} of the entity.
 	 */
-	public void setEntityClass(Class<E> pEntityClass) 
+	public void setEntityClass(Class<E> pEntityClass)
 	{
 		entityClass = pEntityClass;
 	}
