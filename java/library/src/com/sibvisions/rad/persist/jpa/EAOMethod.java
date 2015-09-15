@@ -30,37 +30,49 @@ import java.lang.annotation.Target;
  * 
  * @author Stefan Wurm
  */
-@Retention (RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface EAOMethod 
+public @interface EAOMethod
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Definitions
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	/**
-	 * Enumeration Type for the EAO Methods.
-	 * 
-	 * @author Stefan Wurm
-	 */
-	public enum EAO 
-	{
-		/** The Insert Method. **/
-		 INSERT, 
-		 /** The Update Method. **/
-		 UPDATE, 
-		 /** The Delete Method. **/
-		 DELETE, 
-		 /** The Find-by-id Method. **/
-		 FIND_BY_ID, 
-		 /** The Find-all Method. **/
-		 FIND_ALL
-	}
 	
 	/**
 	 * Returns the Methode Identifier.
 	 * 
 	 */
 	public EAO methodIdentifier();
+	
+	//****************************************************************
+	// Subclass definition
+	//****************************************************************
+	
+	/**
+	 * Enumeration Type for the EAO Methods.
+	 * 
+	 * @author Stefan Wurm
+	 */
+	public enum EAO
+	{
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Constants
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		/** The Insert Method. **/
+		INSERT,
+		
+		/** The Update Method. **/
+		UPDATE,
+		
+		/** The Delete Method. **/
+		DELETE,
+		
+		/** The Find-by-id Method. **/
+		FIND_BY_ID,
+		
+		/** The Find-all Method. **/
+		FIND_ALL
+	}
 	
 }	// EAOMethod
