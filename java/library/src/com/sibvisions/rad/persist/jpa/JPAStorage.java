@@ -47,6 +47,9 @@ import javax.rad.persist.ColumnMetaData;
 import javax.rad.persist.DataSourceException;
 import javax.rad.persist.IStorage;
 import javax.rad.persist.MetaData;
+import javax.rad.remote.IConnectionConstants;
+import javax.rad.server.ISession;
+import javax.rad.server.SessionContext;
 import javax.rad.type.bean.IBean;
 
 import com.sibvisions.rad.model.DataBookCSVExporter;
@@ -498,7 +501,26 @@ public class JPAStorage extends AbstractCachedStorage
 			String[] pLabels, ICondition pFilter, SortDefinition pSort,
 			String pSeparator) throws Exception
 	{
-		OutputStreamWriter out = new OutputStreamWriter(pStream, "ISO-8859-1");
+		ISession session = SessionContext.getCurrentSession();
+		
+		String sEncoding = null;
+		
+		if (session != null)
+		{
+			sEncoding = (String)session.getProperty(IConnectionConstants.PREFIX_CLIENT + IConnectionConstants.PREFIX_SYSPROP + "file.encoding");
+			
+			if (sEncoding == null)
+			{
+				sEncoding = (String)session.getProperty(IConnectionConstants.PREFIX_CLIENT + "defaultCharset");
+			}
+		}
+		
+		if (StringUtil.isEmpty(sEncoding))
+		{
+			sEncoding = DataBookCSVExporter.getDefaultEncoding();
+		}
+		
+		OutputStreamWriter out = new OutputStreamWriter(pStream, sEncoding);
 		
 		try
 		{
