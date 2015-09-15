@@ -25,7 +25,7 @@ package com.sibvisions.rad.persist.jpa;
  * The <code>IPackageSetup</code> class defines package relevant version information
  * and properties.
  * 
- * @author René Jahn
+ * @author RenÃ© Jahn
  */
 public interface IPackageSetup
 {
