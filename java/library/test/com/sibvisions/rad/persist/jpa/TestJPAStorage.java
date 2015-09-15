@@ -172,7 +172,7 @@ public class TestJPAStorage
 	}
 	
 	/**
-	 * Delets all values from the database.
+	 * Deletes all values from the database.
 	 * 
 	 */
 	public void clearDB()
@@ -200,7 +200,7 @@ public class TestJPAStorage
 	/**
 	 * Tests the initialization of the MetaData for the education entity.
 	 * 
-	 * @throws Throwable
+	 * @throws Throwable if the test fails.
 	 */
 	@Test
 	public void testMetaDataEducation() throws Throwable
@@ -226,7 +226,7 @@ public class TestJPAStorage
 	/**
 	 * Tests the initialization of the MetaData for the address entity.
 	 * 
-	 * @throws Throwable
+	 * @throws Throwable if the test fails.
 	 */
 	@Test
 	public void testMetaDataAddress() throws Throwable
@@ -254,7 +254,7 @@ public class TestJPAStorage
 	/**
 	 * Tests the fetch method from JPAStorageCustomer.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testFetch() throws Exception
@@ -270,7 +270,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to insert a customer.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testInsertCustomer() throws Exception
@@ -309,7 +309,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to insert an address.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testInsertAddress() throws Exception
@@ -348,7 +348,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to insert an education.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testInsertEducation() throws Exception
@@ -380,7 +380,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to update a customer.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testUpdateCustomer() throws Exception
@@ -431,7 +431,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to update an address.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testUpdateAddress() throws Exception
@@ -473,7 +473,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to update an education.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testUpdateEducation() throws Exception
@@ -516,7 +516,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to delete a customer.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testDeleteCustomer() throws Exception
@@ -543,7 +543,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to delete an address.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testDeleteAddress() throws Exception
@@ -570,7 +570,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to delete an education.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testDeleteEducation() throws Exception
@@ -600,7 +600,7 @@ public class TestJPAStorage
 	/**
 	 * Test method to refetch a customer.
 	 * 
-	 * @throws Exception
+	 * @throws Exception if the test fails.
 	 */
 	@Test
 	public void testRefetchCustomer() throws Exception
