@@ -52,6 +52,7 @@ import javax.rad.type.bean.IBean;
 import com.sibvisions.rad.model.DataBookCSVExporter;
 import com.sibvisions.rad.persist.AbstractCachedStorage;
 import com.sibvisions.rad.persist.AbstractStorage;
+import com.sibvisions.util.type.CommonUtil;
 import com.sibvisions.util.type.StringUtil;
 
 /**
@@ -565,14 +566,7 @@ public class JPAStorage extends AbstractCachedStorage
 		}
 		finally
 		{
-			try
-			{
-				out.close();
-			}
-			catch (Exception e)
-			{
-				// nothing to be done
-			}
+			CommonUtil.close(out);
 		}
 	}
 	
@@ -1207,7 +1201,7 @@ public class JPAStorage extends AbstractCachedStorage
 				
 				for (Attribute attribute : jpaAccess.getAttributes(pEntityClass))
 				{
-					if (JPAStorageUtil.isPrimaryKeyAttribute(attribute, pEntityClass))
+					if (JPAStorageUtil.isPrimaryKeyAttribute(attribute))
 					{
 						jpaDataType.setGetterMethodName(JPAStorageUtil.getGetterMethodNameForAttribute(attribute));
 						jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(attribute));
@@ -1344,7 +1338,7 @@ public class JPAStorage extends AbstractCachedStorage
 				for (Attribute attribute : attributes)
 				{
 					// PrimaryKey Attributes already initialized
-					if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute, masterEntity))
+					if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute))
 					{
 						if (attribute.getPersistentAttributeType() == PersistentAttributeType.BASIC)
 						{
@@ -1493,7 +1487,7 @@ public class JPAStorage extends AbstractCachedStorage
 		
 		for (Attribute attribute : attributes)
 		{
-			if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute, pEntityClass))
+			if (!JPAStorageUtil.isPrimaryKeyAttribute(attribute))
 			{
 				if (uniqueKeys.size() > 0)
 				{
@@ -1542,7 +1536,7 @@ public class JPAStorage extends AbstractCachedStorage
 			{
 				if (targetAttribute.isCollection())
 				{
-					Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(targetAttribute, pMasterEntity);
+					Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(targetAttribute);
 					
 					for (Annotation annotation : annotations)
 					{
@@ -1589,7 +1583,7 @@ public class JPAStorage extends AbstractCachedStorage
 		for (Attribute attribute : attributes)
 		{
 			// Unique Keys can be defined in JPA 2.0 in the Annotation Column from a field
-			Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(attribute, pEntityClass);
+			Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(attribute);
 			
 			//an expensive method!
 			String sAttribName = JPAStorageUtil.getNameForAttribute(attribute, annotations);
@@ -1649,7 +1643,7 @@ public class JPAStorage extends AbstractCachedStorage
 		jpaDataType.setSetterMethodName(JPAStorageUtil.getSetterMethodNameForAttribute(pAttribute));
 		serverColumnMetaData.setJPAMappingType(jpaDataType);
 		
-		Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(pAttribute, pEntityClass);
+		Annotation[] annotations = JPAStorageUtil.getAnnotationsForAttribute(pAttribute);
 		
 		serverColumnMetaData.setName(JPAStorageUtil.getNameForAttribute(pAttribute, annotations));
 		serverColumnMetaData.setLabel(JPAStorageUtil.getLabelForAttribute(pAttribute));

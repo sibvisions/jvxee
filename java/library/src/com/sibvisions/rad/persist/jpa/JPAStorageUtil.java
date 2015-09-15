@@ -22,6 +22,8 @@ package com.sibvisions.rad.persist.jpa;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.HashSet;
@@ -41,10 +43,11 @@ import javax.rad.model.datatype.TimestampDataType;
 import com.sibvisions.util.type.StringUtil;
 
 /**
- * Util Methods for the JPA Integration.
+ * The {@link JPAStorageUtil} provides various methods for working with the
+ * {@link JPAStorage}.
  * 
  * @author Stefan Wurm
- *		
+ * 		
  */
 public final class JPAStorageUtil
 {
@@ -52,7 +55,10 @@ public final class JPAStorageUtil
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/** the primitive type wrappers. **/
+	/**
+	 * The {@link Set} of {@link Class}es that represent wrappers of primitive
+	 * types.
+	 **/
 	private static final Set<Class> WRAPPER_TYPES = new HashSet();
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,11 +79,11 @@ public final class JPAStorageUtil
 	}
 	
 	/**
-	 * Invisible constructor because <code>JPAStorageUtil</code> is a utility
-	 * class.
+	 * No instance needed.
 	 */
 	private JPAStorageUtil()
 	{
+		// No instance needed.
 	}
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,32 +91,34 @@ public final class JPAStorageUtil
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Returns all Annoations for the given attribute.
+	 * Returns all {@link Annotation}s for the given {@link Attribute}.
 	 * 
-	 * @param pAttribute the attribute
-	 * @param pEntityClass the entity class
-	 * @return the Annotaitons
-	 * @throws Exception
+	 * @param pAttribute the {@link Attribute} from which to get the
+	 *            {@link Annotation}s.
+	 * @return the {@link Annotation}s of the given {@link Attribute}.
+	 *         {@code null} if the {@link Annotation}s could not be got.
 	 */
-	public static Annotation[] getAnnotationsForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
+	public static Annotation[] getAnnotationsForAttribute(Attribute pAttribute)
 	{
-		String member = pAttribute.getJavaMember().getName();
+		Member member = pAttribute.getJavaMember();
 		
-		if (member.startsWith("get") || member.startsWith("is"))
+		if (member instanceof Field)
 		{
-			// The Annotation is defined on the getter-Methode
-			return pEntityClass.getMethod(member).getAnnotations();
+			return ((Field)member).getAnnotations();
+		}
+		else if (member instanceof Method)
+		{
+			return ((Method)member).getAnnotations();
 		}
 		
-		// The Annotation is defined on the field 
-		return pEntityClass.getDeclaredField(member).getAnnotations();
+		return null;
 	}
 	
 	/**
-	 * Returns the IDataType for the given Class.
+	 * Returns the {@link IDataType} for the given {@link Class java type}.
 	 * 
-	 * @param pJavaType the java Type
-	 * @return the IDataType
+	 * @param pJavaType the {@link Class java type}.
+	 * @return the {@link IDataType}.
 	 */
 	public static IDataType getDataTypeIdentifierForJavaType(Class pJavaType)
 	{
@@ -210,25 +218,14 @@ public final class JPAStorageUtil
 	}
 	
 	/**
-	 * Returns the name for the attribute.
+	 * Returns the name for the {@link Attribute}.
 	 * 
-	 * @param pAttribute the attribute
-	 * @return the name for the attribute
+	 * @param pAttribute the {@link Attribute}.
+	 * @return the name for the {@link Attribute}.
 	 */
 	public static String getNameForAttribute(Attribute pAttribute)
 	{
-		Annotation[] anons;
-		
-		try
-		{
-			anons = getAnnotationsForAttribute(pAttribute, pAttribute.getDeclaringType().getJavaType());
-		}
-		catch (Exception e)
-		{
-			anons = null;
-		}
-		
-		return getNameForAttribute(pAttribute, anons);
+		return getNameForAttribute(pAttribute, getAnnotationsForAttribute(pAttribute));
 	}
 	
 	/**
@@ -243,10 +240,10 @@ public final class JPAStorageUtil
 	}
 	
 	/**
-	 * The Type-Class for the given attribute.
+	 * Gets the {@link Class Type-Class} for the given {@link Attribute}.
 	 * 
-	 * @param pAttribute the attribute
-	 * @return the type-Class
+	 * @param pAttribute the {@link Attribute}.
+	 * @return the {@link Class Type-Class}.
 	 * @throws Exception
 	 */
 	public static Class getTypeClassForAttribute(Attribute pAttribute) throws Exception
@@ -261,19 +258,16 @@ public final class JPAStorageUtil
 	}
 	
 	/**
-	 * Checks if the given Attribute is part of the primary key of the given
-	 * class.
+	 * Checks if the given {@link Attribute} is part of the primary key of the
+	 * given class.
 	 * 
-	 * @param pAttribute the Attribute
-	 * @param pEntityClass The class of the entity
-	 * @return true if given Attribute is part of the primary key
-	 * @throws Exception
+	 * @param pAttribute the {@link Attribute}.
+	 * @return {@code true} if given {@link Attribute} is part of the primary
+	 *         key.
 	 */
-	public static boolean isPrimaryKeyAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
+	public static boolean isPrimaryKeyAttribute(Attribute pAttribute)
 	{
-		Annotation[] annotations = getAnnotationsForAttribute(pAttribute, pEntityClass);
-		
-		for (Annotation annotation : annotations)
+		for (Annotation annotation : getAnnotationsForAttribute(pAttribute))
 		{
 			if (annotation.annotationType() == Id.class || annotation.annotationType() == EmbeddedId.class)
 			{
@@ -285,10 +279,10 @@ public final class JPAStorageUtil
 	}
 	
 	/**
-	 * Checks if the given class is a primitive or wrapper.
+	 * Checks if the given {@link Class} is a primitive or a wrapper.
 	 * 
-	 * @param pClazz the class
-	 * @return true if the given class is a primitive or wrapper
+	 * @param pClazz the {@link Class}.
+	 * @return {@code true} if the given {@link Class} is a primitive or a wrapper.
 	 */
 	public static boolean isPrimitiveOrWrapped(Class pClazz)
 	{
@@ -296,7 +290,7 @@ public final class JPAStorageUtil
 	}
 	
 	/**
-	 * Returns the name for the attribute.
+	 * Returns the name for the {@link Attribute}.
 	 * 
 	 * @param pAttribute the attribute
 	 * @param pAnnotations the attribute annotations
