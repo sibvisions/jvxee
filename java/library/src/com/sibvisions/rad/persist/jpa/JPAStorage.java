@@ -502,11 +502,11 @@ public class JPAStorage extends AbstractCachedStorage
 		
 		try
 		{
-			List<Object[]> lResult = this.executeFetch(pFilter, pSort, 0, 0);
+			List<Object[]> lResult = executeFetch(pFilter, pSort, 0, 0);
 			
 			if (pColumnNames == null)
 			{
-				pColumnNames = this.serverMetaData.getColumnNames();
+				pColumnNames = serverMetaData.getColumnNames();
 			}
 			
 			if (pLabels == null)
@@ -515,7 +515,7 @@ public class JPAStorage extends AbstractCachedStorage
 				
 				for (int i = 0; i < pColumnNames.length; i++)
 				{
-					pLabels[i] = this.serverMetaData.getServerColumnMetaData(pColumnNames[i]).getLabel();
+					pLabels[i] = serverMetaData.getServerColumnMetaData(pColumnNames[i]).getLabel();
 					
 					if (pLabels[i] == null)
 					{
