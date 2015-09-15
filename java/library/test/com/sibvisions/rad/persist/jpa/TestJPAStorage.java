@@ -30,6 +30,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.rad.model.condition.Equals;
 import javax.rad.model.condition.ICondition;
+import javax.rad.persist.DataSourceException;
 import javax.rad.remote.MasterConnection;
 
 import org.junit.After;
@@ -290,6 +291,23 @@ public class TestJPAStorage
 		List<Object[]> objects = jpaStorageCustomer.executeFetch(null, null, 0, 10);
 		
 		Assert.assertEquals(5, objects.size());
+	}
+	
+	/**
+	 * Tests the {@link JPAStorage#getName()} function.
+	 * 
+	 * @throws DataSourceException if the test fails.
+	 */
+	@Test
+	public void testGetName() throws DataSourceException
+	{
+		JPAStorage storage = new JPAStorage(Customer.class);
+		
+		Assert.assertEquals("customer", storage.getName());
+		
+		storage.setDetailEntity(Address.class);
+		
+		Assert.assertEquals("customeraddress", storage.getName());
 	}
 	
 	/**
