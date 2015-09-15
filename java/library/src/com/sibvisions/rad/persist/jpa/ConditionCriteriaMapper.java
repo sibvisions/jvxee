@@ -47,12 +47,9 @@ import javax.rad.model.condition.Or;
 import javax.rad.persist.DataSourceException;
 
 /**
- * The <code>ConditionCriteriaMapper</code> creates from the ICondition and the
- * SortDefinition a CriteriaQuery.
+ * The {@link ConditionCriteriaMapper} is able to create {@link CriteriaQuery}s
+ * from {@link ICondition}s.
  * 
- * @see javax.rad.model.datatype.IDataType
- * @see javax.rad.persist.ColumnMetaData
- * 		
  * @author Stefan Wurm
  */
 public class ConditionCriteriaMapper
@@ -61,10 +58,10 @@ public class ConditionCriteriaMapper
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/** The ServerMetaData from the Storage. **/
+	/** The {@link JPAServerMetaData} from the storage. **/
 	private JPAServerMetaData serverMetaData;
 	
-	/** The CriteriaBuilder from the entityManager. **/
+	/** The {@link CriteriaBuilder} from the entity manager. **/
 	private CriteriaBuilder criteriaBuilder;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,10 +69,10 @@ public class ConditionCriteriaMapper
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Creates the ConditionCriteriaMapper.
-	 * 
-	 * @param pServerMetaData The JPAServerMetaData
-	 * @param pCriteriaBuilder The CriteriaBuilder
+	 * Creates a new instance of {@link ConditionCriteriaMapper}.
+	 *
+	 * @param pServerMetaData the {@link JPAServerMetaData server meta data}.
+	 * @param pCriteriaBuilder the {@link CriteriaBuilder criteria builder}.
 	 */
 	public ConditionCriteriaMapper(JPAServerMetaData pServerMetaData, CriteriaBuilder pCriteriaBuilder)
 	{
@@ -88,17 +85,17 @@ public class ConditionCriteriaMapper
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Returns the correct CriteriaQuery for the ICondition and SortDefinition
-	 * for the given entity.
+	 * Returns the created {@link CriteriaQuery} for the {@link ICondition} and
+	 * {@link SortDefinition} for the given entity.
 	 * 
-	 * @param pCondition the ICondition
-	 * @param pSort the SortDefinition
-	 * @param pFromEntity the Entity to select
+	 * @param pCondition the {@link ICondition}.
+	 * @param pSort the {@link SortDefinition}.
+	 * @param pFromEntity the Entity to select.
 	 * @param pJoinAttributeName the Attribute Name for a join. It is used in a
-	 *            ManyToMany Realtion
-	 * @return The CriteriaQuery
-	 * @throws DataSourceException Throws a DataSourceException when the defined
-	 *             Columns are not in the ServerMetaData
+	 *            ManyToMany relation.
+	 * @return the {@link CriteriaQuery}.
+	 * @throws DataSourceException if the defined columns are not in the server
+	 *             metadata.
 	 */
 	public CriteriaQuery getCriteriaQuery(ICondition pCondition, SortDefinition pSort, Class pFromEntity, String pJoinAttributeName) throws DataSourceException
 	{
@@ -175,15 +172,15 @@ public class ConditionCriteriaMapper
 	}
 	
 	/**
-	 * Returns the Count-Select for the given ICondition and entity Class.
+	 * Returns the Count-Select for the given {@link ICondition} and entity.
 	 * 
-	 * @param pCondition the ICondition
-	 * @param pFromEntity the Entity to select
+	 * @param pCondition the {@link ICondition}.
+	 * @param pFromEntity the Entity to select.
 	 * @param pJoinAttributeName the Attribute Name for a join. It is used in a
-	 *            ManyToMany Realtion
-	 * @return the CriteriaQuery
-	 * @throws DataSourceException throws a DataSourceException when the defined
-	 *             Columns are not in the ServerMetaData
+	 *            ManyToMany relation.
+	 * @return the {@link CriteriaQuery}.
+	 * @throws DataSourceException if the defined columns are not in the server
+	 *             metadata.
 	 */
 	public CriteriaQuery getCountCriteriaQuery(ICondition pCondition, Class pFromEntity, String pJoinAttributeName) throws DataSourceException
 	{
@@ -229,95 +226,68 @@ public class ConditionCriteriaMapper
 	}
 	
 	/**
-	 * Returns the javax.persistence.criteria.Predicate for the given
-	 * OperatorCondition.
+	 * Sets the Order By to the given {@link CriteriaQuery}.
 	 * 
-	 * @param pOperatorCondition the OperatorCondition
-	 * @param pFrom
-	 * @return The Predicate
-	 * @throws DataSourceException throws a DataSourceException when the defined
-	 *             Columns are not in the ServerMetaData
+	 * @param pCriteriaQuery the {@link CriteriaQuery}.
+	 * @param pFrom the {@link From}.
+	 * @param pSort the {@link SortDefinition}.
+	 * @throws DataSourceException if a column could not be found in the server
+	 *             metadata.
 	 */
-	private Predicate getPredicateForOperatorCondition(OperatorCondition pOperatorCondition, From pFrom) throws DataSourceException
+	public void setOrdering(CriteriaQuery pCriteriaQuery, From pFrom, SortDefinition pSort) throws DataSourceException
 	{
-		ArrayList<Predicate> predicates = new ArrayList<Predicate>();
 		
-		for (ICondition subCondition : pOperatorCondition.getConditions())
+		String[] columnNames = pSort.getColumns();
+		boolean[] isAscending = pSort.isAscending();
+		
+		Order[] order = new Order[columnNames.length];
+		
+		for (int i = 0; i < columnNames.length; i++)
 		{
-			Predicate predicate = null;
+			JPAServerColumnMetaData serverColumnMetaData = serverMetaData.getServerColumnMetaData(columnNames[i]);
 			
-			if (subCondition instanceof OperatorCondition)
+			if (serverColumnMetaData == null)
 			{
-				predicate = getPredicateForOperatorCondition((OperatorCondition)subCondition, pFrom);
-			}
-			else if (subCondition instanceof CompareCondition)
-			{
-				predicate = getPredicateForCompareCondition((CompareCondition)subCondition, pFrom);
-			}
-			else if (subCondition instanceof Not)
-			{
-				predicate = getPredicateForNotCondition((Not)subCondition, pFrom);
+				throw new DataSourceException("The column " + columnNames[i] + " is unkown.");
 			}
 			
-			predicates.add(predicate);
+			Path path = null;
+			
+			for (String attributeName : serverColumnMetaData.getJPAMappingType().getPathNavigation())
+			{
+				
+				if (path == null)
+				{
+					path = pFrom.get(attributeName);
+				}
+				else
+				{
+					path = path.get(attributeName);
+				}
+				
+			}
+			
+			if (isAscending[i])
+			{
+				order[i] = criteriaBuilder.asc(path);
+			}
+			else
+			{
+				order[i] = criteriaBuilder.desc(path);
+			}
 		}
 		
-		if (pOperatorCondition instanceof Or)
-		{
-			Predicate predicate = criteriaBuilder.or(predicates.toArray(new Predicate[1]));
-			
-			return predicate;
-		}
-		else if (pOperatorCondition instanceof And)
-		{
-			Predicate predicate = criteriaBuilder.and(predicates.toArray(new Predicate[1]));
-			
-			return predicate;
-		}
-		
-		return null;
+		pCriteriaQuery.orderBy(order);
 	}
 	
 	/**
-	 * Returns the Predicate for the Not Condition.
+	 * Returns the {@link Predicate} for the given {@link CompareCondition}.
 	 * 
-	 * @param pNotCondition The NotCondition
-	 * @param pFrom
-	 * @return the Predicate
-	 * @throws DataSourceException throws a DataSourceException when the defined
-	 *             Columns are not in the ServerMetaData
-	 */
-	private Predicate getPredicateForNotCondition(Not pNotCondition, From pFrom) throws DataSourceException
-	{
-		Predicate predicate = null;
-		
-		ICondition inNot = pNotCondition.getCondition();
-		
-		if (inNot instanceof OperatorCondition)
-		{
-			predicate = getPredicateForOperatorCondition((OperatorCondition)inNot, pFrom);
-		}
-		else if (inNot instanceof CompareCondition)
-		{
-			predicate = getPredicateForCompareCondition((CompareCondition)inNot, pFrom);
-		}
-		else if (inNot instanceof Not)
-		{
-			predicate = getPredicateForNotCondition((Not)inNot, pFrom);
-		}
-		
-		return criteriaBuilder.not(predicate);
-	}
-	
-	/**
-	 * Returns the javax.persistence.criteria.Predicate for the
-	 * CompareCondition.
-	 * 
-	 * @param pCompareCondition the CompareCondition
-	 * @param pFrom
-	 * @return The Predicate
-	 * @throws DataSourceException throws a DataSourceException when the defined
-	 *             Columns are not in the ServerMetaData
+	 * @param pCompareCondition the {@link CompareCondition}.
+	 * @param pFrom the {@link From}.
+	 * @return the {@link Predicate}.
+	 * @throws DataSourceException if the defined columns are not in the server
+	 *             metadata.
 	 */
 	private Predicate getPredicateForCompareCondition(CompareCondition pCompareCondition, From pFrom) throws DataSourceException
 	{
@@ -330,7 +300,7 @@ public class ConditionCriteriaMapper
 		
 		if (serverColumnMetaData == null)
 		{
-			throw new DataSourceException("Column " + columnName + " unkown");
+			throw new DataSourceException("The column " + columnName + " is unkown.");
 		}
 		
 		Path path = null;
@@ -540,57 +510,83 @@ public class ConditionCriteriaMapper
 	}
 	
 	/**
-	 * Sets the Order By to the given criteriaQuery.
+	 * Returns the {@link Predicate} for the {@link Not Not Condition}.
 	 * 
-	 * @param pCriteriaQuery the CriteriaQuery
-	 * @param pFrom
-	 * @param pSort the SortDefinition
-	 * @throws DataSourceException
+	 * @param pNotCondition The {@link Not Not Condition}.
+	 * @param pFrom the {@link From}.
+	 * @return the {@link Predicate}.
+	 * @throws DataSourceException if the defined Columns are not in the server
+	 *             metadata.
 	 */
-	public void setOrdering(CriteriaQuery pCriteriaQuery, From pFrom, SortDefinition pSort) throws DataSourceException
+	private Predicate getPredicateForNotCondition(Not pNotCondition, From pFrom) throws DataSourceException
 	{
+		Predicate predicate = null;
 		
-		String[] columnNames = pSort.getColumns();
-		boolean[] isAscending = pSort.isAscending();
+		ICondition inNot = pNotCondition.getCondition();
 		
-		Order[] order = new Order[columnNames.length];
-		
-		for (int i = 0; i < columnNames.length; i++)
+		if (inNot instanceof OperatorCondition)
 		{
-			JPAServerColumnMetaData serverColumnMetaData = serverMetaData.getServerColumnMetaData(columnNames[i]);
-			
-			if (serverColumnMetaData == null)
-			{
-				throw new DataSourceException("Column " + columnNames[i] + " unkown");
-			}
-			
-			Path path = null;
-			
-			for (String attributeName : serverColumnMetaData.getJPAMappingType().getPathNavigation())
-			{
-				
-				if (path == null)
-				{
-					path = pFrom.get(attributeName);
-				}
-				else
-				{
-					path = path.get(attributeName);
-				}
-				
-			}
-			
-			if (isAscending[i])
-			{
-				order[i] = criteriaBuilder.asc(path);
-			}
-			else
-			{
-				order[i] = criteriaBuilder.desc(path);
-			}
+			predicate = getPredicateForOperatorCondition((OperatorCondition)inNot, pFrom);
+		}
+		else if (inNot instanceof CompareCondition)
+		{
+			predicate = getPredicateForCompareCondition((CompareCondition)inNot, pFrom);
+		}
+		else if (inNot instanceof Not)
+		{
+			predicate = getPredicateForNotCondition((Not)inNot, pFrom);
 		}
 		
-		pCriteriaQuery.orderBy(order);
+		return criteriaBuilder.not(predicate);
+	}
+	
+	/**
+	 * Returns the {@link Predicate} for the given {@link OperatorCondition}.
+	 * 
+	 * @param pOperatorCondition the {@link OperatorCondition}.
+	 * @param pFrom the {@link From}.
+	 * @return the {@link Predicate}.
+	 * @throws DataSourceException if the defined Columns are not in the server
+	 *             metadata.
+	 */
+	private Predicate getPredicateForOperatorCondition(OperatorCondition pOperatorCondition, From pFrom) throws DataSourceException
+	{
+		ArrayList<Predicate> predicates = new ArrayList<Predicate>();
+		
+		for (ICondition subCondition : pOperatorCondition.getConditions())
+		{
+			Predicate predicate = null;
+			
+			if (subCondition instanceof OperatorCondition)
+			{
+				predicate = getPredicateForOperatorCondition((OperatorCondition)subCondition, pFrom);
+			}
+			else if (subCondition instanceof CompareCondition)
+			{
+				predicate = getPredicateForCompareCondition((CompareCondition)subCondition, pFrom);
+			}
+			else if (subCondition instanceof Not)
+			{
+				predicate = getPredicateForNotCondition((Not)subCondition, pFrom);
+			}
+			
+			predicates.add(predicate);
+		}
+		
+		if (pOperatorCondition instanceof Or)
+		{
+			Predicate predicate = criteriaBuilder.or(predicates.toArray(new Predicate[1]));
+			
+			return predicate;
+		}
+		else if (pOperatorCondition instanceof And)
+		{
+			Predicate predicate = criteriaBuilder.and(predicates.toArray(new Predicate[1]));
+			
+			return predicate;
+		}
+		
+		return null;
 	}
 	
 }	// ConditionCriteriaMapper
