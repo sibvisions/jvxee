@@ -50,7 +50,7 @@ import javax.rad.persist.IStorage;
 import javax.rad.persist.MetaData;
 import javax.rad.type.bean.IBean;
 
-import com.sibvisions.rad.model.DataBookUtil;
+import com.sibvisions.rad.model.DataBookCSVExporter;
 import com.sibvisions.rad.persist.AbstractCachedStorage;
 import com.sibvisions.rad.persist.AbstractStorage;
 import com.sibvisions.util.type.StringUtil;
@@ -123,6 +123,15 @@ public class JPAStorage extends AbstractCachedStorage
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Abstract methods implementation
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() throws Throwable
+	{
+		// TODO Is there something to close?
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -293,20 +302,6 @@ public class JPAStorage extends AbstractCachedStorage
 		objects.add(null);
 		
 		return objects;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public MetaData executeGetMetaData() throws DataSourceException
-	{
-		if (!isOpen())
-		{
-			throw new DataSourceException("JPAStorage isn't open!");
-		}
-		
-		return serverMetaData.getMetaData();
 	}
 	
 	/**
@@ -485,6 +480,20 @@ public class JPAStorage extends AbstractCachedStorage
 	 * {@inheritDoc}
 	 */
 	@Override
+	public MetaData getMetaData() throws DataSourceException
+	{
+		if (!isOpen())
+		{
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
+		
+		return serverMetaData.getMetaData();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void writeCSV(OutputStream pStream, String[] pColumnNames,
 			String[] pLabels, ICondition pFilter, SortDefinition pSort,
 			String pSeparator) throws Exception
@@ -531,7 +540,7 @@ public class JPAStorage extends AbstractCachedStorage
 			
 			for (int i = 0, anz = pColumnNames.length; i < anz; i++)
 			{
-				dataTypes[i] = ColumnMetaData.createDataType(serverMetaData.getServerColumnMetaData(pColumnNames[i]).getColumnMetaData());
+				dataTypes[i] = serverMetaData.getServerColumnMetaData(pColumnNames[i]).getColumnMetaData().getDataType();
 			}
 			
 			IBean bnRowData;
@@ -548,7 +557,7 @@ public class JPAStorage extends AbstractCachedStorage
 						out.write(pSeparator);
 					}
 					
-					DataBookUtil.writeQuoted(out, dataTypes[j], bnRowData.get(pColumnNames[j]), pSeparator);
+					DataBookCSVExporter.writeQuoted(out, dataTypes[j], bnRowData.get(pColumnNames[j]), pSeparator);
 				}
 				out.write("\n");
 			}
@@ -1730,4 +1739,4 @@ public class JPAStorage extends AbstractCachedStorage
 		jpaAccess = pJPAAccess;
 	}
 	
-}// JPAStorage
+}	// JPAStorage

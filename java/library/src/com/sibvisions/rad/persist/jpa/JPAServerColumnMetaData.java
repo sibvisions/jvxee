@@ -260,7 +260,7 @@ public class JPAServerColumnMetaData
 	 */
 	public void setDataType(int pTypeIdentifier)
 	{
-		columnMetaData.setDataType(pTypeIdentifier);
+		columnMetaData.setTypeIdentifier(pTypeIdentifier);
 	}
 
 	/**
