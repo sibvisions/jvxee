@@ -22,16 +22,16 @@
 package com.sibvisions.rad.persist.jpa;
 
 /**
- * The <code>IPackageSetup</code> class defines package relevant version information
+ * The {@link IPackageSetup} class defines package relevant version information
  * and properties.
  * 
  * @author René Jahn
  */
 public interface IPackageSetup
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Constants
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Constants
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/** the product name. */
 	public static final String NAME = "JVx EE";
