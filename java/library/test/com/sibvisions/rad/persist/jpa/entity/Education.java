@@ -33,40 +33,40 @@ public class Education implements Serializable
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	private long	id;
-
-	private String 	education;
-
-	public Education() 
+	
+	private long id;
+	
+	private String education;
+	
+	public Education()
 	{
-		
+	
 	}
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId()
 	{
 		return id;
 	}
-
+	
 	public void setId(long id)
 	{
 		this.id = id;
 	}
-
+	
 	public String getEducation()
 	{
 		return education;
 	}
-
+	
 	public void setEducation(String education)
 	{
 		this.education = education;
 	}
-
+	
 }	// Education

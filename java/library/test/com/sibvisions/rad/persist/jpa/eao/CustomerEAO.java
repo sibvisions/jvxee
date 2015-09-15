@@ -31,25 +31,25 @@ import com.sibvisions.rad.persist.jpa.entity.Customer;
  * 
  * @author Stefan Wurm
  */
-public class CustomerEAO 
+public class CustomerEAO
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/** The Entity Manager. */
 	private EntityManager entityManager;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/**
 	 * Setter Method for the Entity Manager.
 	 * 
 	 * @param pEntityManager The Entity Manager
 	 */
-	public void setEntityManager(EntityManager pEntityManager) 
+	public void setEntityManager(EntityManager pEntityManager)
 	{
 		entityManager = pEntityManager;
 	}
@@ -59,23 +59,23 @@ public class CustomerEAO
 	 * 
 	 * @param customer The Customer
 	 */
-	@EAOMethod (methodIdentifier = EAO.DELETE)
-	public void deleteCustomer(Customer customer) 
+	@EAOMethod(methodIdentifier = EAO.DELETE)
+	public void deleteCustomer(Customer customer)
 	{
-        entityManager.getTransaction().begin();
-    	
-        if (customer.getEducations().size() > 0) 
-        {
-        	customer.getEducations().clear();
-        }
-        
-        if (customer.getAddresses().size() > 0) 
-        {
-        	customer.getEducations().clear();
-        }
-        
-        entityManager.remove(customer);
-        entityManager.getTransaction().commit();
+		entityManager.getTransaction().begin();
+		
+		if (customer.getEducations().size() > 0)
+		{
+			customer.getEducations().clear();
+		}
+		
+		if (customer.getAddresses().size() > 0)
+		{
+			customer.getEducations().clear();
+		}
+		
+		entityManager.remove(customer);
+		entityManager.getTransaction().commit();
 	}
 	
 }	// CustomerEAO

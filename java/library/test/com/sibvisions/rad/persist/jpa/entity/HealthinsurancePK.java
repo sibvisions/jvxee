@@ -24,42 +24,44 @@ import java.io.Serializable;
 
 public class HealthinsurancePK implements Serializable
 {
-
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	private long id;
-
-	private int	nr;
 	
-	public HealthinsurancePK() 
+	private long id;
+	
+	private int nr;
+	
+	public HealthinsurancePK()
 	{
-		
+	
 	}
-
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Overwritten methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int)(id ^ (id >>> 32));
 		result = prime * result + nr;
 		return result;
 	}
-
+	
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj)
+	{
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HealthinsurancePK other = (HealthinsurancePK) obj;
+		HealthinsurancePK other = (HealthinsurancePK)obj;
 		if (id != other.id)
 			return false;
 		if (nr != other.nr)
@@ -75,20 +77,20 @@ public class HealthinsurancePK implements Serializable
 	{
 		return id;
 	}
-
+	
 	public void setId(long id)
 	{
 		this.id = id;
 	}
-
+	
 	public int getNr()
 	{
 		return nr;
 	}
-
+	
 	public void setNr(int nr)
 	{
 		this.nr = nr;
 	}
-
+	
 }	// HealthinsurancePK

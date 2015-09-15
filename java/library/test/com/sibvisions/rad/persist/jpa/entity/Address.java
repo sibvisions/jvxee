@@ -35,26 +35,26 @@ public class Address implements Serializable
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long		id;
-
-	private String		street;
-
-	@Column(length = 4)
-	private String		zip;
-
-	private String		city;
-
-	@ManyToOne
-	private Customer	customer;
+	private long id;
 	
-	public Address() 
+	private String street;
+	
+	@Column(length = 4)
+	private String zip;
+	
+	private String city;
+	
+	@ManyToOne
+	private Customer customer;
+	
+	public Address()
 	{
-		
+	
 	}
-
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,47 +63,47 @@ public class Address implements Serializable
 	{
 		return id;
 	}
-
+	
 	public void setId(long id)
 	{
 		this.id = id;
 	}
-
+	
 	public String getStreet()
 	{
 		return street;
 	}
-
+	
 	public void setStreet(String street)
 	{
 		this.street = street;
 	}
-
+	
 	public String getZip()
 	{
 		return zip;
 	}
-
+	
 	public void setZip(String zip)
 	{
 		this.zip = zip;
 	}
-
+	
 	public String getCity()
 	{
 		return city;
 	}
-
+	
 	public void setCity(String city)
 	{
 		this.city = city;
 	}
-
+	
 	public Customer getCustomer()
 	{
 		return customer;
 	}
-
+	
 	public void setCustomer(Customer customer)
 	{
 		this.customer = customer;

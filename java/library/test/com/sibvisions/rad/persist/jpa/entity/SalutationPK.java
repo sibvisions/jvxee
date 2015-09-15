@@ -28,56 +28,69 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Embeddable
-public class SalutationPK implements Serializable {
-
-    @Id 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+public class SalutationPK implements Serializable
+{
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	
 	private String salutation;
 	
-	public SalutationPK() 
+	public SalutationPK()
 	{
-		
+	
 	}
 	
-	public long getId() {
+	public long getId()
+	{
 		return id;
 	}
-	public void setId(long id) {
+	
+	public void setId(long id)
+	{
 		this.id = id;
 	}
-	public String getSalutation() {
+	
+	public String getSalutation()
+	{
 		return salutation;
 	}
-	public void setSalutation(String salutation) {
+	
+	public void setSalutation(String salutation)
+	{
 		this.salutation = salutation;
 	}
-
+	
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int)(id ^ (id >>> 32));
 		result = prime * result
 				+ ((salutation == null) ? 0 : salutation.hashCode());
 		return result;
 	}
-
+	
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj)
+	{
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SalutationPK other = (SalutationPK) obj;
+		SalutationPK other = (SalutationPK)obj;
 		if (id != other.id)
 			return false;
-		if (salutation == null) {
+		if (salutation == null)
+		{
 			if (other.salutation != null)
 				return false;
-		} else if (!salutation.equals(other.salutation))
+		}
+		else if (!salutation.equals(other.salutation))
 			return false;
 		return true;
 	}

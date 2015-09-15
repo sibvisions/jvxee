@@ -32,7 +32,7 @@ import com.sibvisions.rad.persist.jpa.entity.Address;
  * 
  * @author Stefan Wurm
  */
-public class AddressEAO 
+public class AddressEAO
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
@@ -44,13 +44,13 @@ public class AddressEAO
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/**
 	 * Setter Method for the Entity Manager.
 	 * 
 	 * @param pEntityManager The Entity Manager
-	 */	
-	public void setEntityManager(EntityManager pEntityManager) 
+	 */
+	public void setEntityManager(EntityManager pEntityManager)
 	{
 		entityManager = pEntityManager;
 	}
@@ -62,38 +62,38 @@ public class AddressEAO
 	 * @return the address with the id
 	 * @throws DataSourceException if the zip is not 4 characters long.
 	 */
-	@EAOMethod (methodIdentifier = EAO.INSERT)
-	public Address insertAddress(Address address) throws DataSourceException 
+	@EAOMethod(methodIdentifier = EAO.INSERT)
+	public Address insertAddress(Address address) throws DataSourceException
 	{
-		if (address.getZip().length() <= 3) 
+		if (address.getZip().length() <= 3)
 		{
 			throw new DataSourceException("ZIP have to be 4 characters long");
-		}		
-
-        entityManager.getTransaction().begin();
-        entityManager.persist(address);
-        entityManager.getTransaction().commit();
-
-        return address;
+		}
+		
+		entityManager.getTransaction().begin();
+		entityManager.persist(address);
+		entityManager.getTransaction().commit();
+		
+		return address;
 	}
-
+	
 	/**
 	 * Make an update to the given address.
 	 * 
 	 * @param address the address
 	 * @throws DataSourceException if the zip is not 4 characters long.
 	 */
-	@EAOMethod (methodIdentifier = EAO.UPDATE)
-	public void updateAddress(Address address) throws DataSourceException 
+	@EAOMethod(methodIdentifier = EAO.UPDATE)
+	public void updateAddress(Address address) throws DataSourceException
 	{
-		if (address.getZip().length() <= 3) 
+		if (address.getZip().length() <= 3)
 		{
 			throw new DataSourceException("ZIP have to be 4 characters long");
-		}		
-
-        entityManager.getTransaction().begin();
-        entityManager.merge(address);
-        entityManager.getTransaction().commit();
+		}
+		
+		entityManager.getTransaction().begin();
+		entityManager.merge(address);
+		entityManager.getTransaction().commit();
 	}
 	
 }	// AddressEAO

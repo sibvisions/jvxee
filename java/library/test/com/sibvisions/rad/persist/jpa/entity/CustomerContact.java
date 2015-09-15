@@ -28,46 +28,50 @@ public class CustomerContact
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	private String	telephonePrivate;
-
-	private String	telephoneOffice;
-
-	private String	email;
-
-	public CustomerContact() 
+	
+	private String telephonePrivate;
+	
+	private String telephoneOffice;
+	
+	private String email;
+	
+	public CustomerContact()
 	{
-		
+	
 	}
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	public String getTelephonePrivate() {
+	
+	public String getTelephonePrivate()
+	{
 		return telephonePrivate;
 	}
-
-	public void setTelephonePrivate(String telephonePrivate) {
+	
+	public void setTelephonePrivate(String telephonePrivate)
+	{
 		this.telephonePrivate = telephonePrivate;
 	}
-
-	public String getTelephoneOffice() {
+	
+	public String getTelephoneOffice()
+	{
 		return telephoneOffice;
 	}
-
-	public void setTelephoneOffice(String telephoneOffice) {
+	
+	public void setTelephoneOffice(String telephoneOffice)
+	{
 		this.telephoneOffice = telephoneOffice;
 	}
 	
 	public String getEmail()
 	{
 		return email;
-	}	
-
+	}
+	
 	public void setEmail(String email)
 	{
 		this.email = email;
 	}
-
-} 	// CustomerContact
+	
+}	// CustomerContact

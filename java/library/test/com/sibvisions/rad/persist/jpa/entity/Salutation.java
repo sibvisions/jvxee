@@ -26,7 +26,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
 @Entity
-public class Salutation implements Serializable 
+public class Salutation implements Serializable
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
@@ -34,22 +34,22 @@ public class Salutation implements Serializable
 	
 	private SalutationPK salutationPK;
 	
-	public Salutation() 
+	public Salutation()
 	{
-		
+	
 	}
-
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	@EmbeddedId
-	public SalutationPK getSalutationPK() 
+	public SalutationPK getSalutationPK()
 	{
 		return salutationPK;
 	}
-
-	public void setSalutationPK(SalutationPK salutationPK) 
+	
+	public void setSalutationPK(SalutationPK salutationPK)
 	{
 		this.salutationPK = salutationPK;
 	}
