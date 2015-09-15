@@ -194,63 +194,87 @@ public class TestJPAStorage
 	// Test methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	// MetaData
-	//-----------------------------------
-	
 	/**
-	 * Tests the initialization of the MetaData for the education entity.
+	 * Test method to delete an address.
 	 * 
-	 * @throws Throwable if the test fails.
+	 * @throws Exception if the test fails.
 	 */
 	@Test
-	public void testMetaDataEducation() throws Throwable
+	public void testDeleteAddress() throws Exception
 	{
+		ICondition condition = new Equals("ID", BigDecimal.valueOf(2));
 		
-		DirectObjectConnection con = new DirectObjectConnection();
-		con.put("jpa", jpaStorageEducation);
+		List<Object[]> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
 		
-		MasterConnection macon = new MasterConnection(con);
-		macon.open();
+		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
-		RemoteDataSource rds = new RemoteDataSource(macon);
-		rds.open();
+		Object[] dataRowDelete = list.get(0);
 		
-		RemoteDataBook rdb = new RemoteDataBook();
-		rdb.setDataSource(rds);
-		rdb.setName("jpa");
-		rdb.open();
+		jpaStorageAddress.executeDelete(dataRowDelete);
 		
-		Assert.assertArrayEquals(new String[] { "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID", "EDUCATION_EDUCATION" }, rdb.getRowDefinition().getColumnNames());
+		entityManager.getTransaction().begin();
+		
+		Address entity = entityManager.find(Address.class, Long.valueOf(2));
+		
+		Assert.assertNull(entity);
+		
+		entityManager.getTransaction().commit();
 	}
-	
+
 	/**
-	 * Tests the initialization of the MetaData for the address entity.
+	 * Test method to delete a customer.
 	 * 
-	 * @throws Throwable if the test fails.
+	 * @throws Exception if the test fails.
 	 */
 	@Test
-	public void testMetaDataAddress() throws Throwable
+	public void testDeleteCustomer() throws Exception
 	{
-		DirectObjectConnection con = new DirectObjectConnection();
-		con.put("jpa", jpaStorageAddress);
+		ICondition condition = new Equals("ID", BigDecimal.valueOf(3));
 		
-		MasterConnection macon = new MasterConnection(con);
-		macon.open();
+		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
 		
-		RemoteDataSource rds = new RemoteDataSource(macon);
-		rds.open();
+		Assert.assertEquals(2, list.size()); // is 2 because of null
 		
-		RemoteDataBook rdb = new RemoteDataBook();
-		rdb.setDataSource(rds);
-		rdb.setName("jpa");
-		rdb.open();
+		Object[] dataRowDelete = list.get(0);
 		
-		Assert.assertArrayEquals(new String[] { "ID", "ZIP", "STREET", "CUSTOMER_ID", "CUSTOMER_LASTNAME", "CITY" }, rdb.getRowDefinition().getColumnNames());
+		jpaStorageCustomer.executeDelete(dataRowDelete);
+		
+		entityManager.getTransaction().begin();
+		
+		Customer entity = entityManager.find(Customer.class, Long.valueOf(3));
+		
+		Assert.assertNull(entity);
+		
+		entityManager.getTransaction().commit();
 	}
-	
-	// Fetch
-	//-----------------------------------
-	
+
+	/**
+	 * Test method to delete an education.
+	 * 
+	 * @throws Exception if the test fails.
+	 */
+	@Test
+	public void testDeleteEducation() throws Exception
+	{
+		/*
+		 * "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID",
+		 * "EDUCATION_EDUCATION"
+		 */
+		Object[] dataRowDelete = { BigDecimal.valueOf(1), "Lastname 1", BigDecimal.valueOf(2), "Education 2" };
+		
+		jpaStorageEducation.executeDelete(dataRowDelete);
+		
+		entityManager.getTransaction().begin();
+		
+		Customer entity = entityManager.find(Customer.class, Long.valueOf(1));
+		
+		Assert.assertNotNull(entity);
+		Assert.assertEquals(1, entity.getId());
+		Assert.assertEquals(1, entity.getEducations().size());
+		
+		entityManager.getTransaction().commit();
+	}
+
 	/**
 	 * Tests the fetch method from JPAStorageCustomer.
 	 * 
@@ -263,9 +287,6 @@ public class TestJPAStorage
 		
 		Assert.assertEquals(5, objects.size());
 	}
-	
-	// Insert
-	//-----------------------------------
 	
 	/**
 	 * Test method to insert a customer.
@@ -374,8 +395,56 @@ public class TestJPAStorage
 		entityManager.getTransaction().commit();
 	}
 	
-	// Update
-	//-----------------------------------
+	/**
+	 * Tests the initialization of the MetaData for the education entity.
+	 * 
+	 * @throws Throwable if the test fails.
+	 */
+	@Test
+	public void testMetaDataEducation() throws Throwable
+	{
+		
+		DirectObjectConnection con = new DirectObjectConnection();
+		con.put("jpa", jpaStorageEducation);
+		
+		MasterConnection macon = new MasterConnection(con);
+		macon.open();
+		
+		RemoteDataSource rds = new RemoteDataSource(macon);
+		rds.open();
+		
+		RemoteDataBook rdb = new RemoteDataBook();
+		rdb.setDataSource(rds);
+		rdb.setName("jpa");
+		rdb.open();
+		
+		Assert.assertArrayEquals(new String[] { "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID", "EDUCATION_EDUCATION" }, rdb.getRowDefinition().getColumnNames());
+	}
+	
+	/**
+	 * Tests the initialization of the MetaData for the address entity.
+	 * 
+	 * @throws Throwable if the test fails.
+	 */
+	@Test
+	public void testMetaDataAddress() throws Throwable
+	{
+		DirectObjectConnection con = new DirectObjectConnection();
+		con.put("jpa", jpaStorageAddress);
+		
+		MasterConnection macon = new MasterConnection(con);
+		macon.open();
+		
+		RemoteDataSource rds = new RemoteDataSource(macon);
+		rds.open();
+		
+		RemoteDataBook rdb = new RemoteDataBook();
+		rdb.setDataSource(rds);
+		rdb.setName("jpa");
+		rdb.open();
+		
+		Assert.assertArrayEquals(new String[] { "ID", "ZIP", "STREET", "CUSTOMER_ID", "CUSTOMER_LASTNAME", "CITY" }, rdb.getRowDefinition().getColumnNames());
+	}
 	
 	/**
 	 * Test method to update a customer.
@@ -509,93 +578,6 @@ public class TestJPAStorage
 		
 		entityManager.getTransaction().commit();
 	}
-	
-	// Delete
-	//-----------------------------------
-	
-	/**
-	 * Test method to delete a customer.
-	 * 
-	 * @throws Exception if the test fails.
-	 */
-	@Test
-	public void testDeleteCustomer() throws Exception
-	{
-		ICondition condition = new Equals("ID", BigDecimal.valueOf(3));
-		
-		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
-		
-		Assert.assertEquals(2, list.size()); // is 2 because of null
-		
-		Object[] dataRowDelete = list.get(0);
-		
-		jpaStorageCustomer.executeDelete(dataRowDelete);
-		
-		entityManager.getTransaction().begin();
-		
-		Customer entity = entityManager.find(Customer.class, Long.valueOf(3));
-		
-		Assert.assertNull(entity);
-		
-		entityManager.getTransaction().commit();
-	}
-	
-	/**
-	 * Test method to delete an address.
-	 * 
-	 * @throws Exception if the test fails.
-	 */
-	@Test
-	public void testDeleteAddress() throws Exception
-	{
-		ICondition condition = new Equals("ID", BigDecimal.valueOf(2));
-		
-		List<Object[]> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
-		
-		Assert.assertEquals(2, list.size()); // is 2 because of null
-		
-		Object[] dataRowDelete = list.get(0);
-		
-		jpaStorageAddress.executeDelete(dataRowDelete);
-		
-		entityManager.getTransaction().begin();
-		
-		Address entity = entityManager.find(Address.class, Long.valueOf(2));
-		
-		Assert.assertNull(entity);
-		
-		entityManager.getTransaction().commit();
-	}
-	
-	/**
-	 * Test method to delete an education.
-	 * 
-	 * @throws Exception if the test fails.
-	 */
-	@Test
-	public void testDeleteEducation() throws Exception
-	{
-		/*
-		 * "CUSTOMER_ID", "CUSTOMER_LASTNAME", "EDUCATION_ID",
-		 * "EDUCATION_EDUCATION"
-		 */
-		Object[] dataRowDelete = { BigDecimal.valueOf(1), "Lastname 1", BigDecimal.valueOf(2), "Education 2" };
-		
-		jpaStorageEducation.executeDelete(dataRowDelete);
-		
-		entityManager.getTransaction().begin();
-		
-		Customer entity = entityManager.find(Customer.class, Long.valueOf(1));
-		
-		Assert.assertNotNull(entity);
-		Assert.assertEquals(1, entity.getId());
-		Assert.assertEquals(1, entity.getEducations().size());
-		
-		entityManager.getTransaction().commit();
-	}
-	
-	// Refetch
-	//-----------------------------------
 	
 	/**
 	 * Test method to refetch a customer.
