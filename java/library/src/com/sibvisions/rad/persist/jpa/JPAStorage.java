@@ -88,6 +88,9 @@ public class JPAStorage extends AbstractCachedStorage
 	/** The EntityClass for the JPAStorage. */
 	private Class masterEntity;
 	
+	/** The name of this storage. */
+	private String name = "JPAStorage";
+	
 	/** The open state of this DBStorage. */
 	private boolean open = false;
 	
@@ -573,17 +576,7 @@ public class JPAStorage extends AbstractCachedStorage
 	@Override
 	public String getName()
 	{
-		if (masterEntity != null)
-		{
-			if (detailEntity != null)
-			{
-				return masterEntity.getSimpleName().toLowerCase() + detailEntity.getSimpleName().toLowerCase();
-			}
-			
-			return masterEntity.getSimpleName().toLowerCase();
-		}
-		
-		return super.getName();
+		return name;
 	}
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -601,6 +594,8 @@ public class JPAStorage extends AbstractCachedStorage
 		checkEntity(pMasterEntity);
 		
 		masterEntity = pMasterEntity;
+		
+		updateName();
 	}
 	
 	/**
@@ -625,6 +620,8 @@ public class JPAStorage extends AbstractCachedStorage
 		checkEntity(pDetailEntity);
 		
 		detailEntity = pDetailEntity;
+		
+		updateName();
 	}
 	
 	/**
@@ -1699,6 +1696,20 @@ public class JPAStorage extends AbstractCachedStorage
 		}
 		
 		return subStorages.put(pStorageName, pSubStorage);
+	}
+	
+	/**
+	 * Updates the name based on the {@link #masterEntity} and
+	 * {@link #detailEntity} (if any}.
+	 */
+	private void updateName()
+	{
+		name = masterEntity.getSimpleName().toLowerCase();
+		
+		if (detailEntity != null)
+		{
+			name = name + detailEntity.getSimpleName().toLowerCase();
+		}
 	}
 	
 	/**
