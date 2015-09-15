@@ -44,21 +44,21 @@ import com.sibvisions.util.type.StringUtil;
  * Util Methods for the JPA Integration.
  * 
  * @author Stefan Wurm
- *
+ *		
  */
 public final class JPAStorageUtil
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/** the primitive type wrappers. **/
-	private static final Set<Class>	WRAPPER_TYPES	= new HashSet();
-
+	private static final Set<Class> WRAPPER_TYPES = new HashSet();
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	static
 	{
 		WRAPPER_TYPES.add(Boolean.class);
@@ -71,14 +71,15 @@ public final class JPAStorageUtil
 		WRAPPER_TYPES.add(Double.class);
 		WRAPPER_TYPES.add(String.class);
 	}
-
+	
 	/**
-	 * Invisible constructor because <code>JPAStorageUtil</code> is a utility class.
+	 * Invisible constructor because <code>JPAStorageUtil</code> is a utility
+	 * class.
 	 */
 	private JPAStorageUtil()
 	{
 	}
-
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,25 +90,25 @@ public final class JPAStorageUtil
 	 * @param pAttribute the attribute
 	 * @param pEntityClass the entity class
 	 * @return the Annotaitons
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static Annotation[] getAnnotationsForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
 	{
 		String member = pAttribute.getJavaMember().getName();
-	
+		
 		if (member.startsWith("get") || member.startsWith("is"))
-		{ 
+		{
 			// The Annotation is defined on the getter-Methode
 			return pEntityClass.getMethod(member).getAnnotations();
 		}
-	
+		
 		// The Annotation is defined on the field 
-		return pEntityClass.getDeclaredField(member).getAnnotations(); 
+		return pEntityClass.getDeclaredField(member).getAnnotations();
 	}
 	
 	/**
 	 * Returns the IDataType for the given Class.
-	 *  
+	 * 
 	 * @param pJavaType the java Type
 	 * @return the IDataType
 	 */
@@ -124,23 +125,23 @@ public final class JPAStorageUtil
 				return new BinaryDataType();
 			}
 		}
-	
-		if (pJavaType == String.class 
-			|| pJavaType == Character.class 
-			|| pJavaType == char.class)
+		
+		if (pJavaType == String.class
+				|| pJavaType == Character.class
+				|| pJavaType == char.class)
 		{
 			return new StringDataType();
 		}
-		else if (Number.class.isAssignableFrom(pJavaType) 
-				 || pJavaType == byte.class 
-				 || pJavaType == short.class 
-				 || pJavaType == int.class 
-				 || pJavaType == long.class 
-				 || pJavaType == float.class 
-				 || pJavaType == double.class)
+		else if (Number.class.isAssignableFrom(pJavaType)
+				|| pJavaType == byte.class
+				|| pJavaType == short.class
+				|| pJavaType == int.class
+				|| pJavaType == long.class
+				|| pJavaType == float.class
+				|| pJavaType == double.class)
 		{
 			return new BigDecimalDataType();
-	
+			
 		}
 		
 		if (pJavaType == Boolean.class || pJavaType == boolean.class)
@@ -151,10 +152,10 @@ public final class JPAStorageUtil
 		{
 			return new TimestampDataType();
 		}
-	
+		
 		return new ObjectDataType();
 	}
-
+	
 	/**
 	 * Returns the default-value for the attribute.
 	 * 
@@ -165,23 +166,23 @@ public final class JPAStorageUtil
 	 * @param pAttribute the attribute
 	 * @param pEntityClass the class of the entity
 	 * @return the default-value
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static Object getDefaultValueForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
 	{
 		return pEntityClass.getMethod(getGetterMethodNameForAttribute(pAttribute)).invoke(pEntityClass.newInstance());
 	}
-
+	
 	/**
 	 * Returns the name of the getter-method.
 	 * 
 	 * @param pAttribute the attribute
 	 * @return the name of the getter-method
-	 */	
+	 */
 	public static String getGetterMethodNameForAttribute(Attribute pAttribute)
 	{
 		String methodName = StringUtil.formatMethodName("get", pAttribute.getName());
-
+		
 		if (pAttribute.getJavaType() == Boolean.class || pAttribute.getJavaType() == boolean.class)
 		{
 			try
@@ -193,10 +194,10 @@ public final class JPAStorageUtil
 				methodName = StringUtil.formatMethodName("is", pAttribute.getName());
 			}
 		}
-
+		
 		return methodName;
 	}
-
+	
 	/**
 	 * Returns the label for the attribute.
 	 * 
@@ -207,7 +208,7 @@ public final class JPAStorageUtil
 	{
 		return StringUtil.formatInitCap(pAttribute.getName());
 	}
-
+	
 	/**
 	 * Returns the name for the attribute.
 	 * 
@@ -240,37 +241,38 @@ public final class JPAStorageUtil
 	{
 		return StringUtil.formatMethodName("set", pAttribute.getName());
 	}
-
+	
 	/**
 	 * The Type-Class for the given attribute.
 	 * 
 	 * @param pAttribute the attribute
 	 * @return the type-Class
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static Class getTypeClassForAttribute(Attribute pAttribute) throws Exception
 	{
 		Field stringListField = pAttribute.getDeclaringType().getJavaType().getDeclaredField(pAttribute.getName());
-
+		
 		ParameterizedType stringListType = (ParameterizedType)stringListField.getGenericType();
-
+		
 		Class<?> typeClass = (Class<?>)stringListType.getActualTypeArguments()[0];
-
+		
 		return typeClass;
 	}
-
+	
 	/**
-	 * Checks if the given Attribute is part of the primary key of the given class.
+	 * Checks if the given Attribute is part of the primary key of the given
+	 * class.
 	 * 
 	 * @param pAttribute the Attribute
 	 * @param pEntityClass The class of the entity
 	 * @return true if given Attribute is part of the primary key
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static boolean isPrimaryKeyAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
 	{
 		Annotation[] annotations = getAnnotationsForAttribute(pAttribute, pEntityClass);
-	
+		
 		for (Annotation annotation : annotations)
 		{
 			if (annotation.annotationType() == Id.class || annotation.annotationType() == EmbeddedId.class)
@@ -278,28 +280,28 @@ public final class JPAStorageUtil
 				return true;
 			}
 		}
-	
+		
 		return false;
 	}
-
+	
 	/**
 	 * Checks if the given class is a primitive or wrapper.
 	 * 
 	 * @param pClazz the class
-	 * @return  true if the given class is a primitive or wrapper
+	 * @return true if the given class is a primitive or wrapper
 	 */
 	public static boolean isPrimitiveOrWrapped(Class pClazz)
 	{
 		return pClazz.isPrimitive() || WRAPPER_TYPES.contains(pClazz);
 	}
-
+	
 	/**
 	 * Returns the name for the attribute.
 	 * 
 	 * @param pAttribute the attribute
 	 * @param pAnnotations the attribute annotations
 	 * @return the name for the attribute
-	 */	
+	 */
 	static String getNameForAttribute(Attribute pAttribute, Annotation[] pAnnotations)
 	{
 		if (pAnnotations != null)
@@ -307,9 +309,9 @@ public final class JPAStorageUtil
 			//try to detect the name from Column annotation
 			try
 			{
-				for (Annotation annotation : pAnnotations) 
+				for (Annotation annotation : pAnnotations)
 				{
-					if (annotation.annotationType() == javax.persistence.Column.class) 
+					if (annotation.annotationType() == javax.persistence.Column.class)
 					{
 						String sName = (String)annotation.getClass().getMethod("name").invoke(annotation);
 						
@@ -328,5 +330,5 @@ public final class JPAStorageUtil
 		
 		return pAttribute.getName().toUpperCase();
 	}
-
+	
 }	// JPAStorageUtil
