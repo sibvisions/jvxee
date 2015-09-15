@@ -1096,7 +1096,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * Checks if the given Class is an entity.
 	 * 
 	 * @param pEntityClass the entity class.
-	 * @throws DataSourceException zf the given Class is no entity.
+	 * @throws DataSourceException of the given Class is no entity.
 	 */
 	private void checkEntity(Class pEntityClass) throws DataSourceException
 	{
