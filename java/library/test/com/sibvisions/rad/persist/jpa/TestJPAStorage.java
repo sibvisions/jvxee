@@ -22,6 +22,7 @@ package com.sibvisions.rad.persist.jpa;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -42,6 +43,9 @@ import com.sibvisions.rad.persist.jpa.entity.Address;
 import com.sibvisions.rad.persist.jpa.entity.Customer;
 import com.sibvisions.rad.persist.jpa.entity.Education;
 import com.sibvisions.rad.util.DirectObjectConnection;
+import com.sibvisions.util.type.FileUtil;
+import com.sibvisions.util.type.ResourceUtil;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 /**
  * The class to test the JPAStorage.
@@ -220,7 +224,7 @@ public class TestJPAStorage
 		
 		entityManager.getTransaction().commit();
 	}
-
+	
 	/**
 	 * Test method to delete a customer.
 	 * 
@@ -247,7 +251,7 @@ public class TestJPAStorage
 		
 		entityManager.getTransaction().commit();
 	}
-
+	
 	/**
 	 * Test method to delete an education.
 	 * 
@@ -274,7 +278,7 @@ public class TestJPAStorage
 		
 		entityManager.getTransaction().commit();
 	}
-
+	
 	/**
 	 * Tests the fetch method from JPAStorageCustomer.
 	 * 
@@ -610,6 +614,31 @@ public class TestJPAStorage
 		Assert.assertEquals("first3.last3@gmx.at", dataRowRefetch2[2]);
 		Assert.assertEquals(new Long(2), dataRowRefetch2[10]);
 		Assert.assertEquals("Mrs", dataRowRefetch2[11]);
+	}
+	
+	/**
+	 * Tests the
+	 * {@link JPAStorage#writeCSV(java.io.OutputStream, String[], String[], ICondition, javax.rad.model.SortDefinition, String)}
+	 * method.
+	 *
+	 * @throws Exception if the test fails.
+	 */
+	@Test
+	public void testWriteCSV() throws Exception
+	{
+		// First get the column names to make sure that they are always in
+		// the correct order.
+		String[] columnNames = jpaStorageCustomer.getMetaData().getColumnNames();
+		Arrays.sort(columnNames);
+		
+		ByteOutputStream stream = new ByteOutputStream();
+		
+		jpaStorageCustomer.writeCSV(stream, columnNames, null, null, null, ",");
+		
+		String expected = new String(FileUtil.getContent(ResourceUtil.getResourceAsStream("/com/sibvisions/rad/persist/jpa/resource/customers.csv")));
+		String actual = new String(stream.getBytes(), 0, stream.size());
+		System.out.println(actual);
+		Assert.assertEquals(expected, actual);
 	}
 	
 }	// TestJPAStorage
