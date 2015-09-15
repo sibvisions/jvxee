@@ -37,7 +37,6 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
-import javax.rad.model.ModelException;
 import javax.rad.model.SortDefinition;
 import javax.rad.model.condition.ICondition;
 import javax.rad.model.datatype.BinaryDataType;
@@ -123,7 +122,7 @@ public class JPAStorage extends AbstractCachedStorage
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Abstract methods implementation
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -346,7 +345,7 @@ public class JPAStorage extends AbstractCachedStorage
 			{
 				Object entityForInsert = masterEntity.newInstance();
 				
-				mappeDataRowToEntity(pDataRow, entityForInsert);
+				mapDataRowToEntity(pDataRow, entityForInsert);
 				
 				entityForInsert = jpaAccess.insert(entityForInsert, masterEntity);
 				
@@ -444,7 +443,7 @@ public class JPAStorage extends AbstractCachedStorage
 				
 				Object entityForUpdate = jpaAccess.findById(primaryKey, masterEntity);
 				
-				mappeDataRowToEntity(pNewDataRow, entityForUpdate);
+				mapDataRowToEntity(pNewDataRow, entityForUpdate);
 				
 				jpaAccess.update(entityForUpdate, masterEntity);
 				
@@ -804,9 +803,10 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pJPAForeignKey The JPAForeignKey.
 	 * @param pMasterEntity The Entity for the AutoLinkReference.
-	 * @throws ModelException
+	 * @throws DataSourceException if creating the link reference did not
+	 *             succeed.
 	 */
-	public void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, Class pMasterEntity) throws ModelException
+	public void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, Class pMasterEntity) throws DataSourceException
 	{
 		createAutomaticLinkReference(pJPAForeignKey, createAutomaticLinkStorage(pMasterEntity));
 	}
@@ -817,9 +817,8 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pJPAForeignKey The JPAForeignKey.
 	 * @param pJPAStorage The Storage Object.
-	 * @throws ModelException
 	 */
-	protected void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, AbstractStorage pJPAStorage) throws ModelException
+	protected void createAutomaticLinkReference(JPAForeignKey pJPAForeignKey, AbstractStorage pJPAStorage)
 	{
 		String sStorageName = pJPAStorage.getName();
 		
@@ -858,10 +857,11 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Returns the DataRow for a ManyToMany relation between to Entities.
 	 * 
-	 * @param pEntity1
-	 * @param pEntity2
-	 * @return The DataRow
-	 * @throws DataSourceException
+	 * @param pEntity1 the first entity.
+	 * @param pEntity2 the second entity.
+	 * @return the DataRow.
+	 * @throws DataSourceException if the storage is not open or one of the
+	 *             entities could not be mapped.
 	 */
 	protected Object[] getDataRowForEntities(Object pEntity1, Object pEntity2) throws DataSourceException
 	{
@@ -932,9 +932,10 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Returns the DataRow for the given entity-object.
 	 * 
-	 * @param pEntity
-	 * @return The DataRow
-	 * @throws DataSourceException
+	 * @param pEntity the entity for which to get the data row.
+	 * @return the DataRow.
+	 * @throws DataSourceException if the storage is not open or the entity
+	 *             could not be mapped.
 	 */
 	protected Object[] getDataRowForEntity(Object pEntity) throws DataSourceException
 	{
@@ -1017,11 +1018,12 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Writes all values from the DataRow to the entity-object.
 	 * 
-	 * @param pDataRow The DataRow
-	 * @param pEntity The entity-object
-	 * @throws DataSourceException
+	 * @param pDataRow the DataRow;
+	 * @param pEntity the entity-object.
+	 * @throws DataSourceException if the storage is not open or the data row
+	 *             could not be mapped to the entity.
 	 */
-	protected void mappeDataRowToEntity(Object[] pDataRow, Object pEntity) throws DataSourceException
+	protected void mapDataRowToEntity(Object[] pDataRow, Object pEntity) throws DataSourceException
 	{
 		if (!isOpen())
 		{
