@@ -112,6 +112,8 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pMasterEntity the master entity class.
 	 * @throws DataSourceException if set master entity fails.
+	 * @throws IllegalArgumentException if the given master entity is
+	 *             {@code null}.
 	 */
 	public JPAStorage(Class pMasterEntity) throws DataSourceException
 	{
@@ -588,9 +590,16 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pMasterEntity the master entity class.
 	 * @throws DataSourceException if entity check fails.
+	 * @throws IllegalArgumentException if the given master entity is
+	 *             {@code null}.
 	 */
 	public void setMasterEntity(Class pMasterEntity) throws DataSourceException
 	{
+		if (pMasterEntity == null)
+		{
+			throw new IllegalArgumentException("Master entity can not be null!");
+		}
+		
 		checkEntity(pMasterEntity);
 		
 		masterEntity = pMasterEntity;
@@ -1093,7 +1102,6 @@ public class JPAStorage extends AbstractCachedStorage
 	{
 		try
 		{
-			
 			Annotation[] annotations = pEntityClass.getAnnotations();
 			
 			for (Annotation annotation : annotations)
@@ -1722,4 +1730,4 @@ public class JPAStorage extends AbstractCachedStorage
 		jpaAccess = pJPAAccess;
 	}
 	
-}	// JPAStorage
+}// JPAStorage

@@ -211,7 +211,8 @@ public class TestJPAStorage
 		
 		List<Object[]> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertEquals(2, list.size()); // is 2 because of null
+		// is 2 because of null
+		Assert.assertEquals(2, list.size());
 		
 		Object[] dataRowDelete = list.get(0);
 		
@@ -238,7 +239,8 @@ public class TestJPAStorage
 		
 		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertEquals(2, list.size()); // is 2 because of null
+		// is 2 because of null
+		Assert.assertEquals(2, list.size());
 		
 		Object[] dataRowDelete = list.get(0);
 		
@@ -278,6 +280,41 @@ public class TestJPAStorage
 		Assert.assertEquals(1, entity.getEducations().size());
 		
 		entityManager.getTransaction().commit();
+	}
+	
+	/**
+	 * Tests if an exception occurs if the master entity is {@code null}.
+	 * 
+	 * @throws DataSourceException if the test fails.
+	 */
+	@Test
+	public void testExceptionOnNullMasterEntity() throws DataSourceException
+	{
+		JPAStorage storage = null;
+		
+		try
+		{
+			storage = new JPAStorage(null);
+			
+			Assert.fail("JPAStorage does accept a null master entity in it's constructor, this shouldn't be allowed!");
+		}
+		catch (IllegalArgumentException e)
+		{
+			// Everything is fine, carry on.
+		}
+		
+		storage = new JPAStorage(Customer.class);
+		
+		try
+		{
+			storage.setMasterEntity(null);
+			
+			Assert.fail("JPAStorage does accept a null master entity, this shouldn't be allowed!");
+		}
+		catch (IllegalArgumentException e)
+		{
+			// Everything is fine, carry on.
+		}
 	}
 	
 	/**
@@ -480,7 +517,8 @@ public class TestJPAStorage
 		
 		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertEquals(2, list.size()); // is 2 because of null
+		// is 2 because of null
+		Assert.assertEquals(2, list.size());
 		
 		Object[] dataRowOld = list.get(0);
 		
@@ -531,7 +569,8 @@ public class TestJPAStorage
 		
 		List<Object[]> list = jpaStorageAddress.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertEquals(2, list.size()); // is 2 because of null
+		// is 2 because of null
+		Assert.assertEquals(2, list.size());
 		
 		Object[] dataRowOld = list.get(0);
 		
@@ -613,7 +652,8 @@ public class TestJPAStorage
 		
 		List<Object[]> list = jpaStorageCustomer.executeFetch(condition, null, 0, 10);
 		
-		Assert.assertEquals(2, list.size()); // is 2 because of null
+		// is 2 because of null
+		Assert.assertEquals(2, list.size());
 		
 		Object[] dataRowRefetch = list.get(0);
 		
