@@ -687,6 +687,7 @@ public class TestJPAStorage
 		// First get the column names to make sure that they are always in
 		// the correct order.
 		String[] columnNames = jpaStorageCustomer.getMetaData().getColumnNames();
+		columnNames = Arrays.copyOf(columnNames, columnNames.length);
 		Arrays.sort(columnNames);
 		
 		ByteOutputStream stream = new ByteOutputStream();
