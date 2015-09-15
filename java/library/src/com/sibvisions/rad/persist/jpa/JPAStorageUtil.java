@@ -84,6 +84,28 @@ public final class JPAStorageUtil
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
+	 * Returns all Annoations for the given attribute.
+	 * 
+	 * @param pAttribute the attribute
+	 * @param pEntityClass the entity class
+	 * @return the Annotaitons
+	 * @throws Exception 
+	 */
+	public static Annotation[] getAnnotationsForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
+	{
+		String member = pAttribute.getJavaMember().getName();
+	
+		if (member.startsWith("get") || member.startsWith("is"))
+		{ 
+			// The Annotation is defined on the getter-Methode
+			return pEntityClass.getMethod(member).getAnnotations();
+		}
+	
+		// The Annotation is defined on the field 
+		return pEntityClass.getDeclaredField(member).getAnnotations(); 
+	}
+	
+	/**
 	 * Returns the IDataType for the given Class.
 	 *  
 	 * @param pJavaType the java Type
@@ -102,7 +124,7 @@ public final class JPAStorageUtil
 				return new BinaryDataType();
 			}
 		}
-
+	
 		if (pJavaType == String.class 
 			|| pJavaType == Character.class 
 			|| pJavaType == char.class)
@@ -118,7 +140,7 @@ public final class JPAStorageUtil
 				 || pJavaType == double.class)
 		{
 			return new BigDecimalDataType();
-
+	
 		}
 		
 		if (pJavaType == Boolean.class || pJavaType == boolean.class)
@@ -129,53 +151,25 @@ public final class JPAStorageUtil
 		{
 			return new TimestampDataType();
 		}
-
+	
 		return new ObjectDataType();
 	}
 
 	/**
-	 * Checks if the given Attribute is part of the primary key of the given class.
+	 * Returns the default-value for the attribute.
 	 * 
-	 * @param pAttribute the Attribute
-	 * @param pEntityClass The class of the entity
-	 * @return true if given Attribute is part of the primary key
-	 * @throws Exception 
-	 */
-	public static boolean isPrimaryKeyAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
-	{
-		Annotation[] annotations = getAnnotationsForAttribute(pAttribute, pEntityClass);
-
-		for (Annotation annotation : annotations)
-		{
-			if (annotation.annotationType() == Id.class || annotation.annotationType() == EmbeddedId.class)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Checks if the given class is a primitive or wrapper.
+	 * String country = "AT"
 	 * 
-	 * @param pClazz the class
-	 * @return  true if the given class is a primitive or wrapper
-	 */
-	public static boolean isPrimitiveOrWrapped(Class pClazz)
-	{
-		return pClazz.isPrimitive() || WRAPPER_TYPES.contains(pClazz);
-	}
-
-	/**
-	 * Returns the name of the setter-method.
+	 * "AT" is the default-value
 	 * 
 	 * @param pAttribute the attribute
-	 * @return the name of the setter-method
+	 * @param pEntityClass the class of the entity
+	 * @return the default-value
+	 * @throws Exception 
 	 */
-	public static String getSetterMethodNameForAttribute(Attribute pAttribute)
+	public static Object getDefaultValueForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
 	{
-		return StringUtil.formatMethodName("set", pAttribute.getName());
+		return pEntityClass.getMethod(getGetterMethodNameForAttribute(pAttribute)).invoke(pEntityClass.newInstance());
 	}
 
 	/**
@@ -204,6 +198,17 @@ public final class JPAStorageUtil
 	}
 
 	/**
+	 * Returns the label for the attribute.
+	 * 
+	 * @param pAttribute the attribute
+	 * @return the label of the attribute
+	 */
+	public static String getLabelForAttribute(Attribute pAttribute)
+	{
+		return StringUtil.formatInitCap(pAttribute.getName());
+	}
+
+	/**
 	 * Returns the name for the attribute.
 	 * 
 	 * @param pAttribute the attribute
@@ -225,6 +230,69 @@ public final class JPAStorageUtil
 		return getNameForAttribute(pAttribute, anons);
 	}
 	
+	/**
+	 * Returns the name of the setter-method.
+	 * 
+	 * @param pAttribute the attribute
+	 * @return the name of the setter-method
+	 */
+	public static String getSetterMethodNameForAttribute(Attribute pAttribute)
+	{
+		return StringUtil.formatMethodName("set", pAttribute.getName());
+	}
+
+	/**
+	 * The Type-Class for the given attribute.
+	 * 
+	 * @param pAttribute the attribute
+	 * @return the type-Class
+	 * @throws Exception 
+	 */
+	public static Class getTypeClassForAttribute(Attribute pAttribute) throws Exception
+	{
+		Field stringListField = pAttribute.getDeclaringType().getJavaType().getDeclaredField(pAttribute.getName());
+
+		ParameterizedType stringListType = (ParameterizedType)stringListField.getGenericType();
+
+		Class<?> typeClass = (Class<?>)stringListType.getActualTypeArguments()[0];
+
+		return typeClass;
+	}
+
+	/**
+	 * Checks if the given Attribute is part of the primary key of the given class.
+	 * 
+	 * @param pAttribute the Attribute
+	 * @param pEntityClass The class of the entity
+	 * @return true if given Attribute is part of the primary key
+	 * @throws Exception 
+	 */
+	public static boolean isPrimaryKeyAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
+	{
+		Annotation[] annotations = getAnnotationsForAttribute(pAttribute, pEntityClass);
+	
+		for (Annotation annotation : annotations)
+		{
+			if (annotation.annotationType() == Id.class || annotation.annotationType() == EmbeddedId.class)
+			{
+				return true;
+			}
+		}
+	
+		return false;
+	}
+
+	/**
+	 * Checks if the given class is a primitive or wrapper.
+	 * 
+	 * @param pClazz the class
+	 * @return  true if the given class is a primitive or wrapper
+	 */
+	public static boolean isPrimitiveOrWrapped(Class pClazz)
+	{
+		return pClazz.isPrimitive() || WRAPPER_TYPES.contains(pClazz);
+	}
+
 	/**
 	 * Returns the name for the attribute.
 	 * 
@@ -259,74 +327,6 @@ public final class JPAStorageUtil
 		}
 		
 		return pAttribute.getName().toUpperCase();
-	}
-
-	/**
-	 * Returns the label for the attribute.
-	 * 
-	 * @param pAttribute the attribute
-	 * @return the label of the attribute
-	 */
-	public static String getLabelForAttribute(Attribute pAttribute)
-	{
-		return StringUtil.formatInitCap(pAttribute.getName());
-	}
-
-	/**
-	 * Returns all Annoations for the given attribute.
-	 * 
-	 * @param pAttribute the attribute
-	 * @param pEntityClass the entity class
-	 * @return the Annotaitons
-	 * @throws Exception 
-	 */
-	public static Annotation[] getAnnotationsForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
-	{
-		String member = pAttribute.getJavaMember().getName();
-
-		if (member.startsWith("get") || member.startsWith("is"))
-		{ 
-			// The Annotation is defined on the getter-Methode
-			return pEntityClass.getMethod(member).getAnnotations();
-		}
-
-		// The Annotation is defined on the field 
-		return pEntityClass.getDeclaredField(member).getAnnotations(); 
-	}
-
-	/**
-	 * Returns the default-value for the attribute.
-	 * 
-	 * String country = "AT"
-	 * 
-	 * "AT" is the default-value
-	 * 
-	 * @param pAttribute the attribute
-	 * @param pEntityClass the class of the entity
-	 * @return the default-value
-	 * @throws Exception 
-	 */
-	public static Object getDefaultValueForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
-	{
-		return pEntityClass.getMethod(getGetterMethodNameForAttribute(pAttribute)).invoke(pEntityClass.newInstance());
-	}
-
-	/**
-	 * The Type-Class for the given attribute.
-	 * 
-	 * @param pAttribute the attribute
-	 * @return the type-Class
-	 * @throws Exception 
-	 */
-	public static Class getTypeClassForAttribute(Attribute pAttribute) throws Exception
-	{
-		Field stringListField = pAttribute.getDeclaringType().getJavaType().getDeclaredField(pAttribute.getName());
-
-		ParameterizedType stringListType = (ParameterizedType)stringListField.getGenericType();
-
-		Class<?> typeClass = (Class<?>)stringListType.getActualTypeArguments()[0];
-
-		return typeClass;
 	}
 
 }	// JPAStorageUtil
