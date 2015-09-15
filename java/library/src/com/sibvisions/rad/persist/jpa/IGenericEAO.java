@@ -24,54 +24,55 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * The <code>IGenericDAO</code> defines the methods to access the database by entities and primary keys.
+ * The {@link IGenericDAO} defines the methods to access the database by
+ * entities and primary keys.
  * 
- * @param <E> The Type of the Entity
- * @param <PK> The Type of the Primary Key
- * 
+ * @param <E> The Type of the Entity.
+ * @param <PK> The Type of the Primary Key.
+ *			
  * @author Stefan Wurm
  */
-public interface IGenericEAO<E, PK  extends Serializable> 
+public interface IGenericEAO<E, PK extends Serializable>
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Method definitions
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
+	 * Removes the values of this entity from the database.
+	 * 
+	 * @param entity the entity to delete.
+	 */
+	public void delete(E entity);
+	
+	/**
+	 * Finds the entity for the given id.
+	 * 
+	 * @param id the primary key.
+	 * @return the entity for this primary key.
+	 */
+	public E findById(PK id);
+	
+	/**
+	 * Finds all entities.
+	 * 
+	 * @return a {@link Collection} of all entities.
+	 */
+	public Collection<E> findAll();
+	
+	/**
 	 * Saves the values of the entity in the database.
 	 * 
-	 * @param newEntity the new entity to insert
-	 * @return the inserted entity
+	 * @param newEntity the new entity to insert.
+	 * @return the inserted entity.
 	 */
-    public E insert(E newEntity);
-    
-    /**
-     * Saves the values of the entity in the database.
-     * 
-     * @param entity to update
-     */
-    public void update(E entity);
-    
-    /**
-     * Removes the values of this entity from the database.
-     * 
-     * @param entity to delete
-     */
-    public void delete(E entity);
-        
-    /**
-     * Finds the entity for the given id.
-     * 
-     * @param id the primary key
-     * @return the entity for this primary key
-     */
-    public E findById(PK id);
-    
-    /**
-     * Finds all entities.
-     * 
-     * @return a Collection of all entities
-     */
-    public Collection<E> findAll();
-    
+	public E insert(E newEntity);
+	
+	/**
+	 * Saves the values of the entity in the database.
+	 * 
+	 * @param entity the entity to update.
+	 */
+	public void update(E entity);
+	
 }	// IGenericEAO
