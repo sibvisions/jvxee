@@ -828,6 +828,16 @@ public class JPAStorage extends AbstractCachedStorage
 	}
 	
 	/**
+	 * Gets the {@link JPAServerMetaData JPA server meta data}.
+	 *
+	 * @return the {@link JPAServerMetaData JPA server meta data}.
+	 */
+	JPAServerMetaData getJPAServerMetaData()
+	{
+		return serverMetaData;
+	}
+	
+	/**
 	 * Creates and sets a new {@link StorageReferenceDefinition} with the
 	 * specified {@link JPAStorage} for the {@link JPAForeignKey} Columns.
 	 * 
