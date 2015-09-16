@@ -24,20 +24,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The <code>JPAPrimaryKey</code> is a JPAEmbeddeKey an encapsulates additional information and methods.
- * A JPAPrimaryKey encapsulates the <code>JPAServerColumnMetaData</code> for an entity. 
- * 
+ * The {@link JPAPrimaryKey} is a {@link JPAEmbeddeKey} extension and
+ * encapsulates additional information and methods and the
+ * {@link JPAServerColumnMetaData} for an entity.
+ * <p>
  * For example: An entity can have three different types of primary keys:
- * 
- * *******************************************************************************
- * 
+ * <p>
  * 1. A singled id attribute:
- * <pre>   
+ * 
+ * <pre>
+ * <code>
+ *    
  * {@literal @}Id
  * private int id;
- * </pre>  
+ * </code>
+ * </pre>
+ * 
  * 2. Many id attributes in an IdClass
+ * 
  * <pre>
+ * <code>
  * public class CustomerPK implements Serializable
  * {
  *      {@literal @}Id
@@ -62,10 +68,15 @@ import java.util.Map;
  *      private String name;
  *  
  *      ....
- * } 
+ * }
+ * </code>
  * </pre>
+ * 
  * 3. An Embedded Primary Class
- * <pre>	
+ * 
+ * <pre>
+ * <code>
+ * 	
  * {@literal @}Embeddable
  * public class CustomerPK implements Serializable
  * { 
@@ -88,168 +99,146 @@ import java.util.Map;
  *  
  *      ....
  * }
+ * </code>
  * </pre>
- * 
- * And so the primary key from an entity is similar to an embedded Object in an entity.
+ * <p>
+ * And so the primary key from an entity is similar to an embedded Object in an
+ * entity.
  * 
  * @author Stefan Wurm
- * @see com.sibvisions.rad.persist.jpa.JPAEmbeddedKey
  */
-public class JPAPrimaryKey extends JPAEmbeddedKey 
+public class JPAPrimaryKey extends JPAEmbeddedKey
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/** Is needed because of a Many To Many Relation where no entity exists. **/
+	/** Defines if the primary key from the entity is an embedded class. **/
+	private boolean embedded = false;
+	
+	/** Is needed because of a many to many relation where no entity exists. **/
 	private Map<Class, JPAForeignKey> mapForeignKey = new HashMap<Class, JPAForeignKey>();
-
-	/** Defines if the Primary Key from the entity is an embedded class. **/
-	private boolean isEmbedded = false;
 	
 	/** Defines if the Id from the entity is a single id. **/
 	private boolean singleIdAttribute = true;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// Overwritten methods
+	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	@Override
-	public String toString() 
+	
+	/**
+	 * Creates a new instance of {@link JPAPrimaryKey}.
+	 */
+	public JPAPrimaryKey()
 	{
-		return "JPAPrimaryKey [mapForeignKey=" + mapForeignKey
-				+ ", isEmbedded=" + isEmbedded + ", singleIdAttribute="
-				+ singleIdAttribute + ", toString()=" + super.toString() + "]";
+		super();
 	}
 	
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Overwritten methods
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString()
+	{
+		return "JPAPrimaryKey [mapForeignKey=" + mapForeignKey
+				+ ", isEmbedded=" + embedded + ", singleIdAttribute="
+				+ singleIdAttribute + ", toString()=" + super.toString() + "]";
+	}
+
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	/**
-	 * Returns true if the Id from the entity in the entity is a single id.
-	 * 
-	 * @return true if the Id from the entity in the entity is a single id
-	 */	
-	public boolean isSingleIdAttribute() 
-	{
-		return singleIdAttribute;
-	}
 	
 	/**
-	 * Sets the SingledIdAttribute.
+	 * Adds a {@link JPAForeignKey} to the {@link JPAPrimaryKey}. Is needed
+	 * because of a Many To Many relation where no entity exists. For example:
+	 * <p>
+	 * If there is a ManyToMany relation between Order and Article it is not
+	 * necessary to create an entity "OrderArticle".
+	 * <p>
+	 * And so the PrimaryKey for this relation is a combined ForeignKey from
+	 * Order and Article
 	 * 
-	 * @param pSingleIdAttribute true if it is a sigled Id
+	 * @param pEntity the class of the entity.
+	 * @param pForeignKey the {@link JPAForeignKey}.
 	 */
-	public void setSingleIdAttribute(boolean pSingleIdAttribute) 
-	{
-		singleIdAttribute = pSingleIdAttribute;
-	}
-	
-	/**
-	 * Returns the class of the key from the entity.
-	 * 
-	 * @return Class
-	 */	
-	public Class getKeyClass() 
-	{
-		return super.getJPAMappingType().getJavaTypeClass();
-	}
-		
-	/**
-	 * True if the Primary Key from the entity is an embedded class.
-	 *  
-	 * @return true if the Primary Key from the entity is an embedded class
-	 */
-	public boolean isEmbedded() 
-	{
-		return isEmbedded;
-	}
-
-	/**
-	 * Sets true if the primary key from the entity is an embedded class.
-	 * 
-	 * @param pIsEmbedded true if the primary key is embedded
-	 */
-	public void setEmbedded(boolean pIsEmbedded) 
-	{
-		isEmbedded = pIsEmbedded;
-	}
-	
-	/**
-	 * Adds a <code>JPAForeignKey</code> to the <code>JPAPrimaryKey</code>.
-	 * Is needed because of a Many To Many relation where no entity exists.
-	 * 
-	 * For example:
-	 * 
-	 * If there is a ManyToMany relation between Order and Article it is not necessary
-	 * to create an entity "OrderArticle".
-	 * 
-	 * And so the PrimaryKey for this relation is a combined ForeignKey from Order and Article
-	 * 
-	 * @param pEntity the class of the entity
-	 * @param pForeignKey the JPAForeignKEy
-	 */
-	public void addForeignKey(Class pEntity, JPAForeignKey pForeignKey) 
+	public void addForeignKey(Class pEntity, JPAForeignKey pForeignKey)
 	{
 		mapForeignKey.put(pEntity, pForeignKey);
 	}
-	
+
 	/**
-	 * Returns the <code>JPAForeignKey</code> for the given class.
+	 * Gets the {@link JPAForeignKey} for the given class.
 	 * 
 	 * @param pEntity the class of the entity
-	 * @return the <code>JPAForeignKey</code> for the given class 
+	 * @return the {@link JPAForeignKey} for the given class
 	 */
-	public JPAForeignKey getForeignKey(Class pEntity) 
+	public JPAForeignKey getForeignKey(Class pEntity)
 	{
 		return mapForeignKey.get(pEntity);
-	}		
+	}
 
 	/**
-	 * Returns the Primary Key for the entity with the given values
-	 *  
-	 *  The Map with the Values for the Key has as Key the Name of the <code>JPAServerColumnMetaData</code> and as value the
-	 *  value for the primary key.
-	 *  
-	 *  { ID = 3, SOCIALINSURANCENUMBER = 12345 }
+	 * Returns the class of the key from the entity.
 	 * 
-	 * @param pData the Map with the values for the key
-	 * @return the primary key from the entity in the entity
-	 * @throws Exception 
-	 */	
-	public Object getKeyForEntity(Map<String, Object> pData) throws Exception 
+	 * @return the class of the key.
+	 */
+	public Class getKeyClass()
 	{
-		
+		return getJPAMappingType().getJavaTypeClass();
+	}
+
+	/**
+	 * Returns the primary key for the entity with the given values
+	 * <p>
+	 * The given {@link Map} with the values for the key has as key the name of
+	 * the {@link JPAServerColumnMetaData} and as value the value for the
+	 * primary key.
+	 * <p>
+	 * 
+	 * <pre>
+	 * { ID = 3, SOCIALINSURANCENUMBER = 12345 }
+	 * </pre>
+	 * 
+	 * @param pData the {@link Map} with the values for the key.
+	 * @return the primary key from the entity in the entity.
+	 * @throws Exception if getting the primary key failed.
+	 */
+	public Object getKeyForEntity(Map<String, Object> pData) throws Exception
+	{
 		Object key = null;
-
-		if (isSingleIdAttribute()) 
+		
+		if (isSingleIdAttribute())
 		{
-			if (JPAStorageUtil.isPrimitiveOrWrapped(getKeyClass())) 
+			if (JPAStorageUtil.isPrimitiveOrWrapped(getKeyClass()))
 			{
-				JPAServerColumnMetaData serverColumnMetaData = super.getServerColumnMetaDataAsArray()[0];
-
+				JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaDataAsArray()[0];
+				
 				key = serverColumnMetaData.getJPAMappingType().castObjectToJavaType(pData.get(serverColumnMetaData.getName()));
-			} 
-			else 
-			{ 
+			}
+			else
+			{
 				// Is EmbeddedId
-								
+				
 				key = getKeyClass().newInstance();
 				
-				for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray()) 
+				for (JPAServerColumnMetaData serverColumnMetaData : getServerColumnMetaDataAsArray())
 				{
 					Object setValue = pData.get(serverColumnMetaData.getName());
 					
 					serverColumnMetaData.getJPAMappingType().setValue(key, setValue);
-				}				
+				}
 			}
-		} 
-		else 
+		}
+		else
 		{
-			key = (Object) getKeyClass().newInstance();
+			key = (Object)getKeyClass().newInstance();
 			
-			for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray()) 
+			for (JPAServerColumnMetaData serverColumnMetaData : getServerColumnMetaDataAsArray())
 			{
 				Object setValue = pData.get(serverColumnMetaData.getName());
 				
@@ -260,4 +249,47 @@ public class JPAPrimaryKey extends JPAEmbeddedKey
 		return key;
 	}
 	
-}	// JPAPrimaryKey
+	/**
+	 * Gets if the Id of the entity is a single ID.
+	 * 
+	 * @return {@code true} if the Id of the entity is a single ID.
+	 */
+	public boolean isSingleIdAttribute()
+	{
+		return singleIdAttribute;
+	}
+	
+	/**
+	 * Sets if the Id of the entity is a single ID.
+	 * 
+	 * @param pSingleIdAttribute {@code true} if the Id of the entity is a
+	 *            single ID.
+	 */
+	public void setSingleIdAttribute(boolean pSingleIdAttribute)
+	{
+		singleIdAttribute = pSingleIdAttribute;
+	}
+	
+	/**
+	 * Gets if the primary key from the entity is an embedded class.
+	 * 
+	 * @return {@code true} if the primary key from the entity is an embedded
+	 *         class.
+	 */
+	public boolean isEmbedded()
+	{
+		return embedded;
+	}
+	
+	/**
+	 * Sets if the primary key from the entity is an embedded class.
+	 * 
+	 * @param pEmbedded {@code true} if the primary key from the entity is an
+	 *            embedded class.
+	 */
+	public void setEmbedded(boolean pEmbedded)
+	{
+		embedded = pEmbedded;
+	}
+	
+}		// JPAPrimaryKey
