@@ -282,21 +282,23 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	 * 
 	 * <pre>
 	 * <code>
-	 * public class CustomerPK implements Serializable { {@literal @}Id private
-	 * int id;
+	 * public class CustomerPK implements Serializable {
+	 * 	{@literal @}Id private int id;
+	 * 	{@literal @}Id private int socialInsuranceNumber;
+	 * 	....
 	 * 
-	 * {@literal @}Id private int socialInsuranceNumber;
+	 * }
 	 * 
-	 * .... }
-	 * 
-	 * {@literal @}Entity {@literal @}IdClass(CustomerPK.class) public class
-	 * Customer implements Serializable { {@literal @}Id private int id;
-	 * 
-	 * {@literal @}Id private int socialInsuranceNumber;
-	 * 
-	 * private String name;
-	 * 
-	 * .... }
+	 * {@literal @}Entity {@literal @}IdClass(CustomerPK.class)
+	 * public class Customer implements Serializable {
+	 * 	{@literal @}Id private int id;
+	 * 	{@literal @}Id private int socialInsuranceNumber;
+	 * 	
+	 * 	private String name;
+	 * 	
+	 * 	....
+	 * 	
+	 * }
 	 * </code>
 	 * </pre>
 	 * 
@@ -304,19 +306,21 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	 * 
 	 * <pre>
 	 * <code>
-	 * {@literal @}Embeddable public class CustomerPK implements Serializable {
-	 * {@literal @}Id private int id;
-	 * 
-	 * {@literal @}Id private int socialInsuranceNumber;
-	 * 
-	 * .... }
+	 * {@literal @}Embeddable
+	 * public class CustomerPK implements Serializable {
+	 * 	{@literal @}Id private int id;
+	 * 	{@literal @}Id private int socialInsuranceNumber;
+	 * 	
+	 * 	....
+	 * }
 	 * 
 	 * {@literal @}Entity public class Customer implements Serializable {
-	 * {@literal @}EmbeddedId private CustomerPK customerPK;
-	 * 
-	 * private String name;
-	 * 
-	 * .... }
+	 * 	{@literal @}EmbeddedId private CustomerPK customerPK;
+	 * 	
+	 * 	private String name;
+	 * 	
+	 * 	....
+	 * }
 	 * </code>
 	 * </pre>
 	 * 
