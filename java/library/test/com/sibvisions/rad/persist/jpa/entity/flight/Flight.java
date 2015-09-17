@@ -27,10 +27,10 @@ import javax.persistence.OneToOne;
 @Entity
 public class Flight
 {
-	private String airline;
-	
 	@OneToOne
-	private Aircraft aircraftRegistrationNumber;
+	private Aircraft aircraft;
+	
+	private String airline;
 	
 	@OneToOne
 	private Airport airportDestination;
@@ -45,14 +45,14 @@ public class Flight
 	{
 	}
 	
+	public Aircraft getAircraft()
+	{
+		return aircraft;
+	}
+	
 	public String getAirline()
 	{
 		return airline;
-	}
-	
-	public Aircraft getAircraftRegistrationNumber()
-	{
-		return aircraftRegistrationNumber;
 	}
 	
 	public Airport getAirportDestination()
@@ -70,14 +70,14 @@ public class Flight
 		return flightNumber;
 	}
 	
+	public void setAircraft(Aircraft pAircraft)
+	{
+		aircraft = pAircraft;
+	}
+	
 	public void setAirline(String pAirline)
 	{
 		airline = pAirline;
-	}
-	
-	public void setAircraftRegistrationNumber(Aircraft pAircraftRegistrationNumber)
-	{
-		aircraftRegistrationNumber = pAircraftRegistrationNumber;
 	}
 	
 	public void setAirportDestination(Airport pAirportDestination)
