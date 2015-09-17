@@ -240,7 +240,7 @@ public class JPAForeignKey extends JPAEmbeddedKey
 	{
 		ICondition condition = null;
 		
-		for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsCollection())
+		for (JPAServerColumnMetaData serverColumnMetaData : getServerColumnMetaDataAsCollection())
 		{
 			if (serverColumnMetaData.isKeyAttribute())
 			{
@@ -347,7 +347,7 @@ public class JPAForeignKey extends JPAEmbeddedKey
 			if (JPAStorageUtil.isPrimitiveOrWrapped(getKeyClass()))
 			{
 				// Is single primitive or wrapped Id
-				JPAServerColumnMetaData serverColumnMetaData = super.getServerColumnMetaDataAsArray()[0];
+				JPAServerColumnMetaData serverColumnMetaData = getServerColumnMetaDataAsArray()[0];
 				
 				key = serverColumnMetaData.getJPAMappingType().castObjectToJavaType(pData.get(serverColumnMetaData.getName()));
 			}
@@ -356,7 +356,7 @@ public class JPAForeignKey extends JPAEmbeddedKey
 				// Is EmbeddedId
 				key = getKeyClass().newInstance();
 				
-				for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray())
+				for (JPAServerColumnMetaData serverColumnMetaData : getServerColumnMetaDataAsArray())
 				{
 					if (serverColumnMetaData.isKeyAttribute())
 					{
@@ -372,7 +372,7 @@ public class JPAForeignKey extends JPAEmbeddedKey
 			//is IdClass
 			key = getKeyClass().newInstance();
 			
-			for (JPAServerColumnMetaData serverColumnMetaData : super.getServerColumnMetaDataAsArray())
+			for (JPAServerColumnMetaData serverColumnMetaData : getServerColumnMetaDataAsArray())
 			{
 				if (serverColumnMetaData.isKeyAttribute())
 				{
