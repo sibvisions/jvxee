@@ -1315,7 +1315,7 @@ public class JPAStorage extends AbstractCachedStorage
 		try
 		{
 			// Is a Many-to-Many Relation
-			if (masterEntity != null && detailEntity != null)
+			if (detailEntity != null)
 			{
 				JPAPrimaryKey jpaPrimaryKey = new JPAPrimaryKey();
 				
