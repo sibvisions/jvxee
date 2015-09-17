@@ -555,7 +555,7 @@ public class TestJPAStorage
 	@Test
 	public void testMultipleForeignKeysColumnNames()
 	{
-		// TODO Test for correct column names here.
+		Assert.fail("Not yet implemented.");
 	}
 	
 	/**
