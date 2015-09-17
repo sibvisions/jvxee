@@ -43,6 +43,7 @@ import com.sibvisions.rad.model.remote.RemoteDataSource;
 import com.sibvisions.rad.persist.jpa.entity.Address;
 import com.sibvisions.rad.persist.jpa.entity.Customer;
 import com.sibvisions.rad.persist.jpa.entity.Education;
+import com.sibvisions.rad.persist.jpa.entity.flight.Flight;
 import com.sibvisions.rad.util.DirectObjectConnection;
 import com.sibvisions.util.type.FileUtil;
 import com.sibvisions.util.type.ResourceUtil;
@@ -78,6 +79,9 @@ public class TestJPAStorage
 	/** The storage for the education entities. **/
 	private JPAStorage jpaStorageEducation;
 	
+	/** The storage for the flight entities. **/
+	private JPAStorage jpaStorageFlight;
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,6 +111,10 @@ public class TestJPAStorage
 		jpaStorageEducation.setEntityManager(entityManager);
 		jpaStorageEducation.setDetailEntity(Education.class);
 		jpaStorageEducation.open();
+		
+		jpaStorageFlight = new JPAStorage(Flight.class);
+		jpaStorageFlight.setEntityManager(entityManager);
+		jpaStorageFlight.open();
 	}
 	
 	/**
@@ -171,6 +179,39 @@ public class TestJPAStorage
 		entityManager.createNativeQuery("insert into customer_education values (1, 1)").executeUpdate();
 		entityManager.createNativeQuery("insert into customer_education values (1, 2)").executeUpdate();
 		
+		// Flights
+		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+				+ "values ('JFK', 'John F. Kennedy International Airport', 'USA', 'New York')").executeUpdate();
+		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+				+ "values ('SFO', 'San Francisco International Airport', 'USA', 'San Francisco')").executeUpdate();
+		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+				+ "values ('BOS', 'Logan International Airport', 'USA', 'Boston')").executeUpdate();
+		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+				+ "values ('IAD', 'Washington Dulles International Airport', 'USA', 'Washington')").executeUpdate();
+		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+				+ "values ('VIE', 'Vienna International Airport', 'Austria', 'Vienna/Schwechat')").executeUpdate();
+		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+				+ "values ('LHR', 'London Heathrow Airport', 'United Kingdom', 'London')").executeUpdate();
+		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+				+ "values ('BER', 'Berlin Brandenburg Airport', 'Germany', 'Berlin')").executeUpdate();
+		
+		entityManager.createNativeQuery("insert into aircraft values ('LX-VCH', 'LX', 'Boeing 747')").executeUpdate();
+		entityManager.createNativeQuery("insert into aircraft values ('G-EUPH', 'G', 'Airbus A319')").executeUpdate();
+		entityManager.createNativeQuery("insert into aircraft values ('HB-FVD', 'HB', 'Pilatus PC12')").executeUpdate();
+		entityManager.createNativeQuery("insert into aircraft values ('HL7414', 'HL', 'Boeing 747')").executeUpdate();
+		entityManager.createNativeQuery("insert into aircraft values ('PH-MCY', 'PH', 'McDonnell Douglas MD-11F')").executeUpdate();
+		entityManager.createNativeQuery("insert into aircraft values ('EI-IMC', 'EI', 'Airbus A319')").executeUpdate();
+		entityManager.createNativeQuery("insert into aircraft values ('D-EPHH', 'D', 'Piper PA46')").executeUpdate();
+		entityManager.createNativeQuery("insert into aircraft values ('PH-KZU', 'PH', 'Fokker 70')").executeUpdate();
+		
+		entityManager.createNativeQuery("delete from flight").executeUpdate();
+		entityManager.createNativeQuery("insert into flight values ('British Airways', '180', 'HB-FVD', 'JFK', 'LHR')").executeUpdate();
+		entityManager.createNativeQuery("insert into flight values ('United', '415', 'PH-MCY', 'JFK', 'SFO')").executeUpdate();
+		entityManager.createNativeQuery("insert into flight values ('JetBlue', '157', 'D-EPHH', 'BOS', 'IAD')").executeUpdate();
+		entityManager.createNativeQuery("insert into flight values ('Virgin Atlantic', '20', 'G-EUPH', 'SFO', 'LHR')").executeUpdate();
+		entityManager.createNativeQuery("insert into flight values ('Germanwings', '8461', 'LX-VCH', 'LHR', 'BER')").executeUpdate();
+		entityManager.createNativeQuery("insert into flight values ('Airberlin', '7248', 'PH-KZU', 'BER', 'JFK')").executeUpdate();
+		
 		entityManager.flush();
 		
 		entityManager.getTransaction().commit();
@@ -189,6 +230,9 @@ public class TestJPAStorage
 		entityManager.createQuery("delete from Salutation").executeUpdate();
 		entityManager.createQuery("delete from Healthinsurance").executeUpdate();
 		entityManager.createQuery("delete from Education").executeUpdate();
+		entityManager.createQuery("delete from Flight").executeUpdate();
+		entityManager.createQuery("delete from Aircraft").executeUpdate();
+		entityManager.createQuery("delete from Airport").executeUpdate();
 		
 		entityManager.flush();
 		
@@ -503,6 +547,15 @@ public class TestJPAStorage
 		rdb.open();
 		
 		Assert.assertArrayEquals(new String[] { "ID", "ZIP", "STREET", "CUSTOMER_ID", "CUSTOMER_LASTNAME", "CITY" }, rdb.getRowDefinition().getColumnNames());
+	}
+	
+	/**
+	 * Tests the multiple foreign keys are producing correctly named columns.
+	 */
+	@Test
+	public void testMultipleForeignKeysColumnNames()
+	{
+		// TODO Test for correct column names here.
 	}
 	
 	/**
