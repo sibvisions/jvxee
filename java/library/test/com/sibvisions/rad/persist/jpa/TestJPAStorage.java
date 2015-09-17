@@ -101,16 +101,16 @@ public class TestJPAStorage
 		
 		jpaStorageCustomer = new JPAStorage(Customer.class);
 		jpaStorageCustomer.setEntityManager(entityManager);
-//		jpaStorageCustomer.open();
+		jpaStorageCustomer.open();
 		
 		jpaStorageAddress = new JPAStorage(Address.class);
 		jpaStorageAddress.setEntityManager(entityManager);
-//		jpaStorageAddress.open();
+		jpaStorageAddress.open();
 		
 		jpaStorageEducation = new JPAStorage(Customer.class);
 		jpaStorageEducation.setEntityManager(entityManager);
 		jpaStorageEducation.setDetailEntity(Education.class);
-//		jpaStorageEducation.open();
+		jpaStorageEducation.open();
 		
 		jpaStorageFlight = new JPAStorage(Flight.class);
 		jpaStorageFlight.setEntityManager(entityManager);
