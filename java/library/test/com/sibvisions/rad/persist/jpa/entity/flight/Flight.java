@@ -30,7 +30,7 @@ public class Flight
 	private String airline;
 	
 	@OneToOne
-	private Aircraft airplaneRegistrationNumber;
+	private Aircraft aircraftRegistrationNumber;
 	
 	@OneToOne
 	private Airport airportDestination;
@@ -50,9 +50,9 @@ public class Flight
 		return airline;
 	}
 	
-	public Aircraft getAirplaneRegistrationNumber()
+	public Aircraft getAircraftRegistrationNumber()
 	{
-		return airplaneRegistrationNumber;
+		return aircraftRegistrationNumber;
 	}
 	
 	public Airport getAirportDestination()
@@ -75,9 +75,9 @@ public class Flight
 		airline = pAirline;
 	}
 	
-	public void setAirplaneRegistrationNumber(Aircraft pAirplaneRegistrationNumber)
+	public void setAircraftRegistrationNumber(Aircraft pAircraftRegistrationNumber)
 	{
-		airplaneRegistrationNumber = pAirplaneRegistrationNumber;
+		aircraftRegistrationNumber = pAircraftRegistrationNumber;
 	}
 	
 	public void setAirportDestination(Airport pAirportDestination)
