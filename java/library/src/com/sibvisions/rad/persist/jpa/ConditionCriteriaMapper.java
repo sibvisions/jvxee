@@ -191,8 +191,8 @@ public class ConditionCriteriaMapper
 		{
 			Predicate predicate = getPredicateForCompareCondition((CompareCondition)pCondition, from);
 			
-			Join educations = from.join(pJoinAttributeName);
-			criteriaQuery.select(educations).where(predicate);
+			Join join = from.join(pJoinAttributeName);
+			criteriaQuery.select(join).where(predicate);
 		}
 		else
 		{
