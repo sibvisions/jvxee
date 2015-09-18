@@ -206,11 +206,6 @@ public class JPAStorage extends AbstractCachedStorage
 		{
 			if (pFilter != null || pSort != null)
 			{
-				if (criteriaConditionMapper == null)
-				{
-					criteriaConditionMapper = new ConditionCriteriaMapper(serverMetaData, jpaAccess.getCriteriaBuilder());
-				}
-				
 				JPAForeignKey jpaForeignKey = serverMetaData.getJPAForeignKeyForCondition(pFilter);
 				
 				if (jpaForeignKey != null && jpaForeignKey.hasDetailEntitiesMethode() && pSort == null)
@@ -474,9 +469,7 @@ public class JPAStorage extends AbstractCachedStorage
 	{
 		CriteriaQuery<Long> countCriteriaQuery = criteriaConditionMapper.getCountCriteriaQuery(pFilter, masterEntity, null);
 		
-		Long count = jpaAccess.countByCriteria(countCriteriaQuery);
-		
-		return count.intValue();
+		return jpaAccess.countByCriteria(countCriteriaQuery).intValue();
 	}
 	
 	/**
@@ -767,6 +760,7 @@ public class JPAStorage extends AbstractCachedStorage
 		}
 		
 		serverMetaData = createServerMetaData(pUseRepresentationColumnsAsQueryColumns);
+		criteriaConditionMapper = new ConditionCriteriaMapper(serverMetaData, jpaAccess.getCriteriaBuilder());
 		
 		open = true;
 	}

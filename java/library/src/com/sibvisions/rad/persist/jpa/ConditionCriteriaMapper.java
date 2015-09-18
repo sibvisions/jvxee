@@ -192,7 +192,7 @@ public class ConditionCriteriaMapper
 			Predicate predicate = getPredicateForCompareCondition((CompareCondition)pCondition, from);
 			
 			Join join = from.join(pJoinAttributeName);
-			criteriaQuery.select(join).where(predicate);
+			criteriaQuery.select(criteriaBuilder.count(join)).where(predicate);
 		}
 		else
 		{
@@ -201,25 +201,21 @@ public class ConditionCriteriaMapper
 				Predicate predicate = getPredicateForCompareCondition((CompareCondition)pCondition, from);
 				
 				criteriaQuery.where(predicate);
-				
-				criteriaQuery.select(criteriaBuilder.count(from));
 			}
 			else if (pCondition instanceof OperatorCondition)
 			{
 				Predicate predicate = getPredicateForOperatorCondition((OperatorCondition)pCondition, from);
 				
 				criteriaQuery.where(predicate);
-				
-				criteriaQuery.select(criteriaBuilder.count(from));
 			}
 			else if (pCondition instanceof Not)
 			{
 				Predicate predicate = getPredicateForNotCondition((Not)pCondition, from);
 				
 				criteriaQuery.where(predicate);
-				
-				criteriaQuery.select(criteriaBuilder.count(from));
 			}
+			
+			criteriaQuery.select(criteriaBuilder.count(from));
 		}
 		
 		return criteriaQuery;

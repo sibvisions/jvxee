@@ -32,6 +32,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.rad.model.condition.Equals;
 import javax.rad.model.condition.ICondition;
+import javax.rad.model.condition.Like;
 import javax.rad.persist.DataSourceException;
 import javax.rad.remote.MasterConnection;
 
@@ -406,6 +407,22 @@ public class TestJPAStorage
 		List<Object[]> objects = jpaStorageCustomer.executeFetch(null, null, 0, 10);
 		
 		Assert.assertEquals(5, objects.size());
+	}
+	
+	/**
+	 * Tests the {@link JPAStorage#getEstimatedRowCount(ICondition)} function.
+	 * 
+	 * @throws DataSourceException if the test fails.
+	 */
+	@Test
+	public void testGetEstimatedRowCount() throws DataSourceException
+	{
+		Assert.assertEquals(4, jpaStorageCustomer.getEstimatedRowCount(null));
+		Assert.assertEquals(4, jpaStorageCustomer.getEstimatedRowCount(new Like("FIRSTNAME", "Firstname *")));
+		Assert.assertEquals(1, jpaStorageCustomer.getEstimatedRowCount(new Equals("FIRSTNAME", "Firstname 3")));
+		Assert.assertEquals(0, jpaStorageCustomer.getEstimatedRowCount(new Equals("FIRSTNAME", "Non Existent")));
+		
+		Assert.assertEquals(6, jpaStorageFlight.getEstimatedRowCount(null));
 	}
 	
 	/**
