@@ -1157,7 +1157,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * @param pEntityClass The Class of the entity
 	 * @param pReferencingColumnName the name of the referencing column.
 	 * @return The {@link JPAForeignKey} for the given entity class
-	 * @throws Exception
+	 * @throws Exception if creating the foreign key failed.
 	 */
 	private JPAForeignKey createForeignKey(Class pEntityClass, String pReferencingColumnName) throws Exception
 	{
@@ -1242,7 +1242,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pEntityClass The Class for generating the JPAPrimaryKey
 	 * @return the {@link JPAPrimaryKey}
-	 * @throws Exception
+	 * @throws Exception if creating the primary key failed.
 	 */
 	private JPAPrimaryKey createPrimaryKey(Class pEntityClass) throws Exception
 	{
@@ -1523,7 +1523,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pEntityClass The Class to search for the best attribute
 	 * @return The Attribute for the automatic link reference
-	 * @throws Exception
+	 * @throws Exception if getting the best attribute failed.
 	 */
 	private Attribute getBestAttributeForStorageReference(Class pEntityClass) throws Exception
 	{
@@ -1588,7 +1588,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * @param pPersistentAttributeType the PersistentAttributeType (OneToMany or
 	 *            ManyToMany)
 	 * @return The Attribute for the detail Relation
-	 * @throws Exception
+	 * @throws Exception if getting the detail relation attribute failed.
 	 */
 	private Attribute getDetailRelationAttribute(Class pMasterEntity, Class pDetailEntity, PersistentAttributeType pPersistentAttributeType) throws Exception
 	{
@@ -1636,7 +1636,7 @@ public class JPAStorage extends AbstractCachedStorage
 	 * 
 	 * @param pEntityClass The Class of the entity
 	 * @return A List with the UniqueKey Column Names
-	 * @throws Exception
+	 * @throws Exception if getting the unique key columns failed.
 	 */
 	private ArrayList<String> getUniqueKeyColumnNames(Class pEntityClass) throws Exception
 	{
@@ -1689,10 +1689,12 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Returns the JPAServerColumnMetaData for the given Attribute.
 	 * 
-	 * @param pAttribute
-	 * @param pEntityClass
+	 * @param pAttribute the {@link Attribute} for which to get the
+	 *            {@link JPAServerColumnMetaData}.
+	 * @param pEntityClass the {@link Class entity class} associated with the
+	 *            {@link Attribute}.
 	 * @return the JPAServerColumnMetaData for the given Attribute
-	 * @throws Exception
+	 * @throws Exception if getting the server column meta data failed.
 	 */
 	private JPAServerColumnMetaData getServerColumnMetaData(Attribute pAttribute, Class pEntityClass) throws Exception
 	{
