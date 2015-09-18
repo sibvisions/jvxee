@@ -208,7 +208,7 @@ public class TestConditionCriteriaMapper
 		Assert.assertNull(criteriaQuery.getOrderList());
 		Assert.assertTrue(criteriaQuery.getParameters().isEmpty());
 		Assert.assertNull(criteriaQuery.getRestriction());
-		Assert.assertNull(criteriaQuery.getSelection());
+		Assert.assertNotNull(criteriaQuery.getSelection());
 		
 		criteriaQuery = conditionCriteriaMapper.getCountCriteriaQuery(
 				new Equals("FIRSTNAME", "Test"),
