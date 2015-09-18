@@ -23,7 +23,9 @@ package com.sibvisions.rad.persist.jpa;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -95,7 +97,7 @@ public class TestJPAStorage
 	public void open() throws Exception
 	{
 		entityManager = emf.createEntityManager();
-		//	      criteriaBuilder = emf.getCriteriaBuilder();
+		// criteriaBuilder = emf.getCriteriaBuilder();
 		clearDB();
 		initializeDB();
 		
@@ -194,7 +196,7 @@ public class TestJPAStorage
 				+ "values ('LHR', 'London Heathrow Airport', 'United Kingdom', 'London')").executeUpdate();
 		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('BER', 'Berlin Brandenburg Airport', 'Germany', 'Berlin')").executeUpdate();
-		
+				
 		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('LX-VCH', 'LX', 'Boeing 747')").executeUpdate();
 		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
@@ -211,7 +213,7 @@ public class TestJPAStorage
 				+ "values ('D-EPHH', 'D', 'Piper PA46')").executeUpdate();
 		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('PH-KZU', 'PH', 'Fokker 70')").executeUpdate();
-		
+				
 		entityManager.createNativeQuery("delete from flight").executeUpdate();
 		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('British Airways', '180', 'HB-FVD', 'JFK', 'LHR')").executeUpdate();
@@ -225,7 +227,7 @@ public class TestJPAStorage
 				+ "values ('Germanwings', '8461', 'LX-VCH', 'LHR', 'BER')").executeUpdate();
 		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('Airberlin', '7248', 'PH-KZU', 'BER', 'JFK')").executeUpdate();
-		
+				
 		entityManager.flush();
 		
 		entityManager.getTransaction().commit();
@@ -564,12 +566,46 @@ public class TestJPAStorage
 	}
 	
 	/**
-	 * Tests the multiple foreign keys are producing correctly named columns. 
+	 * Tests the multiple foreign keys are producing correctly named columns.
+	 * 
+	 * @throws Exception if the test fails.
 	 */
 	@Test
-	public void testMultipleForeignKeysColumnNames()
+	public void testMultipleForeignKeysColumnNames() throws Exception
 	{
-		Assert.fail("Not yet implemented.");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("flight", jpaStorageFlight);
+		
+		// We will be testing the naming of the columns and if they are
+		// correctly mapped. For that we will create a RemoteDataBook.
+		
+		RemoteDataSource dataSource = new RemoteDataSource(new MasterConnection(new DirectObjectConnection(map)));
+		dataSource.open();
+		
+		RemoteDataBook dataBook = new RemoteDataBook();
+		dataBook.setDataSource(dataSource);
+		dataBook.setName("flight");
+		dataBook.open();
+		
+		dataBook.insert(false);
+		dataBook.setValue("AIRLINE", "Personal Aviation Stuffy Inc.");
+		dataBook.setValue("FLIGHTNUMBER", "2634");
+		dataBook.setValue("AIRCRAFT_REGISTRATIONNUMBER", "PH-MCY");
+		dataBook.setValue("AIRPORTORIGIN_CODE", "VIE");
+		dataBook.setValue("AIRPORTDESTINATION_CODE", "SFO");
+		dataBook.saveAllRows();
+		dataBook.reload();
+		
+		dataBook.setSelectedRow(dataBook.searchNext(new Equals("FLIGHTNUMBER", "2634")));
+		
+		// Now check that everything was correctly inserted.
+		Assert.assertEquals("Personal Aviation Stuffy Inc.", dataBook.getValue("AIRLINE"));
+		Assert.assertEquals("2634", dataBook.getValue("FLIGHTNUMBER"));
+		Assert.assertEquals("PH-MCY", dataBook.getValue("AIRCRAFT_REGISTRATIONNUMBER"));
+		Assert.assertEquals("VIE", dataBook.getValue("AIRPORTORIGIN_CODE"));
+		Assert.assertEquals("Vienna/Schwechat", dataBook.getValue("AIRPORTORIGIN_LOCATION"));
+		Assert.assertEquals("SFO", dataBook.getValue("AIRPORTDESTINATION_CODE"));
+		Assert.assertEquals("San Francisco", dataBook.getValue("AIRPORTDESTINATION_LOCATION"));
 	}
 	
 	/**

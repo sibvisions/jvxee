@@ -1161,10 +1161,11 @@ public class JPAStorage extends AbstractCachedStorage
 	 * Creates the {@link JPAForeignKey} for the given entity class.
 	 * 
 	 * @param pEntityClass The Class of the entity
+	 * @param pReferencingColumnName the name of the referencing column.
 	 * @return The {@link JPAForeignKey} for the given entity class
 	 * @throws Exception
 	 */
-	private JPAForeignKey createForeignKey(Class pEntityClass) throws Exception
+	private JPAForeignKey createForeignKey(Class pEntityClass, String pReferencingColumnName) throws Exception
 	{
 		EntityType entityType = jpaAccess.getEntityType(pEntityClass);
 		
@@ -1191,9 +1192,46 @@ public class JPAStorage extends AbstractCachedStorage
 		
 		for (JPAServerColumnMetaData serverColumnMetaData : jpaPrimaryKey.getServerColumnMetaDataAsArray())
 		{
-			String foreignKeyName = entityType.getName().toUpperCase() + "_" + serverColumnMetaData.getName();
+			if (pReferencingColumnName != null)
+			{
+				// If there is a referencing column name provided, we will
+				// use a different naming scheme to make sure that foreign key
+				// columns can not collide.
+				
+				String referencedEntityName = serverColumnMetaData.getJPAMappingType().getEntityClass().getSimpleName().toUpperCase();
+				String columnName = serverColumnMetaData.getName();
+				
+				// If the column does start with the name of the table, we will
+				// strip the table name. This is to avoid having two identical
+				// prefixes like "LOCATION_NAME_LOCATION_NAME".
+				if (columnName.startsWith(referencedEntityName + "_"))
+				{
+					columnName = columnName.substring(referencedEntityName.length() + 1);
+				}
+				
+				// If the referencing column does end with the name we just
+				// created, we will simply use the source column name.
+				// This is simply to avoid two identical postfixes, like
+				// "LOCATION_NAME_NAME".
+				// Otherwise we will append our generated name.
+				if (pReferencingColumnName.endsWith(columnName))
+				{
+					columnName = pReferencingColumnName;
+				}
+				else
+				{
+					columnName = pReferencingColumnName + "_" + columnName;
+				}
+				
+				serverColumnMetaData.setName(columnName);
+			}
+			else
+			{
+				String foreignKeyName = entityType.getName().toUpperCase() + "_" + serverColumnMetaData.getName();
+				
+				serverColumnMetaData.setName(foreignKeyName);
+			}
 			
-			serverColumnMetaData.setName(foreignKeyName);
 			jpaForeignKey.addServerColumnMetaData(serverColumnMetaData);
 		}
 		
@@ -1319,7 +1357,7 @@ public class JPAStorage extends AbstractCachedStorage
 			{
 				JPAPrimaryKey jpaPrimaryKey = new JPAPrimaryKey();
 				
-				JPAForeignKey jpaForeignKey = createForeignKey(masterEntity);
+				JPAForeignKey jpaForeignKey = createForeignKey(masterEntity, null);
 				
 				JPAMappingType jpaDataType = new JPAMappingType();
 				
@@ -1340,7 +1378,7 @@ public class JPAStorage extends AbstractCachedStorage
 				
 				jpaPrimaryKey.addForeignKey(masterEntity, jpaForeignKey);
 				
-				jpaForeignKey = createForeignKey(detailEntity);
+				jpaForeignKey = createForeignKey(detailEntity, null);
 				
 				jpaDataType = new JPAMappingType();
 				
@@ -1394,7 +1432,7 @@ public class JPAStorage extends AbstractCachedStorage
 								&& (attribute.getPersistentAttributeType() == PersistentAttributeType.MANY_TO_ONE
 										|| attribute.getPersistentAttributeType() == PersistentAttributeType.ONE_TO_ONE))
 						{
-							JPAForeignKey jpaForeignKey = createForeignKey(attribute.getJavaType());
+							JPAForeignKey jpaForeignKey = createForeignKey(attribute.getJavaType(), attribute.getName().toUpperCase());
 							
 							Attribute detailRelationAttribute = getDetailRelationAttribute(attribute.getJavaType(), masterEntity, PersistentAttributeType.ONE_TO_MANY);
 							
