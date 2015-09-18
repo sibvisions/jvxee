@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.sibvisions.jvx</groupId>
+	<artifactId>jvxee</artifactId>
+	<name>JVxEE</name>
+	<description>JVx JavaEE</description>
+	<version>1.1</version>
+	<url>http://www.sibvisions.com/jvx</url>
+	<packaging>jar</packaging>
+	
+	<licenses>
+		<license>
+		<name>The Apache Software License, Version 2.0</name>
+		<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<name>Stefan Wurm</name>
+		</developer>
+	</developers>
+	
+	<scm>
+		<connection>scm:svn:http://jvxee.svn.sourceforge.net/svnroot/jvxee/trunk/java</connection>
+		<developerConnection>scm:svn:https://jvxee.svn.sourceforge.net/svnroot/jvxee/trunk/java</developerConnection>
+		<url>http://jvxee.svn.sourceforge.net/viewvc/jvxee/trunk/java</url>
+	</scm>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.sibvisions.jvx</groupId>
+			<artifactId>jvxall</artifactId>
+			<version>2.3</version>
+		</dependency>
+	</dependencies>
+	
+</project>
+

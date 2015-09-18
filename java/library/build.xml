@@ -14,7 +14,9 @@ License for the specific language governing permissions and limitations under
 the License.
 -->
 
-<project name="JVx EE" default="start.complete">
+<project name="JVx EE" default="start.complete"
+         xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+         xmlns:staging="antlib:org.sonatype.nexus.ant.staging">
 
   <!-- 
     ***************************************************************** 
@@ -55,7 +57,16 @@ the License.
   <property name="install" location="${build}/install" />
   <property name="release" location="${build}/release" />
   <property name="javadoc" location="${install}/doc" />
+  <property name="maven"       location="${basedir}/maven" />
   <property name="checkstyle" location="${install}/checkstyle" />
+  
+  <!-- Maven snapshots and staging repository id and url -->
+  <property name="mvn.snapshotsrep.id"  value="sonatype-nexus-snapshots" />
+  <property name="mvn.snapshotsrep.url" value="https://oss.sonatype.org/content/repositories/snapshots" />
+  <property name="mvn.stagingrep.id"    value="sonatype-nexus-staging" />
+  <property name="mvn.stagingrep.url"   value="https://oss.sonatype.org/service/local/staging/deploy/maven2" />
+  
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpath="${build}/maven/maven-ant-tasks-2.1.3.jar" />
   	
   <!-- 
   	***************************************************************** 
@@ -215,6 +226,72 @@ the License.
     </zip>    
     
   </target>  
+	
+	<target name="maven" depends="opensource">
+		<property name="maven.version.postfix" value="" />
+		<property name="mvn.groupId" value="com.sibvisions" />
+		
+		<condition property="gpgexecutable" value="C:\Program Files (x86)\GNU\GnuPG\pub\gpg.exe" else="gpg">
+			<and>
+				<os family="Windows" />
+			</and>
+		</condition>
+		
+		<!-- define late because of the classpath -->
+		<taskdef name="buildnr" classname="com.sibvisions.addons.ant.AntBuildNumber" classpath="${buildnumber}/addons.jar;${classes}" />
+		<buildnr buildfile="${buildnumber}/buildnr.properties" loadOnly="true"/>
+		
+		<propertyregex property="versionnumber" input="${build.version}" regexp=" " replace="_" global="true" defaultValue="${build.version}" />
+		
+		<property name="mvn.jvxee.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}.jar" />
+		<property name="mvn.jvxee.sources.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}-sources.jar" />
+		<property name="mvn.jvxee.javadoc.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}-javadoc.jar" />
+		
+		<property name="mvn.id" value="${mvn.stagingrep.id}" />
+		<property name="mvn.url" value="${mvn.stagingrep.url}" />
+		
+		<mkdir dir="${release}/maven" />
+		
+		<zip destfile="${mvn.jvxee.jar}">
+			<zipfileset src="${install}/${jar.name}"/>
+		</zip>
+		
+		<zip destfile="${mvn.jvxee.sources.jar}">
+			<zipfileset dir="${src}/" includes="**" excludes="**/package.html" prefix=""/>
+		</zip>
+		
+		<unzip src="${release}/${release.name}-${build.version}_javadoc.zip" dest="${release}/maven/javadoc"/>
+		
+		<zip destfile="${mvn.jvxee.javadoc.jar}">
+			<zipfileset dir="${release}/maven/javadoc/api" />
+		</zip>
+		
+		<property name="maven.tmp" location="${temp}/maven" />
+		
+		<delete dir="${release}/maven/javadoc" />
+		<delete dir="${maven.tmp}" />
+		
+		<copy todir="${maven.tmp}">
+			<fileset dir="${maven}"/>
+		</copy>
+		
+		<replace dir="${maven.tmp}" token="&lt;version&gt;0.9&lt;/version&gt;" value="&lt;version&gt;${versionnumber}${maven.version.postfix}&lt;/version&gt;">
+			<include name="**/pom.xml" />
+		</replace>
+		
+		<artifact:mvn>
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file" />
+			<arg value="-Durl=${mvn.url}" />
+			<arg value="-DrepositoryId=${mvn.id}" />
+			<arg value="-DpomFile=${maven.tmp}/jvxee/pom.xml" />
+			<arg value="-Dfile=${mvn.jvxee.jar}" />
+			<arg value="-Dfiles=${mvn.jvxee.sources.jar},${mvn.jvxee.javadoc.jar}" />
+			<arg value="-Dclassifiers=sources,javadoc" />
+			<arg value="-Dtypes=jar,jar" />
+			<arg value="-Pgpg" />
+			<arg value="-Dgpg.executable=${gpgexecutable}" />
+		</artifact:mvn>
+	</target>
 	
   <!-- 
 	* quality tasks 
