@@ -69,9 +69,6 @@ public class TestJPAStorage
 	/** The EntityManager. **/
 	private EntityManager entityManager = null;
 	
-	/** The CriteriaBuilder. **/
-	//	private CriteriaBuilder criteriaBuilder;
-	
 	/** The storage for the customer entities. **/
 	private JPAStorage jpaStorageCustomer;
 	
@@ -97,7 +94,7 @@ public class TestJPAStorage
 	public void open() throws Exception
 	{
 		entityManager = emf.createEntityManager();
-		// criteriaBuilder = emf.getCriteriaBuilder();
+		
 		clearDB();
 		initializeDB();
 		
@@ -182,50 +179,71 @@ public class TestJPAStorage
 		entityManager.createNativeQuery("insert into customer_education values (1, 2)").executeUpdate();
 		
 		// Flights
-		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+		entityManager.createNativeQuery("insert into airport"
+				+ "(CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('JFK', 'John F. Kennedy International Airport', 'USA', 'New York')").executeUpdate();
-		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+		entityManager.createNativeQuery("insert into airport"
+				+ "(CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('SFO', 'San Francisco International Airport', 'USA', 'San Francisco')").executeUpdate();
-		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+		entityManager.createNativeQuery("insert into airport"
+				+ "(CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('BOS', 'Logan International Airport', 'USA', 'Boston')").executeUpdate();
-		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+		entityManager.createNativeQuery("insert into airport"
+				+ "(CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('IAD', 'Washington Dulles International Airport', 'USA', 'Washington')").executeUpdate();
-		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+		entityManager.createNativeQuery("insert into airport"
+				+ "(CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('VIE', 'Vienna International Airport', 'Austria', 'Vienna/Schwechat')").executeUpdate();
-		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+		entityManager.createNativeQuery("insert into airport"
+				+ "(CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('LHR', 'London Heathrow Airport', 'United Kingdom', 'London')").executeUpdate();
-		entityManager.createNativeQuery("insert into airport (CODE, NAME, COUNTRY, LOCATION)"
+		entityManager.createNativeQuery("insert into airport"
+				+ "(CODE, NAME, COUNTRY, LOCATION)"
 				+ "values ('BER', 'Berlin Brandenburg Airport', 'Germany', 'Berlin')").executeUpdate();
 				
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('LX-VCH', 'LX', 'Boeing 747')").executeUpdate();
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('G-EUPH', 'G', 'Airbus A319')").executeUpdate();
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('HB-FVD', 'HB', 'Pilatus PC12')").executeUpdate();
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('HL7414', 'HL', 'Boeing 747')").executeUpdate();
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('PH-MCY', 'PH', 'McDonnell Douglas MD-11F')").executeUpdate();
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('EI-IMC', 'EI', 'Airbus A319')").executeUpdate();
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('D-EPHH', 'D', 'Piper PA46')").executeUpdate();
-		entityManager.createNativeQuery("insert into aircraft (REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
+		entityManager.createNativeQuery("insert into aircraft"
+				+ "(REGISTRATIONNUMBER, COUNTRY, DESCRIPTION)"
 				+ "values ('PH-KZU', 'PH', 'Fokker 70')").executeUpdate();
 				
 		entityManager.createNativeQuery("delete from flight").executeUpdate();
-		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
+		entityManager.createNativeQuery("insert into flight"
+				+ "(AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('British Airways', '180', 'HB-FVD', 'JFK', 'LHR')").executeUpdate();
-		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
+		entityManager.createNativeQuery("insert into flight"
+				+ "(AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('United', '415', 'PH-MCY', 'JFK', 'SFO')").executeUpdate();
-		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
+		entityManager.createNativeQuery("insert into flight"
+				+ "(AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('JetBlue', '157', 'D-EPHH', 'BOS', 'IAD')").executeUpdate();
-		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
+		entityManager.createNativeQuery("insert into flight"
+				+ "(AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('Virgin Atlantic', '20', 'G-EUPH', 'SFO', 'LHR')").executeUpdate();
-		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
+		entityManager.createNativeQuery("insert into flight"
+				+ "(AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('Germanwings', '8461', 'LX-VCH', 'LHR', 'BER')").executeUpdate();
-		entityManager.createNativeQuery("insert into flight (AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
+		entityManager.createNativeQuery("insert into flight"
+				+ "(AIRLINE, FLIGHTNUMBER, AIRCRAFT_REGISTRATIONNUMBER, AIRPORTORIGIN_CODE, AIRPORTDESTINATION_CODE)"
 				+ "values ('Airberlin', '7248', 'PH-KZU', 'BER', 'JFK')").executeUpdate();
 				
 		entityManager.flush();
