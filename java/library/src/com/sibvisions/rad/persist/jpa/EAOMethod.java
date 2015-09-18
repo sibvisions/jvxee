@@ -34,15 +34,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface EAOMethod
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// Definitions
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Properties
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/**
-	 * Returns the method identifier.
-	 * 
-	 * @return the method identifier.
-	 */
+	/** Returns the method identifier. */
 	public EAO methodIdentifier();
 	
 	//****************************************************************
