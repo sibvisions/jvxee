@@ -174,7 +174,7 @@ public final class JPAStorageUtil
 	 * @param pAttribute the attribute
 	 * @param pEntityClass the class of the entity
 	 * @return the default-value
-	 * @throws Exception
+	 * @throws Exception if getting the default value failed.
 	 */
 	public static Object getDefaultValueForAttribute(Attribute pAttribute, Class pEntityClass) throws Exception
 	{
@@ -244,7 +244,7 @@ public final class JPAStorageUtil
 	 * 
 	 * @param pAttribute the {@link Attribute}.
 	 * @return the {@link Class Type-Class}.
-	 * @throws Exception
+	 * @throws Exception if getting the type class failed.
 	 */
 	public static Class getTypeClassForAttribute(Attribute pAttribute) throws Exception
 	{
