@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The {@link JPAPrimaryKey} is a {@link JPAEmbeddeKey} extension and
+ * The {@link JPAPrimaryKey} is a {@link JPAEmbeddedKey} extension and
  * encapsulates additional information and methods and the
  * {@link JPAServerColumnMetaData} for an entity.
  * <p>
@@ -198,7 +198,6 @@ public class JPAPrimaryKey extends JPAEmbeddedKey
 	 * The given {@link Map} with the values for the key has as key the name of
 	 * the {@link JPAServerColumnMetaData} and as value the value for the
 	 * primary key.
-	 * <p>
 	 * 
 	 * <pre>
 	 * { ID = 3, SOCIALINSURANCENUMBER = 12345 }

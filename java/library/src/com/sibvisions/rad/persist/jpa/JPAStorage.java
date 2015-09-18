@@ -731,7 +731,7 @@ public class JPAStorage extends AbstractCachedStorage
 	/**
 	 * Gets all known sub storages as key / value pair.
 	 * 
-	 * @return the key / value pair with subtablename and substorage or <@code
+	 * @return the key / value pair with subtablename and substorage or {@code
 	 *         null} if no substorages are known.
 	 */
 	public Map<String, IStorage> getSubStorages()

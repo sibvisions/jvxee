@@ -108,7 +108,7 @@ public class JPAEmbeddedKey
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Add a {@link JPAServerColumnMetaData} to the {@link JPAEmbeddeKey}.
+	 * Add a {@link JPAServerColumnMetaData} to the {@link JPAEmbeddedKey}.
 	 * 
 	 * @param pServerColumnMetaData the {@link JPAServerColumnMetaData} to add.
 	 */
@@ -145,7 +145,7 @@ public class JPAEmbeddedKey
 	}
 	
 	/**
-	 * Gets all {@link JPAServerColumnMetaData} from the {@link JPAEmbeddeKey}
+	 * Gets all {@link JPAServerColumnMetaData} from the {@link JPAEmbeddedKey}
 	 * as an Array.
 	 * 
 	 * @return all {@link JPAServerColumnMetaData} as array.
@@ -156,7 +156,7 @@ public class JPAEmbeddedKey
 	}
 	
 	/**
-	 * Gets all {@link JPAServerColumnMetaData} from the {@link JPAEmbeddeKey}
+	 * Gets all {@link JPAServerColumnMetaData} from the {@link JPAEmbeddedKey}
 	 * in a Collection.
 	 * 
 	 * @return all {@link JPAServerColumnMetaData} as a collection.
@@ -179,7 +179,7 @@ public class JPAEmbeddedKey
 	/**
 	 * Sets the {@link JPAServerColumnMetaData}.
 	 * 
-	 * @param pJPAMappingType the {@link JPAMAppingType}.
+	 * @param pJPAMappingType the {@link JPAMappingType}.
 	 */
 	public void setJPAMappingType(JPAMappingType pJPAMappingType)
 	{

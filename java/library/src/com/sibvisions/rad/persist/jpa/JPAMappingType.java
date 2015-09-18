@@ -374,7 +374,6 @@ public class JPAMappingType
 	 * <p>
 	 * For a Example the path navigation to the attribute street is: Address,
 	 * street
-	 * <p>
 	 * 
 	 * <pre>
 	 * <code>

@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * The {@link IGenericDAO} defines the methods to access the database by
+ * The {@link IGenericEAO} defines the methods to access the database by
  * entities and primary keys.
  * 
  * @param <E> The Type of the Entity.

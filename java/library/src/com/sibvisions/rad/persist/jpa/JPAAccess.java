@@ -44,20 +44,19 @@ import com.sibvisions.util.log.ILogger;
 import com.sibvisions.util.log.LoggerFactory;
 
 /**
- * The <code>JPAAccess</code> class encapsulates the EntityManager and the Metamodel.
- * <code>JPAAccess</code> manages the methode invocation for the internal generic EAO and
- * external EAO.
+ * The {@link JPAAccess} class encapsulates the EntityManager and the Metamodel.
+ * {@link JPAAccess} manages the method invocation for the internal generic EAO
+ * and external EAO.
  * 
  * @author Stefan Wurm
- *
  */
-public class JPAAccess 
+public class JPAAccess
 {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Class members
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /** The logger. */
+	
+	/** The logger. */
 	protected static ILogger logger = LoggerFactory.getInstance(JPAAccess.class);
 	
 	/** The EntityManager to manage the use of the entities. **/
@@ -97,24 +96,27 @@ public class JPAAccess
 	private Method findByIdMethod;
 	
 	/** The findAll Method. */
-	private Method findAllMethod;	
+	private Method findAllMethod;
 	
 	/** The Metamodel holds information about the structure of the entities. **/
-	private Metamodel metamodel;	
+	private Metamodel metamodel;
 	
-	/** The PersistenceUnitUtil afford methods to get useful information from entities. **/
+	/**
+	 * The PersistenceUnitUtil afford methods to get useful information from
+	 * entities.
+	 **/
 	private PersistenceUnitUtil persistenceUnitUtil;
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Initialization
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/** 
+	/**
 	 * Sets the external EAO Object.
 	 * 
 	 * @param pExternalEAO the external EAO
 	 */
-	public void setExternalEAO(Object pExternalEAO) 
+	public void setExternalEAO(Object pExternalEAO)
 	{
 		externalEAO = pExternalEAO;
 		
@@ -122,59 +124,59 @@ public class JPAAccess
 	}
 	
 	/**
-	 * Initializes the methode Names.
+	 * Initializes the method names.
 	 */
-	private void initializeMethods() 
+	private void initializeMethods()
 	{
-		if (externalEAO instanceof IGenericEAO) 
+		if (externalEAO instanceof IGenericEAO)
 		{
 			insertMethodName = "insert";
 			updateMethodName = "update";
 			deleteMethodName = "delete";
 			findByIdMethodName = "findById";
 			findAllMethodName = "findAll";
-		} 
-		else 
+		}
+		else
 		{
-			for (Method method : externalEAO.getClass().getMethods()) 
+			for (Method method : externalEAO.getClass().getMethods())
 			{
-				for (Annotation annotation : method.getAnnotations()) 
+				for (Annotation annotation : method.getAnnotations())
 				{
-					if (annotation.annotationType() == EAOMethod.class) 
+					if (annotation.annotationType() == EAOMethod.class)
 					{
-						try 
+						try
 						{
-							if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) 
+							if ((EAO)annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT)
 							{
 								insertMethodName = method.getName();
-							} 
-							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT) 
+							}
+							else if ((EAO)annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.INSERT)
 							{
 								updateMethodName = method.getName();
-							} 
-							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.DELETE) 
+							}
+							else if ((EAO)annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.DELETE)
 							{
 								deleteMethodName = method.getName();
-							} 
-							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_BY_ID) 
+							}
+							else if ((EAO)annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_BY_ID)
 							{
 								findByIdMethodName = method.getName();
-							} 
-							else if ((EAO) annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_ALL) 
+							}
+							else if ((EAO)annotation.getClass().getMethod("methodIdentifier").invoke(annotation) == EAO.FIND_ALL)
 							{
 								findAllMethodName = method.getName();
 							}
-						} 
+						}
 						catch (Exception e)
 						{
 							// Nothing to be done
 						}
 					}
-				}	
+				}
 			}
 		}
-	}		
-
+	}
+	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// User-defined methods
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -184,51 +186,51 @@ public class JPAAccess
 	 * 
 	 * @return The Name of the Insert Method
 	 */
-	public String getInsertMethod() 
+	public String getInsertMethod()
 	{
 		return insertMethodName;
 	}
-
+	
 	/**
 	 * Sets the Insert Method name.
 	 * 
 	 * @param pInsertMethod The name of the insert method
 	 */
-	public void setInsertMethod(String pInsertMethod) 
+	public void setInsertMethod(String pInsertMethod)
 	{
 		insertMethodName = pInsertMethod;
 	}
-
+	
 	/**
 	 * Returns the Update Method name.
 	 * 
 	 * @return The Name of the update method
 	 */
-	public String getUpdateMethod() 
+	public String getUpdateMethod()
 	{
 		return updateMethodName;
 	}
-
+	
 	/**
 	 * Sets the Update Method name.
 	 * 
 	 * @param pUpdateMethod The name of the update method
 	 */
-	public void setUpdateMethod(String pUpdateMethod) 
+	public void setUpdateMethod(String pUpdateMethod)
 	{
 		updateMethodName = pUpdateMethod;
 	}
-
+	
 	/**
 	 * Returns the delete Method name.
 	 * 
 	 * @return the name of the delete method
 	 */
-	public String getDeleteMethod() 
+	public String getDeleteMethod()
 	{
 		return deleteMethodName;
 	}
-
+	
 	/**
 	 * Sets the delete Method name.
 	 * 
@@ -238,23 +240,23 @@ public class JPAAccess
 	{
 		deleteMethodName = pDeleteMethod;
 	}
-
+	
 	/**
 	 * Returns the findById Method name.
 	 * 
 	 * @return the name of the find-by-id method
 	 */
-	public String getFindByIdMethod() 
+	public String getFindByIdMethod()
 	{
 		return findByIdMethodName;
 	}
-
+	
 	/**
 	 * Sets the findById Method name.
 	 * 
 	 * @param pFindByIdMethod the name of the find-by-id method
 	 */
-	public void setFindByIdMethod(String pFindByIdMethod) 
+	public void setFindByIdMethod(String pFindByIdMethod)
 	{
 		findByIdMethodName = pFindByIdMethod;
 	}
@@ -264,11 +266,11 @@ public class JPAAccess
 	 * 
 	 * @return the name of the find-all method
 	 */
-	public String getFindAllMethod() 
+	public String getFindAllMethod()
 	{
 		return findAllMethodName;
 	}
-
+	
 	/**
 	 * Sets the findAll Method name.
 	 * 
@@ -278,437 +280,442 @@ public class JPAAccess
 	{
 		findAllMethodName = pFindAllMethod;
 	}
-
+	
 	/**
-	 * If the external EAO is set and also the insert methode is defined, the insert methode
-	 * from the external EAO is called. Otherwise the insert methode from the genericEAO.
+	 * If the external EAO is set and also the insert method is defined, the
+	 * insert method from the external EAO is called. Otherwise the insert
+	 * method from the genericEAO.
 	 * 
 	 * @param pEntity The entity to insert
 	 * @param pEntityClass The entity Class of the inserted entity
 	 * @return The inserted entity-object
-	 * @throws DataSourceException 
+	 * @throws DataSourceException if inserting the entity failed.
 	 */
-    public Object insert(Object pEntity, Class pEntityClass) throws DataSourceException 
-    {
-    	Object ret = null;
-    	
-		if (pEntity != null) 
+	public Object insert(Object pEntity, Class pEntityClass) throws DataSourceException
+	{
+		Object ret = null;
+		
+		if (pEntity != null)
 		{
-	    	if (externalEAO != null && insertMethodName != null) 
-	    	{
-	    		try 
-	    		{
-	    			if (insertMethod == null) 
-	    			{
-	    				insertMethod = externalEAO.getClass().getMethod(insertMethodName, pEntityClass);
-	    			}
-	    			
-	    			ret = insertMethod.invoke(externalEAO, pEntity);
-	    		} 
-	    		catch (InvocationTargetException ite) 
-	    		{ 
-	    			// If the exception is from Type DataSourceException throw it
-
-	    			Throwable thr = ite.getCause();
-	    			
-	    			if (thr instanceof DataSourceException)
-	    			{
-	    				throw (DataSourceException)ite.getCause();
-	    			}
-	    			else if (thr instanceof RuntimeException) 
-	    			{
-	    				throw (RuntimeException)thr;
-	    			}
-	    			else
-	    			{
-	    				logger.error(thr);
-	    			}
-	    		} 
-	    		catch (Exception e) 
-	    		{ 
-	    			// If there is an error, ignore it and try it with the genericDAO
-    				logger.debug(e);
-	    		}    		
-	    	}
-	    	
-	    	if (ret == null || ret.getClass() != pEntityClass) 
-	    	{
-		    	genericEAO.setEntityClass(pEntityClass);
-		    	ret = genericEAO.insert(pEntity);	
-	    	}
+			if (externalEAO != null && insertMethodName != null)
+			{
+				try
+				{
+					if (insertMethod == null)
+					{
+						insertMethod = externalEAO.getClass().getMethod(insertMethodName, pEntityClass);
+					}
+					
+					ret = insertMethod.invoke(externalEAO, pEntity);
+				}
+				catch (InvocationTargetException ite)
+				{
+					// If the exception is from Type DataSourceException throw it
+					
+					Throwable thr = ite.getCause();
+					
+					if (thr instanceof DataSourceException)
+					{
+						throw (DataSourceException)ite.getCause();
+					}
+					else if (thr instanceof RuntimeException)
+					{
+						throw (RuntimeException)thr;
+					}
+					else
+					{
+						logger.error(thr);
+					}
+				}
+				catch (Exception e)
+				{
+					// If there is an error, ignore it and try it with the genericDAO
+					logger.debug(e);
+				}
+			}
+			
+			if (ret == null || ret.getClass() != pEntityClass)
+			{
+				genericEAO.setEntityClass(pEntityClass);
+				ret = genericEAO.insert(pEntity);
+			}
 		}
 		
 		return ret;
-    }
-    
-    /**
-	 * If the external EAO is set and also the update methode is defined, the update methode
-	 * from the external EAO is called. Otherwise the update methode from the genericEAO
+	}
+	
+	/**
+	 * If the external EAO is set and also the update method is defined, the
+	 * update method from the external EAO is called. Otherwise the update
+	 * method from the genericEAO
 	 * 
-     * @param pEntity the entity to Update
-     * @param pEntityClass the entity Class from the entity
-     * @throws DataSourceException 
-     */
-    public void update(Object pEntity, Class pEntityClass) throws DataSourceException 
-    {
-		if (pEntity != null) 
+	 * @param pEntity the entity to Update
+	 * @param pEntityClass the entity Class from the entity
+	 * @throws DataSourceException if updating the entity failed.
+	 */
+	public void update(Object pEntity, Class pEntityClass) throws DataSourceException
+	{
+		if (pEntity != null)
 		{
-	    	if (externalEAO != null && updateMethodName != null) 
-	    	{
-	    		try 
-	    		{
-	    			if (updateMethod == null)
-	    			{
-	    				updateMethod = externalEAO.getClass().getMethod(updateMethodName, pEntityClass);
-	    			}
-	    			
-	    			updateMethod.invoke(externalEAO, pEntity);
-	    	
-	    			return;
-	    		} 
-	    		catch (InvocationTargetException ite) 
-	    		{ 
-	    			// If the exception is from Type DataSourceException throw it
-
-	    			Throwable thr = ite.getCause();
-	    			
-	    			if (thr instanceof DataSourceException)
-	    			{
-	    				throw (DataSourceException)ite.getCause();
-	    			}
-	    			else if (thr instanceof RuntimeException) 
-	    			{
-	    				throw (RuntimeException)thr;
-	    			}
-	    			else
-	    			{
-	    				logger.error(thr);
-	    			}
-	    		} 
-	    		catch (Exception e) 
-	    		{ 
-	    			// If there is an error, ignore it and try it with the genericDAO
-	    			logger.debug(e);
-	    		}
-	    	}
-	    	
-	    	genericEAO.setEntityClass(pEntityClass);
-	    	genericEAO.update(pEntity);	   	    	
-		}    	
-    }
-    
-    /**
-	 * If the external EAO is set and also the delete methode is defined, the delete methode
-	 * from the external EAO is called. Otherwise the delete methode from the genericEAO
-	 * 
-     * @param pEntity the entity to delete
-     * @param pEntityClass the entity class from the entity
-     * @throws DataSourceException 
-     */
-    public void delete(Object pEntity, Class pEntityClass) throws DataSourceException 
-    {
-		if (pEntity != null) 
-		{
-	    	if (externalEAO != null && deleteMethodName != null) 
-	    	{
-	    		try 
-	    		{
-	    			if (deleteMethod == null) 
-	    			{
-	    				deleteMethod = externalEAO.getClass().getMethod(deleteMethodName, pEntityClass);
-	    			}
-	    			
-	    			deleteMethod.invoke(externalEAO, pEntity);
-	    	
-	    			return;
-	    		} 
-	    		catch (InvocationTargetException ite) 
-	    		{ 
-	    			// If the exception  is from Type DataSourceException throw it
-	    		     
-	    			Throwable thr = ite.getCause();
-	    			
-	    			if (thr instanceof DataSourceException)
-	    			{
-	    				throw (DataSourceException)ite.getCause();
-	    			}
-	    			else if (thr instanceof RuntimeException) 
-	    			{
-	    				throw (RuntimeException)thr;
-	    			}
-	    			else
-	    			{
-	    				logger.error(thr);
-	    			}
-	    		} 
-	    		catch (Exception e) 
-	    		{ 
-	    			// If there is an error, ignore it and try it with the genericDAO
-	    			logger.debug(e);
-	    		}
-	    	}
-	    	
-	    	genericEAO.setEntityClass(pEntityClass);
-	    	genericEAO.delete(pEntity);	    	    	
-		} 
-    }
-    
-    /**
-     * If the external EAO is set and also the findById methode is defined, the findById methode
-	 * from the external EAO is called. Otherwise the findById methode from the genericEAO
-     * 
-     * @param pId the id from the entity
-     * @param pEntityClass the entity class to find
-     * @return the entity to the id
-     * @throws DataSourceException 
-     */
-    public Object findById(Object pId, Class pEntityClass) throws DataSourceException 
-    {
-    	Object ret = null;
-    	
-		if (pId != null) 
-		{
-	    	if (externalEAO != null && findByIdMethodName != null) 
-	    	{
-	    		try 
-	    		{
-	    			if (findByIdMethod == null) 
-	    			{
-	    				findByIdMethod = externalEAO.getClass().getMethod(findByIdMethodName, pId.getClass());
-	    			}
-	    				
-	    			ret = findByIdMethod.invoke(externalEAO, pId);
-
-	    			return ret;
-	    		} 
-	    		catch (InvocationTargetException ite) 
-	    		{ 
-	    			// If the exception  is from Type DataSourceException throw it
-	    		     
-	    			Throwable thr = ite.getCause();
-	    			
-	    			if (thr instanceof DataSourceException)
-	    			{
-	    				throw (DataSourceException)ite.getCause();
-	    			}
-	    			else if (thr instanceof RuntimeException) 
-	    			{
-	    				throw (RuntimeException)thr;
-	    			}
-	    			else
-	    			{
-	    				logger.error(thr);
-	    			}
-	    		} 
-	    		catch (Exception e) 
-	    		{ 
-	    			// If there is an error, ignore it and try it with the genericDAO
-	    			logger.debug(e);
-	    		}
-	    	}
-	    	
-	    	genericEAO.setEntityClass(pEntityClass);
-	    	ret = genericEAO.findById((Serializable) pId);
-		}     	
-    	
-    	return ret;
-    }
-    
-    /**
-	 * If the external EAO is set and also the findAll methode is defined, the findAll methode
-	 * from the external EAO is called. Otherwise the findAll methode from the genericEAO
-	 * 
-     * @param pEntityClass the entity Class
-     * @return the entities in a Collection
-     * @throws DataSourceException 
-     */
-    public Collection findAll(Class pEntityClass) throws DataSourceException 
-    {
-    	Object ret = null;
-
-    	if (externalEAO != null && findByIdMethodName != null) 
-    	{
-    		try 
-    		{
-    			if (findAllMethod == null) 
-    			{
-    				findAllMethod = externalEAO.getClass().getMethod(findAllMethodName);
-    			}
-    				
-    			ret = findAllMethod.invoke(externalEAO);   
-    		} 
-    		catch (InvocationTargetException ite) 
-    		{ 
-    			// If the exception  is from Type DataSourceException throw it
-    		     
-    			Throwable thr = ite.getCause();
-    			
-    			if (thr instanceof DataSourceException)
-    			{
-    				throw (DataSourceException)ite.getCause();
-    			}
-    			else if (thr instanceof RuntimeException) 
-    			{
-    				throw (RuntimeException)thr;
-    			}
-    			else
-    			{
-    				logger.error(thr);
-    			}
-    		} 
-    		catch (Exception e) 
-    		{ 
-    			// If there is an error, ignore it and try it with the genericDAO
-    			logger.error(e);
-    		}
-    	}
-    	
-    	if (ret == null || !(ret instanceof Collection)) 
-    	{
-	    	genericEAO.setEntityClass(pEntityClass);
-	    	ret = genericEAO.findAll();
-    	}    	
-	    
-    	return (Collection) ret;    	
-    }    
-    
-    /**
-     * Reads and sets the values for the given entity from the db.
-     * 
-     * @param pEntity The entity-object
-     * @param pEntityClass the class of the entity
-     */
-    public void refresh(Object pEntity, Class pEntityClass) 
-    {
-		if (pEntity != null) 
-		{
-	        entityManager.getTransaction().begin();
-	    	
-	        entityManager.refresh(pEntity);
-	        
-	        entityManager.getTransaction().commit();	
+			if (externalEAO != null && updateMethodName != null)
+			{
+				try
+				{
+					if (updateMethod == null)
+					{
+						updateMethod = externalEAO.getClass().getMethod(updateMethodName, pEntityClass);
+					}
+					
+					updateMethod.invoke(externalEAO, pEntity);
+					
+					return;
+				}
+				catch (InvocationTargetException ite)
+				{
+					// If the exception is from Type DataSourceException throw it
+					
+					Throwable thr = ite.getCause();
+					
+					if (thr instanceof DataSourceException)
+					{
+						throw (DataSourceException)ite.getCause();
+					}
+					else if (thr instanceof RuntimeException)
+					{
+						throw (RuntimeException)thr;
+					}
+					else
+					{
+						logger.error(thr);
+					}
+				}
+				catch (Exception e)
+				{
+					// If there is an error, ignore it and try it with the genericDAO
+					logger.debug(e);
+				}
+			}
+			
+			genericEAO.setEntityClass(pEntityClass);
+			genericEAO.update(pEntity);
 		}
-    }    
-
-    /**
-     * Return the number of Entities for the given criteriaQuery.
-     * 
-     * @param pCountCriteriaQuery the CriteriaQuery
-     * @return the number of Entities
-     */
-    public Long countByCriteria(CriteriaQuery<Long> pCountCriteriaQuery) 
-    { 	
-    	if (pCountCriteriaQuery != null) 
-    	{
+	}
+	
+	/**
+	 * If the external EAO is set and also the delete method is defined, the
+	 * delete method from the external EAO is called. Otherwise the delete
+	 * method from the genericEAO
+	 * 
+	 * @param pEntity the entity to delete
+	 * @param pEntityClass the entity class from the entity
+	 * @throws DataSourceException if deleting the entity failed.
+	 */
+	public void delete(Object pEntity, Class pEntityClass) throws DataSourceException
+	{
+		if (pEntity != null)
+		{
+			if (externalEAO != null && deleteMethodName != null)
+			{
+				try
+				{
+					if (deleteMethod == null)
+					{
+						deleteMethod = externalEAO.getClass().getMethod(deleteMethodName, pEntityClass);
+					}
+					
+					deleteMethod.invoke(externalEAO, pEntity);
+					
+					return;
+				}
+				catch (InvocationTargetException ite)
+				{
+					// If the exception  is from Type DataSourceException throw it
+					
+					Throwable thr = ite.getCause();
+					
+					if (thr instanceof DataSourceException)
+					{
+						throw (DataSourceException)ite.getCause();
+					}
+					else if (thr instanceof RuntimeException)
+					{
+						throw (RuntimeException)thr;
+					}
+					else
+					{
+						logger.error(thr);
+					}
+				}
+				catch (Exception e)
+				{
+					// If there is an error, ignore it and try it with the genericDAO
+					logger.debug(e);
+				}
+			}
+			
+			genericEAO.setEntityClass(pEntityClass);
+			genericEAO.delete(pEntity);
+		}
+	}
+	
+	/**
+	 * If the external EAO is set and also the findById method is defined, the
+	 * findById method from the external EAO is called. Otherwise the findById
+	 * method from the genericEAO
+	 * 
+	 * @param pId the id from the entity
+	 * @param pEntityClass the entity class to find
+	 * @return the entity to the id
+	 * @throws DataSourceException if finding failed.
+	 */
+	public Object findById(Object pId, Class pEntityClass) throws DataSourceException
+	{
+		Object ret = null;
+		
+		if (pId != null)
+		{
+			if (externalEAO != null && findByIdMethodName != null)
+			{
+				try
+				{
+					if (findByIdMethod == null)
+					{
+						findByIdMethod = externalEAO.getClass().getMethod(findByIdMethodName, pId.getClass());
+					}
+					
+					ret = findByIdMethod.invoke(externalEAO, pId);
+					
+					return ret;
+				}
+				catch (InvocationTargetException ite)
+				{
+					// If the exception  is from Type DataSourceException throw it
+					
+					Throwable thr = ite.getCause();
+					
+					if (thr instanceof DataSourceException)
+					{
+						throw (DataSourceException)ite.getCause();
+					}
+					else if (thr instanceof RuntimeException)
+					{
+						throw (RuntimeException)thr;
+					}
+					else
+					{
+						logger.error(thr);
+					}
+				}
+				catch (Exception e)
+				{
+					// If there is an error, ignore it and try it with the genericDAO
+					logger.debug(e);
+				}
+			}
+			
+			genericEAO.setEntityClass(pEntityClass);
+			ret = genericEAO.findById((Serializable)pId);
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * If the external EAO is set and also the findAll method is defined, the
+	 * findAll method from the external EAO is called. Otherwise the findAll
+	 * method from the genericEAO
+	 * 
+	 * @param pEntityClass the entity Class
+	 * @return the entities in a Collection
+	 * @throws DataSourceException if finding failed.
+	 */
+	public Collection findAll(Class pEntityClass) throws DataSourceException
+	{
+		Object ret = null;
+		
+		if (externalEAO != null && findByIdMethodName != null)
+		{
+			try
+			{
+				if (findAllMethod == null)
+				{
+					findAllMethod = externalEAO.getClass().getMethod(findAllMethodName);
+				}
+				
+				ret = findAllMethod.invoke(externalEAO);
+			}
+			catch (InvocationTargetException ite)
+			{
+				// If the exception  is from Type DataSourceException throw it
+				
+				Throwable thr = ite.getCause();
+				
+				if (thr instanceof DataSourceException)
+				{
+					throw (DataSourceException)ite.getCause();
+				}
+				else if (thr instanceof RuntimeException)
+				{
+					throw (RuntimeException)thr;
+				}
+				else
+				{
+					logger.error(thr);
+				}
+			}
+			catch (Exception e)
+			{
+				// If there is an error, ignore it and try it with the genericDAO
+				logger.error(e);
+			}
+		}
+		
+		if (ret == null || !(ret instanceof Collection))
+		{
+			genericEAO.setEntityClass(pEntityClass);
+			ret = genericEAO.findAll();
+		}
+		
+		return (Collection)ret;
+	}
+	
+	/**
+	 * Reads and sets the values for the given entity from the db.
+	 * 
+	 * @param pEntity The entity-object
+	 * @param pEntityClass the class of the entity
+	 */
+	public void refresh(Object pEntity, Class pEntityClass)
+	{
+		if (pEntity != null)
+		{
 			entityManager.getTransaction().begin();
-	        
+			
+			entityManager.refresh(pEntity);
+			
+			entityManager.getTransaction().commit();
+		}
+	}
+	
+	/**
+	 * Return the number of Entities for the given criteriaQuery.
+	 * 
+	 * @param pCountCriteriaQuery the CriteriaQuery
+	 * @return the number of Entities
+	 */
+	public Long countByCriteria(CriteriaQuery<Long> pCountCriteriaQuery)
+	{
+		if (pCountCriteriaQuery != null)
+		{
+			entityManager.getTransaction().begin();
+			
 			Long count = entityManager.createQuery(pCountCriteriaQuery).getSingleResult();
-	        
-			entityManager.getTransaction().commit(); 
+			
+			entityManager.getTransaction().commit();
 			
 			return count;
-    	}
-    	else
-    	{
-    		return null;
-    	}
-    }
-
-    /**
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns the Entities for the given criteriaQuery.
 	 * 
 	 * @param pCriteriaQuery the CriteriaQuery
 	 * @param pOffset the first Row Index
 	 * @param pMax Maximum Number of Entities
 	 * @return the entities in a collection
-     */
-    public Collection findByCriteria(CriteriaQuery pCriteriaQuery, int pOffset, int pMax) 
-    {
-    	 
-        entityManager.getTransaction().begin();
-    	
-        Query query = entityManager.createQuery(pCriteriaQuery);
-        query.setFirstResult(pOffset);
-        query.setMaxResults(pMax);
-        List objectList = (List) query.getResultList();
-        
-        entityManager.getTransaction().commit();
-        
+	 */
+	public Collection findByCriteria(CriteriaQuery pCriteriaQuery, int pOffset, int pMax)
+	{
+		
+		entityManager.getTransaction().begin();
+		
+		Query query = entityManager.createQuery(pCriteriaQuery);
+		query.setFirstResult(pOffset);
+		query.setMaxResults(pMax);
+		List objectList = (List)query.getResultList();
+		
+		entityManager.getTransaction().commit();
+		
 		return objectList;
-    }
-    
+	}
+	
 	/**
 	 * Returns the Entities for the given criteriaQuery.
 	 * 
 	 * @param pCriteriaQuery the CriteriaQuery
 	 * @return the Entities in a Collection
-	 */    
-    public Collection findByCriteria(CriteriaQuery pCriteriaQuery) 
-    {
-        entityManager.getTransaction().begin();
-    	
-        Query query = entityManager.createQuery(pCriteriaQuery);
-        List objectList = (List) query.getResultList();
-        
-        entityManager.getTransaction().commit();
-        
-        return objectList;
-    }
+	 */
+	public Collection findByCriteria(CriteriaQuery pCriteriaQuery)
+	{
+		entityManager.getTransaction().begin();
+		
+		Query query = entityManager.createQuery(pCriteriaQuery);
+		List objectList = (List)query.getResultList();
+		
+		entityManager.getTransaction().commit();
+		
+		return objectList;
+	}
 	
 	/**
 	 * Returns the <code>EntityManager</code>.
 	 * 
 	 * @return The <code>EntityManager</code>
 	 */
-	public EntityManager getEntityManager() 
+	public EntityManager getEntityManager()
 	{
 		return entityManager;
 	}
-
+	
 	/**
 	 * Sets the <code>EntityManager</code>.
 	 * 
 	 * @param pEntityManager the EntityManager
 	 */
-	public void setEntityManager(EntityManager pEntityManager) 
+	public void setEntityManager(EntityManager pEntityManager)
 	{
 		entityManager = pEntityManager;
 		genericEAO = new GenericEAO(pEntityManager);
 		metamodel = pEntityManager.getMetamodel();
 		persistenceUnitUtil = pEntityManager.getEntityManagerFactory().getPersistenceUnitUtil();
 	}
-
+	
 	/**
 	 * Returns the Metamodel from the entityManager.
 	 * 
 	 * @return The Metamodel
 	 */
-	public Metamodel getMetamodel() 
+	public Metamodel getMetamodel()
 	{
 		return metamodel;
 	}
-
+	
 	/**
 	 * Returns the persistence unit util.
 	 * 
 	 * @return the PersistenceUnitUtil
 	 */
-	public PersistenceUnitUtil getPersistenceUnitUtil() 
+	public PersistenceUnitUtil getPersistenceUnitUtil()
 	{
 		return persistenceUnitUtil;
 	}
-
+	
 	/**
 	 * Returns the PrimaryKey from the given entity.
 	 * 
-	 * @param pEntity 
+	 * @param pEntity the entity of which to get the primary key.
 	 * @return The PrimaryKey from the given entity
 	 */
-	public Object getIdentifier(Object pEntity) 
+	public Object getIdentifier(Object pEntity)
 	{
 		return persistenceUnitUtil.getIdentifier(pEntity);
 	}
-
+	
 	/**
 	 * Returns the <code>EntityType</code> for the given entityClass.
 	 * 
@@ -721,24 +728,24 @@ public class JPAAccess
 	}
 	
 	/**
-	 * Returns the <code>Attributes</code> for the given entityClass
-	 * Attributes are the Fields from the entityClass.
+	 * Returns the <code>Attributes</code> for the given entityClass Attributes
+	 * are the Fields from the entityClass.
 	 * 
 	 * @param pEntityClass the class of the entity
 	 * @return <code>Attributes</code> for the given entityClass in a Collection
 	 */
-	public Set<Attribute> getAttributes(Class pEntityClass) 
+	public Set<Attribute> getAttributes(Class pEntityClass)
 	{
 		return metamodel.entity(pEntityClass).getAttributes();
-	}	
-
+	}
+	
 	/**
 	 * Returns the <code>EmbeddableType</code> for the given embeddableClass.
 	 * 
 	 * @param pEmbeddableClass the class of the embedded class
-	 * @return the <code>EmbeddableType</code> for the given embeddableClass 
+	 * @return the <code>EmbeddableType</code> for the given embeddableClass
 	 */
-	public EmbeddableType getEmbeddableType(Class pEmbeddableClass) 
+	public EmbeddableType getEmbeddableType(Class pEmbeddableClass)
 	{
 		return metamodel.embeddable(pEmbeddableClass);
 	}
@@ -748,9 +755,9 @@ public class JPAAccess
 	 * 
 	 * @return CriteriaBuilder from the EntityManager
 	 */
-	public CriteriaBuilder getCriteriaBuilder() 
+	public CriteriaBuilder getCriteriaBuilder()
 	{
 		return entityManager.getCriteriaBuilder();
 	}
-				
+	
 }	// JPAAccess

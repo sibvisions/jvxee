@@ -39,8 +39,9 @@ public @interface EAOMethod
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	/**
-	 * Returns the Methode Identifier.
+	 * Returns the method identifier.
 	 * 
+	 * @return the method identifier.
 	 */
 	public EAO methodIdentifier();
 	

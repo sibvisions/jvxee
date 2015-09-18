@@ -26,7 +26,7 @@ import javax.rad.model.condition.Equals;
 import javax.rad.model.condition.ICondition;
 
 /**
- * The {@link JPAForeignKey} is a {@link JPAEmbeddeKey} extension that
+ * The {@link JPAForeignKey} is a {@link JPAEmbeddedKey} extension that
  * encapsulates additional information and methods. A {@link JPAForeignKey}
  * encapsulates the {@link JPAServerColumnMetaData} for an entity in an entity.
  * There exists an entity in an entity when there is a OneToOne or OneToMany

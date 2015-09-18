@@ -35,7 +35,7 @@ import javax.rad.persist.MetaData;
 
 /**
  * The {@link JPAServerMetaData} is a description of all columns as
- * {@link PAServerColumnMetaData} One {@link JPAServerMetaData} encapsulates the
+ * {@link JPAServerColumnMetaData} One {@link JPAServerMetaData} encapsulates the
  * {@link JPAServerColumnMetaData} for a JPAStorage in different groups. The
  * Groups of {@link JPAServerMetaData} are primary keys, foreign keys and
  * embedded Objects in an Entity.
@@ -388,7 +388,7 @@ public class JPAServerMetaData
 	 * the column and the value is the Value from the data row.
 	 * 
 	 * @param pDataRow the data row.
-	 * @return the {@link map} for the given data row.
+	 * @return the {@link Map} for the given data row.
 	 */
 	public Map<String, Object> getMapForDataRow(Object[] pDataRow)
 	{
