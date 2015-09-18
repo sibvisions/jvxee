@@ -467,6 +467,11 @@ public class JPAStorage extends AbstractCachedStorage
 	@Override
 	public int getEstimatedRowCount(ICondition pFilter) throws DataSourceException
 	{
+		if (!isOpen())
+		{
+			throw new DataSourceException("JPAStorage isn't open!");
+		}
+		
 		CriteriaQuery<Long> countCriteriaQuery = criteriaConditionMapper.getCountCriteriaQuery(pFilter, masterEntity, null);
 		
 		return jpaAccess.countByCriteria(countCriteriaQuery).intValue();
