@@ -97,15 +97,26 @@ the License.
     -->
   
   <target name="proxy.check">
-    <condition property="proxy.enabled">
-      <and>
-        <isreachable host="10.0.0.2"/>
-      </and>
-    </condition>
+    <stopwatch name="timer_proxy"/>
+    
+    <if>
+      <not>
+        <isset property="ci" />
+      </not>
+      <then>
+	    <condition property="proxy.enabled">
+	      <and>
+	        <socket server="10.0.0.1" port="3128"/>
+	      </and>
+	    </condition>
+      </then>
+    </if>
+    
+    <stopwatch name="timer_proxy" action="total"/>
   </target>
   
   <target name="proxy" depends="proxy.check" if="proxy.enabled">
-    <stopwatch name="timer0"/>
+    <stopwatch name="timer1"/>
     
     <property name="proxy.host" value="10.0.0.1"/>
     <property name="proxy.port" value="3128"/>
@@ -114,7 +125,7 @@ the License.
       
     <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.password}"/>
     
-    <stopwatch name="timer0" action="total"/>
+    <stopwatch name="timer1" action="total"/>
   </target>
   
   <!-- 
@@ -227,71 +238,83 @@ the License.
     
   </target>  
 	
-	<target name="maven" depends="opensource">
-		<property name="maven.version.postfix" value="" />
-		<property name="mvn.groupId" value="com.sibvisions" />
+  <target name="maven.snapshot" depends="proxy">
+    <property name="debug" value="on" />
+    <property name="debuglevel" value="lines,vars,source" />
+
+    <property name="maven.version.postfix" value="-SNAPSHOT" />
+
+    <property name="mvn.id" value="${mvn.snapshotsrep.id}" />
+    <property name="mvn.url" value="${mvn.snapshotsrep.url}" />
+    
+  </target>
+  
+  <target name="maven" depends="proxy">
+      
+	<property name="maven.version.postfix" value="" />
+	<property name="mvn.groupId" value="com.sibvisions" />
 		
-		<condition property="gpgexecutable" value="C:\Program Files (x86)\GNU\GnuPG\pub\gpg.exe" else="gpg">
-			<and>
-				<os family="Windows" />
-			</and>
-		</condition>
+	<condition property="gpgexecutable" value="C:\Program Files (x86)\GNU\GnuPG\pub\gpg.exe" else="gpg">
+	  <and>
+		<os family="Windows" />
+	  </and>
+    </condition>
 		
-		<!-- define late because of the classpath -->
-		<taskdef name="buildnr" classname="com.sibvisions.addons.ant.AntBuildNumber" classpath="${buildnumber}/addons.jar;${classes}" />
-		<buildnr buildfile="${buildnumber}/buildnr.properties" loadOnly="true"/>
+	<!-- define late because of the classpath -->
+	<taskdef name="buildnr" classname="com.sibvisions.addons.ant.AntBuildNumber" classpath="${buildnumber}/addons.jar;${classes}" />
+	<buildnr buildfile="${buildnumber}/buildnr.properties" loadOnly="true"/>
 		
-		<propertyregex property="versionnumber" input="${build.version}" regexp=" " replace="_" global="true" defaultValue="${build.version}" />
+	<propertyregex property="versionnumber" input="${build.version}" regexp=" " replace="_" global="true" defaultValue="${build.version}" />
 		
-		<property name="mvn.jvxee.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}.jar" />
-		<property name="mvn.jvxee.sources.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}-sources.jar" />
-		<property name="mvn.jvxee.javadoc.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}-javadoc.jar" />
+	<property name="mvn.jvxee.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}.jar" />
+	<property name="mvn.jvxee.sources.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}-sources.jar" />
+	<property name="mvn.jvxee.javadoc.jar" value="${release}/maven/${release.name}-${versionnumber}${maven.version.postfix}-javadoc.jar" />
 		
-		<property name="mvn.id" value="${mvn.stagingrep.id}" />
-		<property name="mvn.url" value="${mvn.stagingrep.url}" />
+	<property name="mvn.id" value="${mvn.stagingrep.id}" />
+	<property name="mvn.url" value="${mvn.stagingrep.url}" />
 		
-		<mkdir dir="${release}/maven" />
+	<mkdir dir="${release}/maven" />
 		
-		<zip destfile="${mvn.jvxee.jar}">
-			<zipfileset src="${install}/${jar.name}"/>
-		</zip>
+	<zip destfile="${mvn.jvxee.jar}">
+	  <zipfileset src="${install}/${jar.name}"/>
+	</zip>
 		
-		<zip destfile="${mvn.jvxee.sources.jar}">
-			<zipfileset dir="${src}/" includes="**" excludes="**/package.html" prefix=""/>
-		</zip>
+	<zip destfile="${mvn.jvxee.sources.jar}">
+	  <zipfileset dir="${src}/" includes="**" excludes="**/package.html" prefix=""/>
+	</zip>
 		
-		<unzip src="${release}/${release.name}-${build.version}_javadoc.zip" dest="${release}/maven/javadoc"/>
+	<unzip src="${release}/${release.name}-${build.version}_javadoc.zip" dest="${release}/maven/javadoc"/>
 		
-		<zip destfile="${mvn.jvxee.javadoc.jar}">
-			<zipfileset dir="${release}/maven/javadoc/api" />
-		</zip>
+	<zip destfile="${mvn.jvxee.javadoc.jar}">
+	  <zipfileset dir="${release}/maven/javadoc/api" />
+	</zip>
 		
-		<property name="maven.tmp" location="${temp}/maven" />
+	<property name="maven.tmp" location="${temp}/maven" />
 		
-		<delete dir="${release}/maven/javadoc" />
-		<delete dir="${maven.tmp}" />
+	<delete dir="${release}/maven/javadoc" />
+	<delete dir="${maven.tmp}" />
 		
-		<copy todir="${maven.tmp}">
-			<fileset dir="${maven}"/>
-		</copy>
+	<copy todir="${maven.tmp}">
+	  <fileset dir="${maven}"/>
+	</copy>
 		
-		<replace dir="${maven.tmp}" token="&lt;version&gt;0.9&lt;/version&gt;" value="&lt;version&gt;${versionnumber}${maven.version.postfix}&lt;/version&gt;">
-			<include name="**/pom.xml" />
-		</replace>
+	<replace dir="${maven.tmp}" token="&lt;version&gt;1.1&lt;/version&gt;" value="&lt;version&gt;${versionnumber}${maven.version.postfix}&lt;/version&gt;">
+	  <include name="**/pom.xml" />
+	</replace>
 		
-		<artifact:mvn>
-			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file" />
-			<arg value="-Durl=${mvn.url}" />
-			<arg value="-DrepositoryId=${mvn.id}" />
-			<arg value="-DpomFile=${maven.tmp}/jvxee/pom.xml" />
-			<arg value="-Dfile=${mvn.jvxee.jar}" />
-			<arg value="-Dfiles=${mvn.jvxee.sources.jar},${mvn.jvxee.javadoc.jar}" />
-			<arg value="-Dclassifiers=sources,javadoc" />
-			<arg value="-Dtypes=jar,jar" />
-			<arg value="-Pgpg" />
-			<arg value="-Dgpg.executable=${gpgexecutable}" />
-		</artifact:mvn>
-	</target>
+	<artifact:mvn>
+	  <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file" />
+	  <arg value="-Durl=${mvn.url}" />
+	  <arg value="-DrepositoryId=${mvn.id}" />
+	  <arg value="-DpomFile=${maven.tmp}/jvxee/pom.xml" />
+	  <arg value="-Dfile=${mvn.jvxee.jar}" />
+	  <arg value="-Dfiles=${mvn.jvxee.sources.jar},${mvn.jvxee.javadoc.jar}" />
+	  <arg value="-Dclassifiers=sources,javadoc" />
+	  <arg value="-Dtypes=jar,jar" />
+	  <arg value="-Pgpg" />
+	  <arg value="-Dgpg.executable=${gpgexecutable}" />
+	</artifact:mvn>
+  </target>
 	
   <!-- 
 	* quality tasks 
@@ -364,7 +387,7 @@ the License.
       <bottom><![CDATA[<i>Copyright &#169; 2012 SIB Visions GmbH. All Rights Reserved.</i>]]></bottom>
 	  <link href="http://docs.oracle.com/javase/6/docs/api/"/>
 	  <link href="http://docs.oracle.com/javaee/5/api/"/>
-	  <link href="http://www.sibvisions.com/files/jvx/1.1/api/"/>
+	  <link href="http://www.sibvisions.com/files/jvx/2.3/api/"/>
     </javadoc>
 
     <stopwatch name="timer6" action="total"/>
@@ -380,5 +403,8 @@ the License.
   <target name="start.quality" depends="clean.start, checkstyle, javadoc, clean.stop" />
   
   <target name="start.complete" depends="clean.start, opensource, clean.stop"/> 
+  
+  <target name="start.maven" depends="clean.start, opensource, maven" description="Publishing a maven release"/>
+  <target name="start.maven.snapshot" depends="clean.start, maven.snapshot, opensource, maven" description="Publishing a maven snapshot"/>
  
 </project>
