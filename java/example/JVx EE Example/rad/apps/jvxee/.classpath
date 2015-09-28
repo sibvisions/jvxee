@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src.client"/>
-	<classpathentry kind="src" path="src.server"/>
+	<classpathentry excluding="**/package.html" kind="src" path="src.server"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="libs/server/eclipselink.jar"/>
 	<classpathentry kind="lib" path="libs/server/javax.persistence_2.0.3.v201010191057.jar"/>
