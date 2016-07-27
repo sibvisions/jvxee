@@ -99,14 +99,14 @@ the License.
   <target name="proxy.check">
     <stopwatch name="timer_proxy"/>
     
+    <typedef name="canreach" classname="com.sibvisions.addons.ant.CanReach" classpath="${buildnumber}/addons.jar" />
+
     <if>
-      <not>
-        <isset property="ci" />
-      </not>
+      <istrue value="true" />
       <then>
 	    <condition property="proxy.enabled">
 	      <and>
-	        <socket server="10.0.0.1" port="3128"/>
+	        <canreach host="10.0.0.1" port="3128"/>
 	      </and>
 	    </condition>
       </then>
