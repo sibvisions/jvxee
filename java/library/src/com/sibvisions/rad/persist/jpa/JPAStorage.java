@@ -37,20 +37,20 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
-import javax.rad.model.SortDefinition;
-import javax.rad.model.condition.ICondition;
-import javax.rad.model.datatype.BinaryDataType;
-import javax.rad.model.datatype.IDataType;
-import javax.rad.model.datatype.StringDataType;
-import javax.rad.model.reference.StorageReferenceDefinition;
-import javax.rad.persist.ColumnMetaData;
-import javax.rad.persist.DataSourceException;
-import javax.rad.persist.IStorage;
-import javax.rad.persist.MetaData;
-import javax.rad.remote.IConnectionConstants;
-import javax.rad.server.ISession;
-import javax.rad.server.SessionContext;
-import javax.rad.type.bean.IBean;
+import jvx.rad.model.SortDefinition;
+import jvx.rad.model.condition.ICondition;
+import jvx.rad.model.datatype.BinaryDataType;
+import jvx.rad.model.datatype.IDataType;
+import jvx.rad.model.datatype.StringDataType;
+import jvx.rad.model.reference.StorageReferenceDefinition;
+import jvx.rad.persist.ColumnMetaData;
+import jvx.rad.persist.DataSourceException;
+import jvx.rad.persist.IStorage;
+import jvx.rad.persist.MetaData;
+import jvx.rad.remote.IConnectionConstants;
+import jvx.rad.server.ISession;
+import jvx.rad.server.SessionContext;
+import jvx.rad.type.bean.IBean;
 
 import com.sibvisions.rad.model.DataBookCSVExporter;
 import com.sibvisions.rad.persist.AbstractCachedStorage;
@@ -131,9 +131,8 @@ public class JPAStorage extends AbstractCachedStorage
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void close() throws Throwable
+	public void close()
 	{
-		// TODO Is there something to close?
 	}
 	
 	/**

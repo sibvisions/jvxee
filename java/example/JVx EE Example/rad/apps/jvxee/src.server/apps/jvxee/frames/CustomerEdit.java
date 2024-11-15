@@ -21,7 +21,7 @@
 package apps.jvxee.frames;
 
 import javax.persistence.EntityManager;
-import javax.rad.persist.IStorage;
+import jvx.rad.persist.IStorage;
 
 import apps.jvxee.Session;
 import apps.jvxee.eao.AddressEAO;

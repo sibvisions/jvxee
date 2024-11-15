@@ -20,18 +20,17 @@
  */
 package apps.jvxee;
 
-import javax.rad.application.genui.UILauncher;
-import javax.rad.genui.UIImage;
-import javax.rad.genui.component.UIButton;
-import javax.rad.genui.container.UIToolBar;
-import javax.rad.genui.menu.UIMenu;
-import javax.rad.genui.menu.UIMenuItem;
-import javax.rad.remote.IConnection;
-
-import apps.jvxee.frames.CustomerEditFrame;
-
 import com.sibvisions.rad.application.Application;
 import com.sibvisions.rad.server.DirectServerConnection;
+
+import apps.jvxee.frames.CustomerEditFrame;
+import jvx.rad.application.genui.UILauncher;
+import jvx.rad.genui.UIImage;
+import jvx.rad.genui.component.UIButton;
+import jvx.rad.genui.container.UIToolBar;
+import jvx.rad.genui.menu.UIMenu;
+import jvx.rad.genui.menu.UIMenuItem;
+import jvx.rad.remote.IConnection;
 
 /**
  * First application with JVx EE and JVx.
@@ -49,8 +48,9 @@ public class JVxEEApplication extends Application
 	 * dependent launcher.
 	 * 
 	 * @param pLauncher the technology dependent launcher
+	 * @throws Exception if initialization fails
 	 */
-	public JVxEEApplication(UILauncher pLauncher)
+	public JVxEEApplication(UILauncher pLauncher) throws Exception
 	{
 		super(pLauncher);
 	}

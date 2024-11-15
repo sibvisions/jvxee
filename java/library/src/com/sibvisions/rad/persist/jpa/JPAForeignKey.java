@@ -22,8 +22,8 @@ package com.sibvisions.rad.persist.jpa;
 
 import java.util.Map;
 
-import javax.rad.model.condition.Equals;
-import javax.rad.model.condition.ICondition;
+import jvx.rad.model.condition.Equals;
+import jvx.rad.model.condition.ICondition;
 
 /**
  * The {@link JPAForeignKey} is a {@link JPAEmbeddedKey} extension that

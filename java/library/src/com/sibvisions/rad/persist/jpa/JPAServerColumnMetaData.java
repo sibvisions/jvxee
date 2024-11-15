@@ -20,8 +20,8 @@
  */
 package com.sibvisions.rad.persist.jpa;
 
-import javax.rad.model.reference.StorageReferenceDefinition;
-import javax.rad.persist.ColumnMetaData;
+import jvx.rad.model.reference.StorageReferenceDefinition;
+import jvx.rad.persist.ColumnMetaData;
 
 /**
  * A <code>JPAServerColumnMetaData</code> is a description of a <code>JPAMappingType</code>, 
@@ -30,8 +30,8 @@ import javax.rad.persist.ColumnMetaData;
  * 
  * Every primitive or wrapped attribute from an entity is represented by one <code>JPAServerColumnMetaData</code>.
  *  
- * @see javax.rad.model.datatype.IDataType
- * @see javax.rad.persist.ColumnMetaData
+ * @see jvx.rad.model.datatype.IDataType
+ * @see jvx.rad.persist.ColumnMetaData
  * 
  * @author Stefan Wurm
  */

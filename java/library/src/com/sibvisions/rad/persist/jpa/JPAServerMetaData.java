@@ -26,12 +26,12 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import javax.rad.model.condition.CompareCondition;
-import javax.rad.model.condition.ICondition;
-import javax.rad.model.condition.Not;
-import javax.rad.model.condition.OperatorCondition;
-import javax.rad.persist.ColumnMetaData;
-import javax.rad.persist.MetaData;
+import jvx.rad.model.condition.CompareCondition;
+import jvx.rad.model.condition.ICondition;
+import jvx.rad.model.condition.Not;
+import jvx.rad.model.condition.OperatorCondition;
+import jvx.rad.persist.ColumnMetaData;
+import jvx.rad.persist.MetaData;
 
 /**
  * The {@link JPAServerMetaData} is a description of all columns as

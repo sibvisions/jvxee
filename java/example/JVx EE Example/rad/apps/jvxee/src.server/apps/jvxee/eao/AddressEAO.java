@@ -21,7 +21,7 @@
 package apps.jvxee.eao;
 
 import javax.persistence.EntityManager;
-import javax.rad.persist.DataSourceException;
+import jvx.rad.persist.DataSourceException;
 
 import apps.jvxee.entity.Address;
 

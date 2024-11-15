@@ -24,11 +24,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.rad.model.SortDefinition;
-import javax.rad.model.condition.Equals;
-import javax.rad.model.condition.Not;
-import javax.rad.model.condition.Or;
-import javax.rad.persist.DataSourceException;
+import jvx.rad.model.SortDefinition;
+import jvx.rad.model.condition.Equals;
+import jvx.rad.model.condition.Not;
+import jvx.rad.model.condition.Or;
+import jvx.rad.persist.DataSourceException;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -96,7 +96,7 @@ public class TestConditionCriteriaMapper
 	
 	/**
 	 * Tests the
-	 * {@link ConditionCriteriaMapper#getCriteriaQuery(javax.rad.model.condition.ICondition, SortDefinition, Class, String)}
+	 * {@link ConditionCriteriaMapper#getCriteriaQuery(jvx.rad.model.condition.ICondition, SortDefinition, Class, String)}
 	 * method.
 	 * 
 	 * @throws DataSourceException if the test fails.
@@ -191,7 +191,7 @@ public class TestConditionCriteriaMapper
 	
 	/**
 	 * Tests the
-	 * {@link ConditionCriteriaMapper#getCountCriteriaQuery(javax.rad.model.condition.ICondition, Class, String)}
+	 * {@link ConditionCriteriaMapper#getCountCriteriaQuery(jvx.rad.model.condition.ICondition, Class, String)}
 	 * method.
 	 * 
 	 * @throws DataSourceException if the test fails.

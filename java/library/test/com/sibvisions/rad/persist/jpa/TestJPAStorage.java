@@ -20,6 +20,7 @@
  */
 package com.sibvisions.rad.persist.jpa;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,11 +31,6 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.rad.model.condition.Equals;
-import javax.rad.model.condition.ICondition;
-import javax.rad.model.condition.Like;
-import javax.rad.persist.DataSourceException;
-import javax.rad.remote.MasterConnection;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -50,7 +46,12 @@ import com.sibvisions.rad.persist.jpa.entity.flight.Flight;
 import com.sibvisions.rad.util.DirectObjectConnection;
 import com.sibvisions.util.type.FileUtil;
 import com.sibvisions.util.type.ResourceUtil;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+
+import jvx.rad.model.condition.Equals;
+import jvx.rad.model.condition.ICondition;
+import jvx.rad.model.condition.Like;
+import jvx.rad.persist.DataSourceException;
+import jvx.rad.remote.MasterConnection;
 
 /**
  * The class to test the JPAStorage.
@@ -381,6 +382,10 @@ public class TestJPAStorage
 		{
 			// Everything is fine, carry on.
 		}
+		finally
+		{
+			storage.close();
+		}
 		
 		storage = new JPAStorage(Customer.class);
 		
@@ -393,6 +398,10 @@ public class TestJPAStorage
 		catch (IllegalArgumentException e)
 		{
 			// Everything is fine, carry on.
+		}
+		finally
+		{
+			storage.close();
 		}
 	}
 	
@@ -435,11 +444,18 @@ public class TestJPAStorage
 	{
 		JPAStorage storage = new JPAStorage(Customer.class);
 		
-		Assert.assertEquals("customer", storage.getName());
-		
-		storage.setDetailEntity(Address.class);
-		
-		Assert.assertEquals("customeraddress", storage.getName());
+		try
+		{
+			Assert.assertEquals("customer", storage.getName());
+			
+			storage.setDetailEntity(Address.class);
+			
+			Assert.assertEquals("customeraddress", storage.getName());
+		}
+		finally
+		{
+			storage.close();
+		}
 	}
 	
 	/**
@@ -814,7 +830,7 @@ public class TestJPAStorage
 	
 	/**
 	 * Tests the
-	 * {@link JPAStorage#writeCSV(java.io.OutputStream, String[], String[], ICondition, javax.rad.model.SortDefinition, String)}
+	 * {@link JPAStorage#writeCSV(java.io.OutputStream, String[], String[], ICondition, jvx.rad.model.SortDefinition, String)}
 	 * method.
 	 *
 	 * @throws Exception if the test fails.
@@ -828,12 +844,12 @@ public class TestJPAStorage
 		columnNames = Arrays.copyOf(columnNames, columnNames.length);
 		Arrays.sort(columnNames);
 		
-		ByteOutputStream stream = new ByteOutputStream();
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		
 		jpaStorageCustomer.writeCSV(stream, columnNames, null, null, null, ",");
 		
 		String expected = new String(FileUtil.getContent(ResourceUtil.getResourceAsStream("/com/sibvisions/rad/persist/jpa/resource/customers.csv")));
-		String actual = new String(stream.getBytes(), 0, stream.size());
+		String actual = new String(stream.toByteArray(), 0, stream.size());
 		System.out.println(actual);
 		Assert.assertEquals(expected, actual);
 	}

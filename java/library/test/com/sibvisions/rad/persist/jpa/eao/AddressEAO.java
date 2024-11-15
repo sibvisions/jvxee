@@ -21,7 +21,7 @@
 package com.sibvisions.rad.persist.jpa.eao;
 
 import javax.persistence.EntityManager;
-import javax.rad.persist.DataSourceException;
+import jvx.rad.persist.DataSourceException;
 
 import com.sibvisions.rad.persist.jpa.EAOMethod;
 import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;

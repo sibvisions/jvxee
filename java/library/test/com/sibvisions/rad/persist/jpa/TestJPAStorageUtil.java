@@ -23,12 +23,12 @@ package com.sibvisions.rad.persist.jpa;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.rad.model.datatype.BigDecimalDataType;
-import javax.rad.model.datatype.BinaryDataType;
-import javax.rad.model.datatype.BooleanDataType;
-import javax.rad.model.datatype.ObjectDataType;
-import javax.rad.model.datatype.StringDataType;
-import javax.rad.model.datatype.TimestampDataType;
+import jvx.rad.model.datatype.BigDecimalDataType;
+import jvx.rad.model.datatype.BinaryDataType;
+import jvx.rad.model.datatype.BooleanDataType;
+import jvx.rad.model.datatype.ObjectDataType;
+import jvx.rad.model.datatype.StringDataType;
+import jvx.rad.model.datatype.TimestampDataType;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -32,13 +32,13 @@ import java.util.Set;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Id;
 import javax.persistence.metamodel.Attribute;
-import javax.rad.model.datatype.BigDecimalDataType;
-import javax.rad.model.datatype.BinaryDataType;
-import javax.rad.model.datatype.BooleanDataType;
-import javax.rad.model.datatype.IDataType;
-import javax.rad.model.datatype.ObjectDataType;
-import javax.rad.model.datatype.StringDataType;
-import javax.rad.model.datatype.TimestampDataType;
+import jvx.rad.model.datatype.BigDecimalDataType;
+import jvx.rad.model.datatype.BinaryDataType;
+import jvx.rad.model.datatype.BooleanDataType;
+import jvx.rad.model.datatype.IDataType;
+import jvx.rad.model.datatype.ObjectDataType;
+import jvx.rad.model.datatype.StringDataType;
+import jvx.rad.model.datatype.TimestampDataType;
 
 import com.sibvisions.util.type.StringUtil;
 

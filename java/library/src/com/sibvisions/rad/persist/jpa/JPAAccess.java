@@ -37,7 +37,7 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
-import javax.rad.persist.DataSourceException;
+import jvx.rad.persist.DataSourceException;
 
 import com.sibvisions.rad.persist.jpa.EAOMethod.EAO;
 import com.sibvisions.util.log.ILogger;

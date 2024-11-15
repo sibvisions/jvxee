@@ -30,21 +30,21 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
-import javax.rad.model.SortDefinition;
-import javax.rad.model.condition.And;
-import javax.rad.model.condition.CompareCondition;
-import javax.rad.model.condition.Equals;
-import javax.rad.model.condition.Greater;
-import javax.rad.model.condition.GreaterEquals;
-import javax.rad.model.condition.ICondition;
-import javax.rad.model.condition.Less;
-import javax.rad.model.condition.LessEquals;
-import javax.rad.model.condition.Like;
-import javax.rad.model.condition.LikeIgnoreCase;
-import javax.rad.model.condition.Not;
-import javax.rad.model.condition.OperatorCondition;
-import javax.rad.model.condition.Or;
-import javax.rad.persist.DataSourceException;
+import jvx.rad.model.SortDefinition;
+import jvx.rad.model.condition.And;
+import jvx.rad.model.condition.CompareCondition;
+import jvx.rad.model.condition.Equals;
+import jvx.rad.model.condition.Greater;
+import jvx.rad.model.condition.GreaterEquals;
+import jvx.rad.model.condition.ICondition;
+import jvx.rad.model.condition.Less;
+import jvx.rad.model.condition.LessEquals;
+import jvx.rad.model.condition.Like;
+import jvx.rad.model.condition.LikeIgnoreCase;
+import jvx.rad.model.condition.Not;
+import jvx.rad.model.condition.OperatorCondition;
+import jvx.rad.model.condition.Or;
+import jvx.rad.persist.DataSourceException;
 
 /**
  * The {@link ConditionCriteriaMapper} is able to create {@link CriteriaQuery}s

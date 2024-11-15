@@ -38,10 +38,10 @@ public @interface EAOMethod
     // Properties
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	/**
+	/** 
 	 * Returns the method identifier.
 	 * 
-	 * @return the method identifier.
+	 *  @return {@link EAO} the method identifier
 	 */
 	public EAO methodIdentifier();
 	
