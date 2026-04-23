@@ -1,0 +1,11 @@
+persistence.xml
+build/release/*
+build/build.log
+build/install/*
+library/classes/*
+library/
+example/JVx\ EE\ Example/rad/apps/jvxee/classes/*
+example/JVx\ EE\ Example/rad/apps/jvxee/db/*.lck
+example/JVx\ EE\ Example/rad/apps/jvxee/db/*.log
+jpatestdb.log
+jpatestdb.lck
