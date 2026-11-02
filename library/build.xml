@@ -16,8 +16,10 @@ the License.
 
 <project name="JVx EE" default="start.complete"
          xmlns:artifact="antlib:org.apache.maven.artifact.ant"
-         xmlns:staging="antlib:org.sonatype.nexus.ant.staging">
-
+         xmlns:staging="antlib:org.sonatype.nexus.ant.staging"
+		 xmlns:if="ant:if" 
+		 xmlns:unless="ant:unless">
+		 
   <!-- 
     ***************************************************************** 
   	* information   
