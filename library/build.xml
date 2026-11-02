@@ -62,9 +62,9 @@ the License.
   
   <!-- Maven snapshots and staging repository id and url -->
   <property name="mvn.snapshotsrep.id"  value="sonatype-nexus-snapshots" />
-  <property name="mvn.snapshotsrep.url" value="https://oss.sonatype.org/content/repositories/snapshots" />
+  <property name="mvn.snapshotsrep.url" value="https://central.sonatype.com/repository/maven-snapshots" />
   <property name="mvn.stagingrep.id"    value="sonatype-nexus-staging" />
-  <property name="mvn.stagingrep.url"   value="https://oss.sonatype.org/service/local/staging/deploy/maven2" />
+  <property name="mvn.stagingrep.url"   value="https://central.sonatype.com/api/v1/publisher/upload" />
   
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpath="${build}/maven/maven-ant-tasks-2.1.3.jar" />
   	
@@ -301,19 +301,29 @@ the License.
 	<replace dir="${maven.tmp}" token="&lt;version&gt;1.1&lt;/version&gt;" value="&lt;version&gt;${versionnumber}${maven.version.postfix}&lt;/version&gt;">
 	  <include name="**/pom.xml" />
 	</replace>
-		
-	<artifact:mvn>
-	  <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file" />
-	  <arg value="-Durl=${mvn.url}" />
-	  <arg value="-DrepositoryId=${mvn.id}" />
-	  <arg value="-DpomFile=${maven.tmp}/jvxee/pom.xml" />
-	  <arg value="-Dfile=${mvn.jvxee.jar}" />
-	  <arg value="-Dfiles=${mvn.jvxee.sources.jar},${mvn.jvxee.javadoc.jar}" />
-	  <arg value="-Dclassifiers=sources,javadoc" />
-	  <arg value="-Dtypes=jar,jar" />
-	  <arg value="-Pgpg" />
-	  <arg value="-Dgpg.executable=${gpgexecutable}" />
-	</artifact:mvn>
+	
+  	<if>
+  	  <equals arg1="${mvn.stagingrep.url}" arg2="${mvn.url}" />
+  	
+  	  <then>	
+      </then>
+      <else>	  
+  	  	<artifact:mvn unless:set="no_maven" mavenVersion="3.9.9" mavenHome="${build}/maven/apache-maven-3.9.9" fork="true">
+  		  <jvmarg value="-Dmaven.multiModuleProjectDirectory=${maven.tmp}/jvxee"/>
+		  <!-- logging
+		  <arg value="-e" />
+		  <arg value="-X" />
+		  -->
+		  <arg value="org.apache.maven.plugins:maven-deploy-plugin:3.1.4:deploy-file" />
+		  <arg value="-Durl=${mvn.url}" />
+		  <arg value="-DrepositoryId=${mvn.id}" />
+		  <arg value="-DgeneratePom=false" />
+		  <arg value="-DpomFile=${maven.tmp}/jvxee/pom.xml" />
+	      <arg value="-Dfile=${mvn.jvxee.jar}" />
+		  <arg value="-Dsources=${mvn.jvxee.sources.jar}" />
+		  <arg value="-Djavadoc=${mvn.jvxee.javadoc.jar}" />
+  		</artifact:mvn>	  
+	  </else>
   </target>
 	
   <!-- 
