@@ -326,6 +326,7 @@ the License.
 		  <arg value="-Djavadoc=${mvn.jvxee.javadoc.jar}" />
   		</artifact:mvn>	  
 	  </else>
+	</if>  
   </target>
 	
   <!-- 
